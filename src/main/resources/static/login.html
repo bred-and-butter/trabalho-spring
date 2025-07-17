@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master House Imobiliária - Login</title>
+    <link rel="stylesheet" href="style_login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="MasterHouse.png" alt="Logo Master House Imobiliária" class="logo">
+                <h1>Bem-vindo!</h1>
+                <p>Acesse sua conta para continuar.</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário (CPF ou CNPJ):</label>
+                    <input type="text" id="username" name="username" placeholder="Digite seu CPF ou CNPJ" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Entrar</button>
+            </form>
+            <div class="login-footer">
+                <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', (event) => {
+                    event.preventDefault(); // Impede o envio padrão do formulário
+
+                    // Aqui você adicionaria sua lógica de autenticação real (AJAX para o backend)
+                    // Para fins de demonstração, vamos apenas redirecionar
+                    
+                    // Simula um login bem-sucedido
+                    alert('Login bem-sucedido! Redirecionando para o Dashboard.');
+                    window.location.replace('dashboard_adm.html'); // Redireciona para o dashboard
+                    /*const userAction = async () => {
+                        const response = await fetch('http:localhost:8080/dashboard');
+                        const myJson = await response.json(); //extract JSON from the http response
+                        // do something with myJson
+                    }*/
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master House Imobiliária - Administrador</title>
+    <link rel="stylesheet" href="style_dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="top-bar">
+            <div class="logo-area">
+                <img src="MasterHouse.png" alt="Logo Master House Imobiliária" class="logo-header">
+                <span class="system-name">Master House Imobiliária</span>
+            </div>
+            <div class="user-info">
+                <span>Bem-vindo, Administrador!</span>
+                <a href="login.html" class="logout-btn">Sair</a>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a href="#dashboard-section" class="sidebar-link active" data-content-id="dashboard-section"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                
+                <li class="menu-divider">Gestão</li>
+                <li><a href="#users-management-section" class="sidebar-link" data-content-id="users-management-section"><i class="fas fa-user-shield"></i> Usuários</a></li>
+                <li><a href="#clients-management-section" class="sidebar-link" data-content-id="clients-management-section"><i class="fas fa-users"></i> Clientes</a></li>
+                <li><a href="#properties-management-section" class="sidebar-link" data-content-id="properties-management-section"><i class="fas fa-building"></i> Imóveis</a></li>
+                
+                <li><a href="#visits-interests-management-section" class="sidebar-link" data-content-id="visits-interests-management-section"><i class="fas fa-eye"></i> Visitas e Interesses</a></li>
+
+                <li><a href="#sales-management-section" class="sidebar-link" data-content-id="sales-management-section"><i class="fas fa-handshake"></i> Vendas</a></li>
+                
+                <li><a href="login.html" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <section id="dashboard-section" class="content-section active">
+                <h2>Dashboard do Administrador</h2>
+                <p>Visão geral e acesso a todas as funcionalidades do sistema.</p>
+                <div class="dashboard-stats">
+                    <a href="#list-manage-users-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-users-content">
+                        <h3>Total de Usuários (Funcionários)</h3>
+                        <p class="stat-number">17</p>
+                    </a>
+                    <a href="#list-manage-clients-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-clients-content">
+                        <h3>Total de Clientes</h3>
+                        <p class="stat-number">250</p>
+                    </a>
+                    <a href="#list-manage-properties-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-properties-content">
+                        <h3>Imóveis Cadastrados</h3>
+                        <p class="stat-number">85</p>
+                    </a>
+                    <a href="#track-sales-section" class="stat-card action-card sidebar-link" data-content-id="track-sales-section">
+                        <h3>Vendas Concluídas</h3>
+                        <p class="stat-number">15</p>
+                    </a>
+                    <a href="#consult-visits-section" class="stat-card action-card sidebar-link" data-content-id="consult-visits-section">
+                        <h3>Visitas Registradas Hoje</h3>
+                        <p class="stat-number">3</p>
+                    </a>
+                    <a href="#consult-visits-section" class="stat-card action-card sidebar-link" data-content-id="consult-visits-section">
+                        <h3>Interesses Registrados (Últ. 7 dias)</h3>
+                        <p class="stat-number">20</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="users-management-section" class="content-section">
+                <h2>Gestão de Usuários</h2>
+                <p>Gerencie todos os tipos de usuários do sistema (Administradores, Gerentes e Corretores).</p>
+                <div class="dashboard-stats">
+                    <a href="#register-user-section" class="stat-card action-card sidebar-link" data-content-id="register-user-section">
+                        <h3><i class="fas fa-user-plus"></i> Cadastrar Novo Usuário</h3>
+                        <p>Crie novas contas de Administradores, Gerentes ou Corretores.</p>
+                    </a>
+                    <a href="#list-manage-users-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-users-content">
+                        <h3><i class="fas fa-users-cog"></i> Listar e Gerenciar Usuários</h3>
+                        <p>Visualize, edite, ative/inative ou exclua usuários existentes.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="register-user-section" class="content-section">
+                <h2 id="user-form-title">Cadastrar Novo Usuário</h2>
+                <p id="user-form-description">Preencha os campos abaixo para registrar um novo usuário no sistema.</p>
+                <form action="/admin/usuarios/salvar" method="POST" class="user-form" id="user-registration-form">
+                    <input type="hidden" id="user_id" name="userId">
+                    <h3>Dados Pessoais</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="cpf_cnpj_select_user">Tipo de Documento:</label>
+                            <select id="cpf_cnpj_select_user" name="documentType" required>
+                                <option value="">Selecione</option>
+                                <option value="CPF">CPF</option>
+                                <option value="CNPJ">CNPJ</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="cpf_group_user">
+                            <label for="cpf_user">CPF:</label>
+                            <input type="text" id="cpf_user" name="cpf" placeholder="Ex: 123.456.789-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                        </div>
+                        <div class="form-group" id="cnpj_group_user" style="display: none;">
+                            <label for="cnpj_user">CNPJ:</label>
+                            <input type="text" id="cnpj_user" name="cnpj" placeholder="Ex: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="nome_user">Nome Completo:</label>
+                            <input type="text" id="nome_user" name="nome" placeholder="Nome completo do usuário" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_user">Email:</label>
+                            <input type="email" id="email_user" name="email" placeholder="email@exemplo.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone_user">Telefone:</label>
+                            <input type="tel" id="telefone_user" name="telefone" placeholder="Ex: (XX) XXXXX-XXXX" pattern="\(\d{2}\)\s\d{4,5}-\d{4}">
+                        </div>
+                    </div>
+
+                    <h3>Endereço</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="cep_user">CEP:</label>
+                            <input type="text" id="cep_user" name="cep" placeholder="Ex: XXXXX-XXX" pattern="\d{5}-\d{3}">
+                        </div>
+                        <div class="form-group">
+                            <label for="logradouro_user">Logradouro:</label>
+                            <input type="text" id="logradouro_user" name="logradouro" placeholder="Rua, Avenida, etc." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_user">Número:</label>
+                            <input type="text" id="numero_user" name="numero" placeholder="Número" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento_user">Complemento:</label>
+                            <input type="text" id="complemento_user" name="complemento" placeholder="Apartamento, Bloco, etc. (Opcional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro_user">Bairro:</label>
+                            <input type="text" id="bairro_user" name="bairro" placeholder="Bairro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade_user">Cidade:</label>
+                            <input type="text" id="cidade_user" name="cidade" placeholder="Cidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado_user">Estado:</label>
+                            <input type="text" id="estado_user" name="estado" placeholder="Estado (Ex: SP)" maxlength="2" required>
+                        </div>
+                    </div>
+
+                    <h3>Dados do Usuário (Funcionário)</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group full-width">
+                            <label for="tipo_cargo">Cargo:</label>
+                            <select id="tipo_cargo" name="tipoCargo" required>
+                                <option value="">Selecione o Cargo</option>
+                                <option value="ADMINISTRADOR">Administrador do Sistema</option>
+                                <option value="GERENTE">Gerente</option>
+                                <option value="CORRETOR">Corretor</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="area_atuacao_group" style="display: none;">
+                            <label for="area_atuacao">Área de Atuação (Corretor):</label>
+                            <input type="text" id="area_atuacao" name="areaAtuacao" placeholder="Ex: Zona Sul, Imóveis Comerciais">
+                        </div>
+                        <div class="form-group">
+                            <label for="senha">Senha:</label>
+                            <input type="password" id="senha" name="senha" placeholder="Crie uma senha" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmar_senha">Confirmar Senha:</label>
+                            <input type="password" id="confirmar_senha" name="confirmarSenha" placeholder="Confirme a senha" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="ativo">Ativo:</label>
+                            <input type="checkbox" id="ativo" name="ativo" checked>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-user-btn"><i class="fas fa-save"></i> Salvar Usuário</button>
+                        <button type="button" class="btn btn-secondary" onclick="showSection('list-manage-users-content')"><i class="fas fa-times-circle"></i> Voltar à Listagem</button>
+                        <button type="button" class="btn btn-error" id="delete-user-btn" style="display: none;"><i class="fas fa-trash-alt"></i> Excluir Usuário</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section id="list-manage-users-content" class="content-section">
+                <h2>Listar e Gerenciar Usuários</h2>
+                <p>Abaixo, a lista completa de usuários cadastrados no sistema.</p>
+                <div class="search-bar">
+                    <input type="text" id="user-search-input" placeholder="Pesquisar por nome, chave primária ou cargo...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Chave Primária</th>
+                                <th>Status</th>
+                                <th>Cargo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <section id="clients-management-section" class="content-section">
+                <h2>Gestão de Clientes</h2>
+                <p>Gerencie informações e ações relacionadas aos clientes da imobiliária.</p>
+                <div class="dashboard-stats">
+                    <a href="#register-client-section" class="stat-card action-card sidebar-link" data-content-id="register-client-section">
+                        <h3><i class="fas fa-user-plus"></i> Cadastrar Cliente</h3>
+                        <p>Registre novos clientes no sistema.</p>
+                    </a>
+                    <a href="#list-manage-clients-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-clients-content">
+                        <h3><i class="fas fa-search"></i> Consultar Clientes</h3>
+                        <p>Busque, visualize e atualize dados de clientes existentes.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="register-client-section" class="content-section">
+                <h2 id="client-form-title">Cadastrar Novo Cliente</h2>
+                <p id="client-form-description">Preencha os campos abaixo para registrar um novo cliente no sistema.</p>
+                <form action="/admin/clientes/salvar" method="POST" class="user-form" id="client-registration-form">
+                    <input type="hidden" id="client_id" name="clientId">
+                    <h3>Dados Pessoais</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="cpf_cnpj_select_client">Tipo de Documento:</label>
+                            <select id="cpf_cnpj_select_client" name="documentType" required>
+                                <option value="">Selecione</option>
+                                <option value="CPF">CPF</option>
+                                <option value="CNPJ">CNPJ</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="cpf_group_client">
+                            <label for="cpf_client">CPF:</label>
+                            <input type="text" id="cpf_client" name="cpf" placeholder="Ex: 123.456.789-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                        </div>
+                        <div class="form-group" id="cnpj_group_client" style="display: none;">
+                            <label for="cnpj_client">CNPJ:</label>
+                            <input type="text" id="cnpj_client" name="cnpj" placeholder="Ex: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="nome_client">Nome Completo:</label>
+                            <input type="text" id="nome_client" name="nome" placeholder="Nome completo do cliente" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_client">Email:</label>
+                            <input type="email" id="email_client" name="email" placeholder="email@exemplo.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone_client">Telefone:</label>
+                            <input type="tel" id="telefone_client" name="telefone" placeholder="Ex: (XX) XXXXX-XXXX" pattern="\(\d{2}\)\s\d{4,5}-\d{4}">
+                        </div>
+                    </div>
+
+                    <h3>Endereço</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="cep_client">CEP:</label>
+                            <input type="text" id="cep_client" name="cep" placeholder="Ex: XXXXX-XXX" pattern="\d{5}-\d{3}">
+                        </div>
+                        <div class="form-group">
+                            <label for="logradouro_client">Logradouro:</label>
+                            <input type="text" id="logradouro_client" name="logradouro" placeholder="Rua, Avenida, etc." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_client">Número:</label>
+                            <input type="text" id="numero_client" name="numero" placeholder="Número" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento_client">Complemento:</label>
+                            <input type="text" id="complemento_client" name="complemento" placeholder="Apartamento, Bloco, etc. (Opcional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro_client">Bairro:</label>
+                            <input type="text" id="bairro_client" name="bairro" placeholder="Bairro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade_client">Cidade:</label>
+                            <input type="text" id="cidade_client" name="cidade" placeholder="Cidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado_client">Estado:</label>
+                            <input type="text" id="estado_client" name="estado" placeholder="Estado (Ex: SP)" maxlength="2" required>
+                        </div>
+                    </div>
+
+                    <h3>Dados do Cliente</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="data_cadastro_client">Data de Cadastro:</label>
+                            <input type="date" id="data_cadastro_client" name="dataCadastro" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-client-btn"><i class="fas fa-save"></i> Salvar Cliente</button>
+                        <button type="button" class="btn btn-secondary" onclick="showSection('list-manage-clients-content')"><i class="fas fa-times-circle"></i> Voltar à Listagem</button>
+                        <button type="button" class="btn btn-error" id="delete-client-btn" style="display: none;"><i class="fas fa-trash-alt"></i> Excluir Cliente</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section id="list-manage-clients-content" class="content-section">
+                <h2>Consultar Clientes</h2>
+                <p>Abaixo, a lista completa de clientes cadastrados no sistema.</p>
+                <div class="search-bar">
+                    <input type="text" id="client-search-input" placeholder="Pesquisar por nome ou chave primária...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table class="users-table"> <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Chave Primária</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Data de Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="link-property-owner-section" class="content-section">
+                <h2>Vincular Imóvel a Proprietário</h2>
+                <p>Formulário para vincular cliente a um imóvel como proprietário.</p>
+                </section>
+            <section id="delete-clients-section" class="content-section">
+                <h2>Excluir Clientes</h2>
+                <p>Opção para excluir clientes do sistema.</p>
+                </section>
+
+
+            <section id="properties-management-section" class="content-section">
+                <h2>Gestão de Imóveis</h2>
+                <p>Gerencie o cadastro e as informações detalhadas dos imóveis.</p>
+                <div class="dashboard-stats">
+                    <a href="#register-property-section" class="stat-card action-card sidebar-link" data-content-id="register-property-section">
+                        <h3><i class="fas fa-plus-square"></i> Cadastrar Imóvel</h3>
+                        <p>Adicione novos imóveis ao portfólio da imobiliária.</p>
+                    </a>
+                    <a href="#list-manage-properties-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-properties-content">
+                        <h3><i class="fas fa-search-location"></i> Consultar Imóveis</h3>
+                        <p>Busque e visualize imóveis por critérios específicos.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="register-property-section" class="content-section">
+                <h2 id="property-form-title">Cadastrar Novo Imóvel</h2>
+                <p id="property-form-description">Preencha os campos abaixo para registrar um novo imóvel no sistema.</p>
+                <form action="/admin/imoveis/salvar" method="POST" class="user-form" id="property-registration-form">
+                    <input type="hidden" id="property_id" name="propertyId">
+                    <h3>Dados Gerais do Imóvel</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="numero_matricula_imovel">Número de Matrícula:</label>
+                            <input type="text" id="numero_matricula_imovel" name="numeroMatriculaImovel" placeholder="Ex: 123456-D" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="finalidade">Finalidade:</label>
+                            <select id="finalidade" name="finalidade" required>
+                                <option value="">Selecione</option>
+                                <option value="VENDA">Venda</option>
+                                <option value="ALUGUEL">Aluguel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="valor">Valor:</label>
+                            <input type="number" id="valor" name="valor" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="area_total">Área Total (m²):</label>
+                            <input type="number" id="area_total" name="areaTotal" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="status">Status:</label>
+                            <select id="status" name="status" required>
+                                <option value="DISPONIVEL">Disponível</option>
+                                <option value="VENDIDO">Vendido</option>
+                                <option value="ALUGADO">Alugado</option>
+                                <option value="EM_NEGOCIACAO">Em Negociação</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="data_cadastro_imovel">Data de Cadastro:</label>
+                            <input type="date" id="data_cadastro_imovel" name="dataCadastro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="data_atualizacao_imovel">Data de Atualização:</label>
+                            <input type="date" id="data_atualizacao_imovel" name="dataAtualizacao">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="proprietario_imovel_select">Proprietário (Cliente):</label>
+                            <select id="proprietario_imovel_select" name="proprietarioImovel" required>
+                                <option value="">Selecione o Cliente Proprietário</option>
+                                <option value="c1">Maria Eduarda Costa (CPF: 000...)</option>
+                                <option value="c2">Construtora Solida S.A. (CNPJ: 45...)</option>
+                                <option value="c3">João Pedro Alves (CPF: 333...)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3>Endereço do Imóvel</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="cep_imovel">CEP:</label>
+                            <input type="text" id="cep_imovel" name="cep" placeholder="Ex: XXXXX-XXX" pattern="\d{5}-\d{3}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="logradouro_imovel">Logradouro:</label>
+                            <input type="text" id="logradouro_imovel" name="logradouro" placeholder="Rua, Avenida, etc." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_imovel">Número:</label>
+                            <input type="text" id="numero_imovel" name="numero" placeholder="Número" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento_imovel">Complemento:</label>
+                            <input type="text" id="complemento_imovel" name="complemento" placeholder="Apartamento, Bloco, etc. (Opcional)">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro_imovel">Bairro:</label>
+                            <input type="text" id="bairro_imovel" name="bairro" placeholder="Bairro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade_imovel">Cidade:</label>
+                            <input type="text" id="cidade_imovel" name="cidade" placeholder="Cidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estado_imovel">Estado:</label>
+                            <input type="text" id="estado_imovel" name="estado" placeholder="Estado (Ex: SP)" maxlength="2" required>
+                        </div>
+                    </div>
+
+                    <h3>Detalhes do Tipo de Imóvel</h3>
+                    <div class="form-group full-width">
+                        <label for="tipo_imovel_select">Tipo de Imóvel:</label>
+                        <select id="tipo_imovel_select" name="tipoImovel" required>
+                            <option value="">Selecione o Tipo</option>
+                            <option value="TERRENO">Terreno</option>
+                            <option value="CASA">Casa</option>
+                            <option value="APARTAMENTO">Apartamento</option>
+                            <option value="PREDIO_COMERCIAL">Prédio Comercial</option>
+                            <option value="SALA_COMERCIAL">Sala Comercial</option>
+                        </select>
+                    </div>
+
+                    <div id="terreno_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="topografia">Topografia:</label>
+                            <input type="text" id="topografia" name="topografia" placeholder="Ex: Plana, Aclive, Declive">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_solo">Tipo de Solo:</label>
+                            <input type="text" id="tipo_solo" name="tipoSolo" placeholder="Ex: Argiloso, Arenoso">
+                        </div>
+                    </div>
+
+                    <div id="unidade_residencial_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="numero_quartos">Nº de Quartos:</label>
+                            <input type="number" id="numero_quartos" name="numeroQuartos" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_banheiros">Nº de Banheiros:</label>
+                            <input type="number" id="numero_banheiros" name="numeroBanheiros" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_suites">Nº de Suítes:</label>
+                            <input type="number" id="numero_suites" name="numeroSuites" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="area_construida">Área Construída (m²):</label>
+                            <input type="number" id="area_construida" name="areaConstruida" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_vagas_garagem">Nº Vagas Garagem:</label>
+                            <input type="number" id="numero_vagas_garagem" name="numeroVagasGaragem" min="0">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="descricao_residencial">Descrição:</label>
+                            <textarea id="descricao_residencial" name="descricaoResidencial" rows="3" placeholder="Detalhes adicionais da unidade residencial."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="casa_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group full-width">
+                            <label for="possui_quintal">Possui Quintal?</label>
+                            <input type="checkbox" id="possui_quintal" name="possuiQuintal">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_pavimentos">Nº de Pavimentos:</label>
+                            <input type="number" id="numero_pavimentos" name="numeroPavimentos" min="1">
+                        </div>
+                    </div>
+
+                    <div id="apartamento_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="andar">Andar:</label>
+                            <input type="number" id="andar" name="andar" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_apartamento">Nº do Apartamento:</label>
+                            <input type="text" id="numero_apartamento" name="numeroApartamento" placeholder="Ex: 101, Apto B">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="possui_elevador">Possui Elevador?</label>
+                            <input type="checkbox" id="possui_elevador" name="possuiElevador">
+                        </div>
+                    </div>
+
+                    <div id="unidade_comercial_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="area_util">Área Útil (m²):</label>
+                            <input type="number" id="area_util" name="areaUtil" step="0.01" min="0">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="descricao_comercial">Descrição:</label>
+                            <textarea id="descricao_comercial" name="descricaoComercial" rows="3" placeholder="Detalhes adicionais da unidade comercial."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="predio_comercial_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="total_andares">Total de Andares:</label>
+                            <input type="number" id="total_andares" name="totalAndares" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_salas">Nº de Salas:</label>
+                            <input type="number" id="numero_salas" name="numeroSalas" min="0">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="possui_estacionamento">Possui Estacionamento?</label>
+                            <input type="checkbox" id="possui_estacionamento" name="possuiEstacionamento">
+                        </div>
+                    </div>
+
+                    <div id="sala_comercial_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="andar_sala">Andar:</label>
+                            <input type="number" id="andar_sala" name="andarSala" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero_sala">Nº da Sala:</label>
+                            <input type="text" id="numero_sala" name="numeroSala" placeholder="Ex: 501, Sala X">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-property-btn"><i class="fas fa-save"></i> Salvar Imóvel</button>
+                        <button type="button" class="btn btn-secondary" onclick="showSection('list-manage-properties-content')"><i class="fas fa-times-circle"></i> Voltar à Listagem</button>
+                        <button type="button" class="btn btn-error" id="delete-property-btn" style="display: none;"><i class="fas fa-trash-alt"></i> Excluir Imóvel</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section id="list-manage-properties-content" class="content-section">
+                <h2>Consultar Imóveis</h2>
+                <p>Abaixo, a lista completa de imóveis cadastrados no sistema.</p>
+                <div class="search-bar">
+                    <input type="text" id="property-search-input" placeholder="Pesquisar por endereço, matrícula ou finalidade...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table class="users-table"> <thead>
+                            <tr>
+                                <th>Matrícula</th>
+                                <th>Endereço Completo</th>
+                                <th>Finalidade</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Proprietário</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="properties-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+
+            <section id="visits-interests-management-section" class="content-section">
+                <h2>Gestão de Visitas e Interesses</h2>
+                <p>Gerencie o registro de visitas e os interesses dos clientes em imóveis.</p>
+                <div class="dashboard-stats">
+                    <a href="#register-visit-interest-section" class="stat-card action-card sidebar-link" data-content-id="register-visit-interest-section">
+                        <h3><i class="fas fa-calendar-plus"></i> Registrar Visita e Interesse</h3>
+                        <p>Registre novas visitas e as avaliações de interesse do cliente no mesmo fluxo.</p>
+                    </a>
+                    <a href="#consult-visits-section" class="stat-card action-card sidebar-link" data-content-id="consult-visits-section">
+                        <h3><i class="fas fa-calendar-check"></i> Consultar Visitas</h3>
+                        <p>Visualize o histórico de visitas vinculadas a clientes ou imóveis.</p>
+                    </a>
+                    <a href="#property-suggestions-section" class="stat-card action-card sidebar-link" data-content-id="property-suggestions-section">
+                        <h3><i class="fas fa-lightbulb"></i> Sugestões de Imóveis</h3>
+                        <p>Calcule e visualize imóveis adequados ao perfil dos clientes.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="register-visit-interest-section" class="content-section">
+                <h2 id="visit-form-title">Registrar Visita e Interesse</h2>
+                <p id="visit-form-description">Preencha os campos abaixo para registrar uma nova visita e a avaliação de interesse.</p>
+                <form action="/admin/visitas/salvar" method="POST" class="user-form" id="visit-registration-form">
+                    <input type="hidden" id="visit_id" name="visitId">
+                    <h3>Detalhes da Visita</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="cliente_visita_select">Cliente:</label>
+                            <select id="cliente_visita_select" name="clienteVisita" required>
+                                <option value="">Selecione o Cliente</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="imovel_visita_select">Imóvel Visitado:</label>
+                            <select id="imovel_visita_select" name="imovelVisita" required>
+                                <option value="">Selecione o Imóvel</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="corretor_visita_select">Corretor Responsável:</label>
+                            <select id="corretor_visita_select" name="corretorVisita" required>
+                                <option value="">Selecione o Corretor</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="data_hora_visita">Data e Hora da Visita:</label>
+                            <input type="datetime-local" id="data_hora_visita" name="dataHoraVisita" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="observacoes_visita">Observações da Visita:</label>
+                            <textarea id="observacoes_visita" name="observacoesVisita" rows="3" placeholder="Detalhes sobre a visita."></textarea>
+                        </div>
+                    </div>
+
+                    <h3 id="avaliacao_imovel_title" style="display: none;">Avaliação do Imóvel (Interesse)</h3>
+                    <p id="avaliacao_imovel_desc" style="display: none;">Atribua uma nota de 1 a 5 estrelas para as características do imóvel. (Campos só aparecerão após seleção de imóvel)</p>
+                    
+                    <div id="avaliacao_fields" class="form-group-grid type-specific-fields" style="display: none;">
+                        <div class="form-group" data-interest-field="bairro">
+                            <label for="avaliacao_bairro">Bairro:</label>
+                            <div class="rating">
+                                <input type="radio" id="bairro5" name="avaliacao_bairro" value="5"><label for="bairro5"></label>
+                                <input type="radio" id="bairro4" name="avaliacao_bairro" value="4"><label for="bairro4"></label>
+                                <input type="radio" id="bairro3" name="avaliacao_bairro" value="3"><label for="bairro3"></label>
+                                <input type="radio" id="bairro2" name="avaliacao_bairro" value="2"><label for="bairro2"></label>
+                                <input type="radio" id="bairro1" name="avaliacao_bairro" value="1"><label for="bairro1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="cidade">
+                            <label for="avaliacao_cidade">Cidade:</label>
+                            <div class="rating">
+                                <input type="radio" id="cidade5" name="avaliacao_cidade" value="5"><label for="cidade5"></label>
+                                <input type="radio" id="cidade4" name="avaliacao_cidade" value="4"><label for="cidade4"></label>
+                                <input type="radio" id="cidade3" name="avaliacao_cidade" value="3"><label for="cidade3"></label>
+                                <input type="radio" id="cidade2" name="avaliacao_cidade" value="2"><label for="cidade2"></label>
+                                <input type="radio" id="cidade1" name="avaliacao_cidade" value="1"><label for="cidade1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="estado">
+                            <label for="avaliacao_estado">Estado:</label>
+                            <div class="rating">
+                                <input type="radio" id="estado5" name="avaliacao_estado" value="5"><label for="estado5"></label>
+                                <input type="radio" id="estado4" name="avaliacao_estado" value="4"><label for="estado4"></label>
+                                <input type="radio" id="estado3" name="avaliacao_estado" value="3"><label for="estado3"></label>
+                                <input type="radio" id="estado2" name="avaliacao_estado" value="2"><label for="estado2"></label>
+                                <input type="radio" id="estado1" name="avaliacao_estado" value="1"><label for="estado1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="areaTotal">
+                            <label for="avaliacao_area_total">Área Total:</label>
+                            <div class="rating">
+                                <input type="radio" id="areatotal5" name="avaliacao_area_total" value="5"><label for="areatotal5"></label>
+                                <input type="radio" id="areatotal4" name="avaliacao_area_total" value="4"><label for="areatotal4"></label>
+                                <input type="radio" id="areatotal3" name="avaliacao_area_total" value="3"><label for="areatotal3"></label>
+                                <input type="radio" id="areatotal2" name="avaliacao_area_total" value="2"><label for="areatotal2"></label>
+                                <input type="radio" id="areatotal1" name="avaliacao_area_total" value="1"><label for="areatotal1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="valor">
+                            <label for="avaliacao_valor">Valor:</label>
+                            <div class="rating">
+                                <input type="radio" id="valor5" name="avaliacao_valor" value="5"><label for="valor5"></label>
+                                <input type="radio" id="valor4" name="avaliacao_valor" value="4"><label for="valor4"></label>
+                                <input type="radio" id="valor3" name="avaliacao_valor" value="3"><label for="valor3"></label>
+                                <input type="radio" id="valor2" name="avaliacao_valor" value="2"><label for="valor2"></label>
+                                <input type="radio" id="valor1" name="avaliacao_valor" value="1"><label for="valor1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="topografia">
+                            <label for="avaliacao_topografia">Topografia:</label>
+                            <div class="rating">
+                                <input type="radio" id="topografia5" name="avaliacao_topografia" value="5"><label for="topografia5"></label>
+                                <input type="radio" id="topografia4" name="avaliacao_topografia" value="4"><label for="topografia4"></label>
+                                <input type="radio" id="topografia3" name="avaliacao_topografia" value="3"><label for="topografia3"></label>
+                                <input type="radio" id="topografia2" name="avaliacao_topografia" value="2"><label for="topografia2"></label>
+                                <input type="radio" id="topografia1" name="avaliacao_topografia" value="1"><label for="topografia1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="tipoSolo">
+                            <label for="avaliacao_tipo_solo">Tipo de Solo:</label>
+                            <div class="rating">
+                                <input type="radio" id="tiposolo5" name="avaliacao_tipo_solo" value="5"><label for="tiposolo5"></label>
+                                <input type="radio" id="tiposolo4" name="avaliacao_tipo_solo" value="4"><label for="tiposolo4"></label>
+                                <input type="radio" id="tiposolo3" name="avaliacao_tipo_solo" value="3"><label for="tiposolo3"></label>
+                                <input type="radio" id="tiposolo2" name="avaliacao_tipo_solo" value="2"><label for="tiposolo2"></label>
+                                <input type="radio" id="tiposolo1" name="avaliacao_tipo_solo" value="1"><label for="tiposolo1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="numeroQuartos">
+                            <label for="avaliacao_quartos">Quartos:</label>
+                            <div class="rating">
+                                <input type="radio" id="quartos5" name="avaliacao_quartos" value="5"><label for="quartos5"></label>
+                                <input type="radio" id="quartos4" name="avaliacao_quartos" value="4"><label for="quartos4"></label>
+                                <input type="radio" id="quartos3" name="avaliacao_quartos" value="3"><label for="quartos3"></label>
+                                <input type="radio" id="quartos2" name="avaliacao_quartos" value="2"><label for="quartos2"></label>
+                                <input type="radio" id="quartos1" name="avaliacao_quartos" value="1"><label for="quartos1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="numeroBanheiros">
+                            <label for="avaliacao_banheiros">Banheiros:</label>
+                            <div class="rating">
+                                <input type="radio" id="banheiros5" name="avaliacao_banheiros" value="5"><label for="banheiros5"></label>
+                                <input type="radio" id="banheiros4" name="avaliacao_banheiros" value="4"><label for="banheiros4"></label>
+                                <input type="radio" id="banheiros3" name="avaliacao_banheiros" value="3"><label for="banheiros3"></label>
+                                <input type="radio" id="banheiros2" name="avaliacao_banheiros" value="2"><label for="banheiros2"></label>
+                                <input type="radio" id="banheiros1" name="avaliacao_banheiros" value="1"><label for="banheiros1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="numeroSuites">
+                            <label for="avaliacao_suites">Suítes:</label>
+                            <div class="rating">
+                                <input type="radio" id="suites5" name="avaliacao_suites" value="5"><label for="suites5"></label>
+                                <input type="radio" id="suites4" name="avaliacao_suites" value="4"><label for="suites4"></label>
+                                <input type="radio" id="suites3" name="avaliacao_suites" value="3"><label for="suites3"></label>
+                                <input type="radio" id="suites2" name="avaliacao_suites" value="2"><label for="suites2"></label>
+                                <input type="radio" id="suites1" name="avaliacao_suites" value="1"><label for="suites1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="areaConstruida">
+                            <label for="avaliacao_construida">Área Construída:</label>
+                            <div class="rating">
+                                <input type="radio" id="construida5" name="avaliacao_construida" value="5"><label for="construida5"></label>
+                                <input type="radio" id="construida4" name="avaliacao_construida" value="4"><label for="construida4"></label>
+                                <input type="radio" id="construida3" name="avaliacao_construida" value="3"><label for="construida3"></label>
+                                <input type="radio" id="construida2" name="avaliacao_construida" value="2"><label for="construida2"></label>
+                                <input type="radio" id="construida1" name="avaliacao_construida" value="1"><label for="construida1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="numeroVagasGaragem">
+                            <label for="avaliacao_garagem">Vagas Garagem:</label>
+                            <div class="rating">
+                                <input type="radio" id="garagem5" name="avaliacao_garagem" value="5"><label for="garagem5"></label>
+                                <input type="radio" id="garagem4" name="avaliacao_garagem" value="4"><label for="garagem4"></label>
+                                <input type="radio" id="garagem3" name="avaliacao_garagem" value="3"><label for="garagem3"></label>
+                                <input type="radio" id="garagem2" name="avaliacao_garagem" value="2"><label for="garagem2"></label>
+                                <input type="radio" id="garagem1" name="avaliacao_garagem" value="1"><label for="garagem1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="possuiQuintal">
+                            <label for="avaliacao_quintal">Quintal:</label>
+                            <div class="rating">
+                                <input type="radio" id="quintal5" name="avaliacao_quintal" value="5"><label for="quintal5"></label>
+                                <input type="radio" id="quintal4" name="avaliacao_quintal" value="4"><label for="quintal4"></label>
+                                <input type="radio" id="quintal3" name="avaliacao_quintal" value="3"><label for="quintal3"></label>
+                                <input type="radio" id="quintal2" name="avaliacao_quintal" value="2"><label for="quintal2"></label>
+                                <input type="radio" id="quintal1" name="avaliacao_quintal" value="1"><label for="quintal1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="numeroPavimentos">
+                            <label for="avaliacao_numero_pavimentos">Nº Pavimentos:</label>
+                            <div class="rating">
+                                <input type="radio" id="pavimentos5" name="avaliacao_numero_pavimentos" value="5"><label for="pavimentos5"></label>
+                                <input type="radio" id="pavimentos4" name="avaliacao_numero_pavimentos" value="4"><label for="pavimentos4"></label>
+                                <input type="radio" id="pavimentos3" name="avaliacao_numero_pavimentos" value="3"><label for="pavimentos3"></label>
+                                <input type="radio" id="pavimentos2" name="avaliacao_numero_pavimentos" value="2"><label for="pavimentos2"></label>
+                                <input type="radio" id="pavimentos1" name="avaliacao_numero_pavimentos" value="1"><label for="pavimentos1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="andar">
+                            <label for="avaliacao_andar_apartamento">Andar Apartamento:</label>
+                            <div class="rating">
+                                <input type="radio" id="andarap5" name="avaliacao_andar_apartamento" value="5"><label for="andarap5"></label>
+                                <input type="radio" id="andarap4" name="avaliacao_andar_apartamento" value="4"><label for="andarap4"></label>
+                                <input type="radio" id="andarap3" name="avaliacao_andar_apartamento" value="3"><label for="andarap3"></label>
+                                <input type="radio" id="andarap2" name="avaliacao_andar_apartamento" value="2"><label for="andarap2"></label>
+                                <input type="radio" id="andarap1" name="avaliacao_andar_apartamento" value="1"><label for="andarap1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="possuiElevador">
+                            <label for="avaliacao_elevador">Elevador:</label>
+                            <div class="rating">
+                                <input type="radio" id="elevador5" name="avaliacao_elevador" value="5"><label for="elevador5"></label>
+                                <input type="radio" id="elevador4" name="avaliacao_elevador" value="4"><label for="elevador4"></label>
+                                <input type="radio" id="elevador3" name="avaliacao_elevador" value="3"><label for="elevador3"></label>
+                                <input type="radio" id="elevador2" name="avaliacao_elevador" value="2"><label for="elevador2"></label>
+                                <input type="radio" id="elevador1" name="avaliacao_elevador" value="1"><label for="elevador1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="areaUtil">
+                            <label for="avaliacao_area_util">Área Útil:</label>
+                            <div class="rating">
+                                <input type="radio" id="areautil5" name="avaliacao_area_util" value="5"><label for="areautil5"></label>
+                                <input type="radio" id="areautil4" name="avaliacao_area_util" value="4"><label for="areautil4"></label>
+                                <input type="radio" id="areautil3" name="avaliacao_area_util" value="3"><label for="areautil3"></label>
+                                <input type="radio" id="areautil2" name="avaliacao_area_util" value="2"><label for="areautil2"></label>
+                                <input type="radio" id="areautil1" name="avaliacao_area_util" value="1"><label for="areautil1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="totalAndares">
+                            <label for="avaliacao_total_andares">Total Andares:</label>
+                            <div class="rating">
+                                <input type="radio" id="totalandares5" name="avaliacao_total_andares" value="5"><label for="totalandares5"></label>
+                                <input type="radio" id="totalandares4" name="avaliacao_total_andares" value="4"><label for="totalandares4"></label>
+                                <input type="radio" id="totalandares3" name="avaliacao_total_andares" value="3"><label for="totalandares3"></label>
+                                <input type="radio" id="totalandares2" name="avaliacao_total_andares" value="2"><label for="totalandares2"></label>
+                                <input type="radio" id="totalandares1" name="avaliacao_total_andares" value="1"><label for="totalandares1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="numeroSalas">
+                            <label for="avaliacao_salas">Salas:</label>
+                            <div class="rating">
+                                <input type="radio" id="salas5" name="avaliacao_salas" value="5"><label for="salas5"></label>
+                                <input type="radio" id="salas4" name="avaliacao_salas" value="4"><label for="salas4"></label>
+                                <input type="radio" id="salas3" name="avaliacao_salas" value="3"><label for="salas3"></label>
+                                <input type="radio" id="salas2" name="avaliacao_salas" value="2"><label for="salas2"></label>
+                                <input type="radio" id="salas1" name="avaliacao_salas" value="1"><label for="salas1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="possuiEstacionamento">
+                            <label for="avaliacao_estacionamento">Estacionamento:</label>
+                            <div class="rating">
+                                <input type="radio" id="estacionamento5" name="avaliacao_estacionamento" value="5"><label for="estacionamento5"></label>
+                                <input type="radio" id="estacionamento4" name="avaliacao_estacionamento" value="4"><label for="estacionamento4"></label>
+                                <input type="radio" id="estacionamento3" name="avaliacao_estacionamento" value="3"><label for="estacionamento3"></label>
+                                <input type="radio" id="estacionamento2" name="avaliacao_estacionamento" value="2"><label for="estacionamento2"></label>
+                                <input type="radio" id="estacionamento1" name="avaliacao_estacionamento" value="1"><label for="estacionamento1"></label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" data-interest-field="andarSala">
+                            <label for="avaliacao_andar_sala">Andar Sala:</label>
+                            <div class="rating">
+                                <input type="radio" id="andarsala5" name="avaliacao_andar_sala" value="5"><label for="andarsala5"></label>
+                                <input type="radio" id="andarsala4" name="avaliacao_andar_sala" value="4"><label for="andarsala4"></label>
+                                <input type="radio" id="andarsala3" name="avaliacao_andar_sala" value="3"><label for="andarsala3"></label>
+                                <input type="radio" id="andarsala2" name="avaliacao_andar_sala" value="2"><label for="andarsala2"></label>
+                                <input type="radio" id="andarsala1" name="avaliacao_andar_sala" value="1"><label for="andarsala1"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" data-interest-field="numeroSala">
+                            <label for="avaliacao_sala">Sala Comercial (Número):</label>
+                            <div class="rating">
+                                <input type="radio" id="sala5" name="avaliacao_sala" value="5"><label for="sala5"></label>
+                                <input type="radio" id="sala4" name="avaliacao_sala" value="4"><label for="sala4"></label>
+                                <input type="radio" id="sala3" name="avaliacao_sala" value="3"><label for="sala3"></label>
+                                <input type="radio" id="sala2" name="avaliacao_sala" value="2"><label for="sala2"></label>
+                                <input type="radio" id="sala1" name="avaliacao_sala" value="1"><label for="sala1"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-visit-btn"><i class="fas fa-save"></i> Salvar Visita e Interesse</button>
+                        <button type="button" class="btn btn-secondary" onclick="showSection('consult-visits-section')"><i class="fas fa-times-circle"></i> Voltar à Listagem</button>
+                        <button type="button" class="btn btn-error" id="delete-visit-btn" style="display: none;"><i class="fas fa-trash-alt"></i> Excluir Visita</button>
+                    </div>
+                </form>
+            </section>
+            
+            <section id="consult-visits-section" class="content-section">
+                <h2>Consultar Visitas</h2>
+                <p>Abaixo, a lista completa de visitas registradas no sistema.</p>
+                <div class="search-bar">
+                    <input type="text" id="visit-search-input" placeholder="Pesquisar por cliente, imóvel ou corretor...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Imóvel</th>
+                                <th>Corretor</th>
+                                <th>Data/Hora</th>
+                                <th>Observações</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visits-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+            <section id="register-new-interest-section" class="content-section">
+                <h2>Registrar Novo Interesse</h2>
+                <p>Formulário para registrar ou atualizar interesse para uma visita já realizada.</p>
+                </section>
+            <section id="delete-visit-section" class="content-section">
+                <h2>Excluir Visita</h2>
+                <p>Opção para excluir registros de visitas.</p>
+                </section>
+            <section id="property-suggestions-section" class="content-section">
+                <h2>Sugestões de Imóveis</h2>
+                <p>Pesquise e selecione um cliente para ver as sugestões de imóveis compatíveis.</p>
+                <div class="search-bar">
+                    <input type="text" id="client-suggestion-search-input" placeholder="Pesquisar cliente por nome ou chave primária...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Nome do Cliente</th>
+                                <th>Chave Primária</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-for-suggestion-table-body">
+                            </tbody>
+                    </table>
+                </div>
+
+                <h3>Imóveis Sugeridos para <span id="selected-client-name-for-suggestions"></span></h3>
+                <div class="dashboard-stats" id="suggested-properties-gallery">
+                    <p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Selecione um cliente acima para ver as sugestões de imóveis.</p>
+                </div>
+            </section>
+
+
+            <section id="sales-management-section" class="content-section">
+                <h2>Gestão de Vendas</h2>
+                <p>Gerencie todo o processo de compra e venda de imóveis.</p>
+                <div class="dashboard-stats">
+                    <a href="#register-sale-section" class="stat-card action-card sidebar-link" data-content-id="register-sale-section">
+                        <h3><i class="fas fa-file-invoice-dollar"></i> Registrar Venda</h3>
+                        <p>Registre novas transações de compra e venda.</p>
+                    </a>
+                    <a href="#track-sales-section" class="stat-card action-card sidebar-link" data-content-id="track-sales-section">
+                        <h3><i class="fas fa-chart-line"></i> Acompanhar Vendas</h3>
+                        <p>Monitore o status e os detalhes das vendas.</p>
+                    </a>
+                </div>
+            </section>
+
+            <section id="register-sale-section" class="content-section">
+                <h2 id="sale-form-title">Registrar Nova Venda</h2>
+                <p id="sale-form-description">Preencha os campos abaixo para registrar uma nova venda no sistema.</p>
+                <form action="/admin/vendas/salvar" method="POST" class="user-form" id="sale-registration-form">
+                    <input type="hidden" id="sale_id" name="saleId">
+                    <h3>Detalhes da Venda</h3>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="imovel_venda_select">Imóvel Vendido (Matrícula):</label>
+                            <select id="imovel_venda_select" name="numeroMatriculaImovel" required>
+                                <option value="">Selecione o Imóvel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cliente_comprador_select">Cliente Comprador:</label>
+                            <select id="cliente_comprador_select" name="cpfCnpjClienteComprador" required>
+                                <option value="">Selecione o Comprador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="proprietario_imovel_venda_select">Proprietário do Imóvel:</label>
+                            <select id="proprietario_imovel_venda_select" name="cpfCnpjProprietarioImovel" required disabled>
+                                <option value="">Proprietário (automático)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="corretor_venda_select">Corretor Responsável:</label>
+                            <select id="corretor_venda_select" name="cpfCnpjCorretor" required>
+                                <option value="">Selecione o Corretor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="data_venda">Data da Venda:</label>
+                            <input type="datetime-local" id="data_venda" name="dataVenda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valor_final">Valor Final:</label>
+                            <input type="number" id="valor_final" name="valorFinal" step="0.01" placeholder="0.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="save-sale-btn"><i class="fas fa-save"></i> Salvar Venda</button>
+                        <button type="button" class="btn btn-secondary" onclick="showSection('track-sales-section')"><i class="fas fa-times-circle"></i> Voltar à Listagem</button>
+                        <button type="button" class="btn btn-error" id="delete-sale-btn" style="display: none;"><i class="fas fa-trash-alt"></i> Excluir Venda</button>
+                    </div>
+                </form>
+            </section>
+            <section id="track-sales-section" class="content-section">
+                <h2>Acompanhar Vendas</h2>
+                <p>Abaixo, a lista completa de vendas registradas no sistema.</p>
+                <div class="search-bar">
+                    <input type="text" id="sale-search-input" placeholder="Pesquisar por imóvel, comprador ou corretor...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Imóvel</th>
+                                <th>Comprador</th>
+                                <th>Proprietário</th>
+                                <th>Corretor</th>
+                                <th>Data da Venda</th>
+                                <th>Valor Final</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-table-body">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+            <section id="delete-sale-section" class="content-section">
+                <h2>Excluir Venda</h2>
+                <p>Opção para excluir vendas.</p>
+                </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Dados de exemplo para usuários (simulando dados do backend)
+        let sampleUsers = [ 
+            { id: '1', nome: 'Ana Paula Silva', primaryKey: '123.456.789-00', status: 'Ativo', cargo: 'Corretor', documentType: 'CPF', cpf: '123.456.789-00', cnpj: '', email: 'ana.silva@exemplo.com', telefone: '(11) 98765-4321', cep: '01000-000', logradouro: 'Rua das Flores', numero: '100', complemento: 'Apto 10', bairro: 'Centro', cidade: 'São Paulo', estado: 'SP', areaAtuacao: 'Zona Sul', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: true },
+            { id: '2', nome: 'Carlos Eduardo Santos', primaryKey: '987.654.321-00', status: 'Ativo', cargo: 'Gerente', documentType: 'CPF', cpf: '987.654.321-00', cnpj: '', email: 'carlos.santos@exemplo.com', telefone: '(21) 91234-5678', cep: '20000-000', logradouro: 'Avenida Principal', numero: '500', complemento: '', bairro: 'Copacabana', cidade: 'Rio de Janeiro', estado: 'RJ', areaAtuacao: '', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: true },
+            { id: '3', nome: 'Empresa Alpha Ltda.', primaryKey: '12.345.678/0001-00', status: 'Ativo', cargo: 'Administrador', documentType: 'CNPJ', cpf: '', cnpj: '12.345.678/0001-00', email: 'contato@alpha.com', telefone: '(31) 3232-1212', cep: '30000-000', logradouro: 'Rua Comercial', numero: '200', complemento: 'Sala 1', bairro: 'Centro', cidade: 'Belo Horizonte', estado: 'MG', areaAtuacao: '', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: true },
+            { id: '4', nome: 'Fernanda Oliveira', primaryKey: '111.222.333-44', status: 'Inativo', cargo: 'Corretor', documentType: 'CPF', cpf: '111.222.333-44', cnpj: '', email: 'fernanda.o@exemplo.com', telefone: '(41) 99887-7665', cep: '80000-000', logradouro: 'Travessa Curitiba', numero: '30', complemento: '', bairro: 'Centro', cidade: 'Curitiba', estado: 'PR', areaAtuacao: 'Centro', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: false }
+        ];
+
+        // Dados de exemplo para clientes (simulando dados do backend)
+        let sampleClients = [
+            { id: 'c1', nome: 'Maria Eduarda Costa', primaryKey: '000.111.222-33', documentType: 'CPF', cpf: '000.111.222-33', cnpj: '', email: 'maria.costa@email.com', telefone: '(51) 99988-7766', cep: '90000-000', logradouro: 'Rua das Palmeiras', numero: '50', complemento: '', bairro: 'Jardim', cidade: 'Porto Alegre', estado: 'RS', dataCadastro: '2023-01-15' },
+            { id: 'c2', nome: 'Construtora Solida S.A.', primaryKey: '45.678.901/0001-00', documentType: 'CNPJ', cpf: '', cnpj: '45.678.901/0001-00', email: 'contato@construtorasolida.com', telefone: '(11) 2233-4455', cep: '03000-000', logradouro: 'Avenida das Indústrias', numero: '1000', complemento: 'Andar 5', bairro: 'Distrito Industrial', cidade: 'São Paulo', estado: 'SP', dataCadastro: '2022-05-20' },
+            { id: 'c3', nome: 'João Pedro Alves', primaryKey: '333.444.555-66', documentType: 'CPF', cpf: '333.444.555-66', cnpj: '', email: 'joao.alves@email.com', telefone: '(61) 98765-1234', cep: '70000-000', logradouro: 'SQN 101 Bloco A', numero: '1', complemento: 'Apto 202', bairro: 'Asa Norte', cidade: 'Brasília', estado: 'DF', dataCadastro: '2024-02-01' }
+        ];
+
+        // Dados de exemplo para imóveis (simulando dados do backend)
+        let sampleProperties = [
+            {
+                id: 'p1', numeroMatriculaImovel: '12345-ABC', finalidade: 'VENDA', valor: 550000.00, areaTotal: 180.50, status: 'DISPONIVEL', dataCadastro: '2023-01-20', dataAtualizacao: '2024-06-01', proprietarioId: 'c1',
+                endereco: 'Rua das Camélias', numero: '123', complemento: '', bairro: 'Jardim Botânico', cidade: 'Porto Alegre', estado: 'RS', cep: '90000-000',
+                tipoImovel: 'CASA', numeroQuartos: 3, numeroBanheiros: 2, numeroSuites: 1, areaConstruida: 120.00, numeroVagasGaragem: 2, descricaoResidencial: 'Casa espaçosa com quintal grande.', possuiQuintal: true, numeroPavimentos: 2,
+                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'numeroQuartos', 'numeroBanheiros', 'numeroSuites', 'areaConstruida', 'numeroVagasGaragem', 'possuiQuintal', 'numeroPavimentos'] // Campos para avaliação
+            },
+            {
+                id: 'p2', numeroMatriculaImovel: '67890-XYZ', finalidade: 'ALUGUEL', valor: 2500.00, areaTotal: 75.00, status: 'DISPONIVEL', dataCadastro: '2023-03-10', dataAtualizacao: '2024-05-15', proprietarioId: 'c2',
+                endereco: 'Av. Paulista', numero: '1500', complemento: 'Apto 101', bairro: 'Bela Vista', cidade: 'São Paulo', estado: 'SP', cep: '01310-100',
+                tipoImovel: 'APARTAMENTO', numeroQuartos: 2, numeroBanheiros: 1, numeroSuites: 0, areaConstruida: 65.00, numeroVagasGaragem: 1, descricaoResidencial: 'Apartamento moderno com vista para a cidade.', andar: 10, numeroApartamento: '101', possuiElevador: true,
+                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'numeroQuartos', 'numeroBanheiros', 'numeroSuites', 'areaConstruida', 'numeroVagasGaragem', 'andar', 'possuiElevador'] // Campos para avaliação
+            },
+            {
+                id: 'p3', numeroMatriculaImovel: '11223-DEF', finalidade: 'VENDA', valor: 1200000.00, areaTotal: 500.00, status: 'EM_NEGOCIACAO', dataCadastro: '2022-11-05', dataAtualizacao: '2024-06-20', proprietarioId: 'c3',
+                endereco: 'Rua do Comércio', numero: '50', complemento: '', bairro: 'Centro', cidade: 'Belo Horizonte', estado: 'MG', cep: '30110-000',
+                tipoImovel: 'SALA_COMERCIAL', areaUtil: 80.00, descricaoComercial: 'Sala comercial ampla com divisórias.', andarSala: 5, numeroSala: '502',
+                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'areaUtil', 'andarSala'] // Removi 'numeroSala' por ser um identificador, não um atributo avaliativo
+            },
+            {
+                id: 'p4', numeroMatriculaImovel: '99887-GHI', finalidade: 'VENDA', valor: 300000.00, areaTotal: 450.00, status: 'DISPONIVEL', dataCadastro: '2024-01-01', dataAtualizacao: '', proprietarioId: 'c1',
+                endereco: 'Estrada do Forte', numero: 'S/N', complemento: '', bairro: 'Zona Rural', cidade: 'Gramado', estado: 'RS', cep: '95670-000',
+                tipoImovel: 'TERRENO', topografia: 'Plana', tipoSolo: 'Argiloso',
+                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'topografia', 'tipoSolo'] // Campos para avaliação
+            }
+        ];
+
+        // Dados de exemplo para Visitas e Interesses
+        let sampleVisits = [
+            {
+                id: 'v1', clienteId: 'c1', imovelId: 'p1', corretorId: '1', dataHora: '2024-06-25T10:00', observacoes: 'Cliente muito interessada na casa, principalmente no quintal.',
+                interesses: { bairro: 5, cidade: 4, estado: 5, areaTotal: 4, valor: 3, numeroQuartos: 5, numeroBanheiros: 4, numeroSuites: 3, areaConstruida: 4, numeroVagasGaragem: 5, possuiQuintal: 5, numeroPavimentos: 4 }
+            },
+            {
+                id: 'v2', clienteId: 'c3', imovelId: 'p3', corretorId: '1', dataHora: '2024-06-26T14:30', observacoes: 'Visita para possível investimento. Cliente pediu mais detalhes sobre zoneamento.',
+                interesses: { bairro: 4, cidade: 5, estado: 5, areaTotal: 3, valor: 4, areaUtil: 4, andarSala: 5 } // numeroSala não é um atributo de avaliação
+            },
+            {
+                id: 'v3', clienteId: 'c2', imovelId: 'p2', corretorId: '4', dataHora: '2024-06-27T11:00', observacoes: 'Empresa buscando espaço para nova filial. Gostou da localização.',
+                interesses: { bairro: 5, cidade: 5, estado: 5, areaTotal: 4, valor: 3, numeroQuartos: 3, numeroBanheiros: 2, numeroSuites: 0, areaConstruida: 4, numeroVagasGaragem: 1, andar: 4, possuiElevador: 5 }
+            }
+        ];
+
+        // Dados de exemplo para Vendas (NOVOS)
+        let sampleSales = [
+            {
+                id: 's1',
+                numeroMatriculaImovel: '12345-ABC',
+                clienteCompradorId: 'c1', // ID do cliente comprador
+                proprietarioImovelId: 'c1', // ID do proprietário do imóvel (inferido do p1)
+                corretorId: '1', // ID do corretor
+                dataVenda: '2024-06-28T14:00',
+                valorFinal: 540000.00
+            },
+            {
+                id: 's2',
+                numeroMatriculaImovel: '11223-DEF',
+                clienteCompradorId: 'c2',
+                proprietarioImovelId: 'c3',
+                corretorId: '4',
+                dataVenda: '2024-06-29T10:30',
+                valorFinal: 1150000.00
+            }
+        ];
+
+
+        // Mapeamento de tipos de imóvel para os IDs dos grupos de campos específicos.
+        const typeFieldGroups = {
+            TERRENO: ['terreno_fields'],
+            CASA: ['unidade_residencial_fields', 'casa_fields'],
+            APARTAMENTO: ['unidade_residencial_fields', 'apartamento_fields'],
+            PREDIO_COMERCIAL: ['unidade_comercial_fields', 'predio_comercial_fields'],
+            SALA_COMERCIAL: ['unidade_comercial_fields', 'sala_comercial_fields']
+        };
+
+        // Função para traduzir nomes de campos para nomes amigáveis
+        const translateFieldName = (fieldName) => {
+            const translations = {
+                bairro: "Bairro",
+                cidade: "Cidade",
+                estado: "Estado",
+                areaTotal: "Área Total",
+                valor: "Valor",
+                topografia: "Topografia",
+                tipoSolo: "Tipo de Solo",
+                numeroQuartos: "Quartos",
+                numeroBanheiros: "Banheiros",
+                numeroSuites: "Suítes",
+                areaConstruida: "Área Construída",
+                numeroVagasGaragem: "Vagas Garagem",
+                possuiQuintal: "Quintal",
+                numeroPavimentos: "Nº Pavimentos",
+                andar: "Andar Apartamento",
+                possuiElevador: "Elevador",
+                areaUtil: "Área Útil",
+                totalAndares: "Total Andares",
+                numeroSalas: "Salas",
+                possuiEstacionamento: "Estacionamento",
+                andarSala: "Andar Sala",
+                numeroSala: "Nº Sala Comercial"
+            };
+            return translations[fieldName] || fieldName;
+        };
+
+        // Função para gerar as estrelas de avaliação
+        const generateStarRating = (rating) => {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHtml += `<span class="star filled-star"></span>`; // Estrela preenchida
+                } else {
+                    starsHtml += `<span class="star"></span>`; // Estrela vazia
+                }
+            }
+            return `<div class="rating-display">${starsHtml}</div>`;
+        };
+
+
+        // Função showSection movida para o escopo global
+        const showSection = (contentId) => {
+            const contentSections = document.querySelectorAll('.content-section');
+            const sidebarLinks = document.querySelectorAll('.sidebar-link'); 
+
+            // Variáveis de formulário que podem ser usadas em múltiplas chamadas
+            const userIdInput = document.getElementById('user_id');
+            const clientIdInput = document.getElementById('client_id');
+            const propertyIdInput = document.getElementById('property_id');
+            const visitIdInput = document.getElementById('visit_id');
+            const saleIdInput = document.getElementById('sale_id'); // Nova para Vendas
+
+            const userSearchInput = document.getElementById('user-search-input');
+            const clientSearchInput = document.getElementById('client-search-input');
+            const propertySearchInput = document.getElementById('property-search-input');
+            const visitSearchInput = document.getElementById('visit-search-input');
+            const clientSuggestionSearchInput = document.getElementById('client-suggestion-search-input'); 
+            const clientsForSuggestionTableBody = document.getElementById('clients-for-suggestion-table-body');
+            const selectedClientNameForSuggestions = document.getElementById('selected-client-name-for-suggestions');
+            const suggestedPropertiesGallery = document.getElementById('suggested-properties-gallery');
+            const saleSearchInput = document.getElementById('sale-search-input'); // Nova para Vendas
+
+
+            const tipoImovelSelect = document.getElementById('tipo_imovel_select');
+            const allTypeSpecificFieldDivs = document.querySelectorAll('.type-specific-fields'); 
+            const imovelVisitaSelect = document.getElementById('imovel_visita_select');
+            const avaliacaoFields = document.getElementById('avaliacao_fields');
+            const avaliacaoImovelTitle = document.getElementById('avaliacao_imovel_title');
+            const avaliacaoImovelDesc = document.getElementById('avaliacao_imovel_desc');
+
+            // Selects de Venda
+            const imovelVendaSelect = document.getElementById('imovel_venda_select');
+            const clienteCompradorSelect = document.getElementById('cliente_comprador_select');
+            const proprietarioImovelVendaSelect = document.getElementById('proprietario_imovel_venda_select');
+            const corretorVendaSelect = document.getElementById('corretor_venda_select');
+
+
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+                section.style.opacity = '0';
+                section.style.display = 'none';
+            });
+
+            sidebarLinks.forEach(link => {
+                link.classList.remove('active');
+                // Adicionado para lidar com os links do dashboard que agora também usam showSection
+                if (link.dataset.contentId === contentId || (link.getAttribute('href') && link.getAttribute('href').substring(1) === contentId)) {
+                    link.classList.add('active');
+                }
+            });
+            
+            const targetSection = document.getElementById(contentId);
+            
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                void targetSection.offsetWidth; // Força um reflow para a transição
+                targetSection.classList.add('active');
+                targetSection.style.opacity = '1';
+
+                // Lógica específica para cada seção ao exibi-la
+                if (contentId === 'list-manage-users-content') {
+                    loadUsersTable();
+                    if (userSearchInput) {
+                        userSearchInput.value = '';
+                    }
+                } else if (contentId === 'register-user-section' && userIdInput && !userIdInput.value) {
+                    resetUserForm();
+                } 
+                else if (contentId === 'list-manage-clients-content') {
+                    loadClientsTable();
+                    if (clientSearchInput) {
+                        clientSearchInput.value = '';
+                    }
+                } else if (contentId === 'register-client-section' && clientIdInput && !clientIdInput.value) {
+                    resetClientForm();
+                }
+                else if (contentId === 'list-manage-properties-content') {
+                    loadPropertiesTable();
+                    if (propertySearchInput) {
+                        propertySearchInput.value = '';
+                    }
+                } else if (contentId === 'register-property-section' && propertyIdInput && !propertyIdInput.value) {
+                    resetPropertyForm();
+                }
+                // Lógica para Visitas e Interesses
+                else if (contentId === 'consult-visits-section') {
+                    loadVisitsTable();
+                    if (visitSearchInput) {
+                        visitSearchInput.value = '';
+                    }
+                } else if (contentId === 'register-visit-interest-section' && visitIdInput && !visitIdInput.value) {
+                    resetVisitForm();
+                }
+                // Lógica para Sugestões de Imóveis
+                else if (contentId === 'property-suggestions-section') {
+                    if (clientSuggestionSearchInput) {
+                        clientSuggestionSearchInput.value = '';
+                    }
+                    loadClientsForSuggestionsTable(''); 
+                    if (suggestedPropertiesGallery) {
+                        suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Selecione um cliente acima para ver as sugestões de imóveis.</p>';
+                    }
+                    if (selectedClientNameForSuggestions) {
+                        selectedClientNameForSuggestions.textContent = '';
+                    }
+                }
+                // NOVA LÓGICA PARA VENDAS
+                else if (contentId === 'track-sales-section') {
+                    loadSalesTable();
+                    if (saleSearchInput) {
+                        saleSearchInput.value = '';
+                    }
+                } else if (contentId === 'register-sale-section' && saleIdInput && !saleIdInput.value) {
+                    resetSaleForm();
+                }
+                // Lógica para Logout
+                else if (contentId === 'logout-action') {
+                    window.location.href = 'login.html'; // Redireciona para a página de login
+                    return; // Sai da função para evitar processamento adicional
+                }
+
+
+                // Chamar a função para atualizar visibilidade dos campos de imóvel caso o select esteja presente
+                if (tipoImovelSelect) {
+                    updatePropertyFieldsVisibility();
+                }
+                // Chamar a função para popular selects e atualizar visibilidade dos campos de avaliação (para visitas)
+                if (imovelVisitaSelect) {
+                    populateVisitFormSelects(); 
+                    updateAvaliacaoFieldsVisibility();
+                }
+                // Chamar a função para popular selects da venda
+                if (imovelVendaSelect) { // Qualquer um dos selects da venda indica que estamos no contexto de venda
+                    populateSaleFormSelects();
+                }
+            }
+        };
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const usersTableBody = document.getElementById('users-table-body');
+            const userSearchInput = document.getElementById('user-search-input'); 
+
+            // Elements for user registration/edit form
+            const userFormTitle = document.getElementById('user-form-title');
+            const userFormDescription = document.getElementById('user-form-description');
+            const userIdInput = document.getElementById('user_id');
+            const saveUserBtn = document.getElementById('save-user-btn');
+            const deleteUserBtn = document.getElementById('delete-user-btn');
+            const userRegistrationForm = document.getElementById('user-registration-form');
+
+            // Elements for client list/edit
+            const clientsTableBody = document.getElementById('clients-table-body');
+            const clientSearchInput = document.getElementById('client-search-input');
+            const clientFormTitle = document.getElementById('client-form-title');
+            const clientFormDescription = document.getElementById('client-form-description');
+            const clientIdInput = document.getElementById('client_id');
+            const saveClientBtn = document.getElementById('save-client-btn');
+            const deleteClientBtn = document.getElementById('delete-client-btn');
+            const clientRegistrationForm = document.getElementById('client-registration-form');
+
+            // Elements for property list/edit
+            const propertiesTableBody = document.getElementById('properties-table-body');
+            const propertySearchInput = document.getElementById('property-search-input');
+            const propertyFormTitle = document.getElementById('property-form-title');
+            const propertyFormDescription = document.getElementById('property-form-description');
+            const propertyIdInput = document.getElementById('property_id');
+            const savePropertyBtn = document.getElementById('save-property-btn');
+            const deletePropertyBtn = document.getElementById('delete-property-btn');
+            const propertyRegistrationForm = document.getElementById('property-registration-form');
+            const tipoImovelSelect = document.getElementById('tipo_imovel_select'); 
+            const allTypeSpecificFieldDivs = document.querySelectorAll('.type-specific-fields'); 
+
+            // Elements for visit/interest management
+            const visitsTableBody = document.getElementById('visits-table-body'); 
+            const visitSearchInput = document.getElementById('visit-search-input'); 
+            const visitFormTitle = document.getElementById('visit-form-title'); 
+            const visitFormDescription = document.getElementById('visit-form-description'); 
+            const visitIdInput = document.getElementById('visit_id'); 
+            const saveVisitBtn = document.getElementById('save-visit-btn'); 
+            const deleteVisitBtn = document.getElementById('delete-visit-btn'); 
+            const visitRegistrationForm = document.getElementById('visit-registration-form'); 
+
+            const clienteVisitaSelect = document.getElementById('cliente_visita_select'); 
+            const imovelVisitaSelect = document.getElementById('imovel_visita_select'); 
+            const corretorVisitaSelect = document.getElementById('corretor_visita_select'); 
+            const avaliacaoFields = document.getElementById('avaliacao_fields'); 
+            const avaliacaoImovelTitle = document.getElementById('avaliacao_imovel_title'); 
+            const avaliacaoImovelDesc = document.getElementById('avaliacao_imovel_desc'); 
+
+            // Elements for property suggestions
+            const clientSuggestionSearchInput = document.getElementById('client-suggestion-search-input'); 
+            const clientsForSuggestionTableBody = document.getElementById('clients-for-suggestion-table-body');
+            const selectedClientNameForSuggestions = document.getElementById('selected-client-name-for-suggestions');
+            const suggestedPropertiesGallery = document.getElementById('suggested-properties-gallery');
+
+            // Elements for sales management (NOVOS)
+            const salesTableBody = document.getElementById('sales-table-body');
+            const saleSearchInput = document.getElementById('sale-search-input');
+            const saleFormTitle = document.getElementById('sale-form-title');
+            const saleFormDescription = document.getElementById('sale-form-description');
+            const saleIdInput = document.getElementById('sale_id');
+            const saveSaleBtn = document.getElementById('save-sale-btn');
+            const deleteSaleBtn = document.getElementById('delete-sale-btn');
+            const saleRegistrationForm = document.getElementById('sale-registration-form');
+
+            const imovelVendaSelect = document.getElementById('imovel_venda_select');
+            const clienteCompradorSelect = document.getElementById('cliente_comprador_select');
+            const proprietarioImovelVendaSelect = document.getElementById('proprietario_imovel_venda_select');
+            const corretorVendaSelect = document.getElementById('corretor_venda_select');
+
+
+            // Anexar event listeners aos links da barra lateral
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Impede o comportamento padrão do link
+                    const contentId = link.dataset.contentId || link.getAttribute('href').substring(1);
+                    // Se o link for de logout, redireciona diretamente
+                    if (contentId === 'logout-action' || link.getAttribute('href') === 'login.html') {
+                        window.location.href = 'login.html';
+                    } else {
+                        showSection(contentId);
+                    }
+                });
+            });
+
+            // Anexar event listeners aos action-cards do dashboard
+            const actionCards = document.querySelectorAll('.dashboard-stats .action-card');
+            actionCards.forEach(card => {
+                card.addEventListener('click', (event) => {
+                    event.preventDefault(); // Impede o comportamento padrão do link
+                    const contentId = card.dataset.contentId || card.getAttribute('href').substring(1);
+                    showSection(contentId);
+                });
+            });
+
+
+            // USER FUNCTIONS -----------------------------------------------------------
+
+            const loadUsersTable = (searchTerm = '') => {
+                usersTableBody.innerHTML = '';
+
+                const filteredUsers = sampleUsers.filter(user => {
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                    return user.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           user.primaryKey.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           user.cargo.toLowerCase().includes(lowerCaseSearchTerm);
+                });
+
+                const sortedUsers = [...filteredUsers].sort((a, b) => a.nome.localeCompare(b.nome));
+
+                sortedUsers.forEach(user => {
+                    const row = usersTableBody.insertRow();
+                    row.innerHTML = `
+                        <td data-label="Nome">${user.nome}</td>
+                        <td data-label="Chave Primária">${user.primaryKey}</td>
+                        <td data-label="Status">${user.status}</td>
+                        <td data-label="Cargo">${user.cargo}</td>
+                        <td data-label="Ações" class="actions-cell">
+                            <button class="edit-btn" data-user-id="${user.id}"><i class="fas fa-edit"></i></button>
+                        </td>
+                    `;
+                });
+
+                document.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const userId = event.currentTarget.dataset.userId;
+                        editUser(userId);
+                    });
+                });
+            };
+
+            if (userSearchInput) {
+                userSearchInput.addEventListener('keyup', (event) => {
+                    loadUsersTable(event.target.value);
+                });
+            }
+
+            const editUser = (userId) => {
+                const user = sampleUsers.find(u => u.id === userId);
+
+                if (user) {
+                    userFormTitle.textContent = 'Editar Usuário';
+                    userFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do usuário.';
+                    userIdInput.value = user.id;
+
+                    document.getElementById('cpf_cnpj_select_user').value = user.documentType;
+                    document.getElementById('cpf_cnpj_select_user').dispatchEvent(new Event('change'));
+                    document.getElementById('cpf_user').value = user.cpf;
+                    document.getElementById('cnpj_user').value = user.cnpj;
+                    document.getElementById('nome_user').value = user.nome;
+                    document.getElementById('email_user').value = user.email;
+                    document.getElementById('telefone_user').value = user.telefone;
+                    document.getElementById('cep_user').value = user.cep;
+                    document.getElementById('logradouro_user').value = user.logradouro;
+                    document.getElementById('numero_user').value = user.numero;
+                    document.getElementById('complemento_user').value = user.complemento;
+                    document.getElementById('bairro_user').value = user.bairro;
+                    document.getElementById('cidade_user').value = user.cidade;
+                    document.getElementById('estado_user').value = user.estado;
+                    document.getElementById('tipo_cargo').value = user.cargo.toUpperCase();
+                    document.getElementById('tipo_cargo').dispatchEvent(new Event('change'));
+                    document.getElementById('area_atuacao').value = user.areaAtuacao;
+                    document.getElementById('senha').value = ''; 
+                    document.getElementById('confirmar_senha').value = '';
+                    document.getElementById('ativo').checked = user.ativo;
+
+                    deleteUserBtn.style.display = 'inline-block';
+                    deleteUserBtn.onclick = () => deleteUser(user.id);
+
+                    showSection('register-user-section');
+                } else {
+                    console.error('Usuário não encontrado para edição:', userId);
+                    alert('Usuário não encontrado.');
+                }
+            };
+
+            const resetUserForm = () => {
+                userFormTitle.textContent = 'Cadastrar Novo Usuário';
+                userFormDescription.textContent = 'Preencha os campos abaixo para registrar um novo usuário no sistema.';
+                userIdInput.value = '';
+                userRegistrationForm.reset();
+                document.getElementById('cpf_cnpj_select_user').dispatchEvent(new Event('change'));
+                document.getElementById('tipo_cargo').dispatchEvent(new Event('change'));
+                deleteUserBtn.style.display = 'none';
+            };
+
+            userRegistrationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(userRegistrationForm);
+                const userData = Object.fromEntries(formData.entries());
+
+                if (userData.senha !== userData.confirmarSenha) {
+                    alert('As senhas não coincidem!');
+                    return;
+                }
+
+                if (userIdInput.value) {
+                    const userIndex = sampleUsers.findIndex(u => u.id === userIdInput.value);
+                    if (userIndex !== -1) {
+                        sampleUsers[userIndex] = {
+                            ...sampleUsers[userIndex],
+                            ...userData,
+                            primaryKey: userData.documentType === 'CPF' ? userData.cpf : userData.cnpj,
+                            status: userData.ativo === 'on' ? 'Ativo' : 'Inativo',
+                            ativo: userData.ativo === 'on'
+                        };
+                        alert('Usuário atualizado com sucesso!');
+                    }
+                } else {
+                    const newUser = {
+                        id: (sampleUsers.length + 1).toString(),
+                        primaryKey: userData.documentType === 'CPF' ? userData.cpf : userData.cnpj,
+                        status: userData.ativo === 'on' ? 'Ativo' : 'Inativo',
+                        ...userData,
+                        ativo: userData.ativo === 'on'
+                    };
+                    sampleUsers.push(newUser);
+                    alert('Usuário cadastrado com sucesso!');
+                }
+                resetUserForm();
+                showSection('list-manage-users-content');
+            });
+
+            const deleteUser = (userId) => {
+                if (confirm('Tem certeza que deseja excluir este usuário? Esta ação é irreversível.')) {
+                    const initialLength = sampleUsers.length;
+                    sampleUsers = sampleUsers.filter(u => u.id !== userId);
+                    if (sampleUsers.length < initialLength) {
+                        alert('Usuário excluído com sucesso!');
+                        resetUserForm();
+                        showSection('list-manage-users-content');
+                    } else {
+                        alert('Erro ao excluir usuário. Usuário não encontrado.');
+                    }
+                }
+            };
+
+            // CLIENT FUNCTIONS -----------------------------------------------------------
+
+            const toggleCpfCnpjClientFields = () => {
+                const cpfCnpjSelectClient = document.getElementById('cpf_cnpj_select_client');
+                const cpfGroupClient = document.getElementById('cpf_group_client');
+                const cnpjGroupClient = document.getElementById('cnpj_group_client');
+                const cpfInputClient = document.getElementById('cpf_client');
+                const cnpjInputClient = document.getElementById('cnpj_client');
+
+                if (cpfCnpjSelectClient && cpfCnpjSelectClient.value === 'CPF') {
+                    cpfGroupClient.style.display = 'block';
+                    cnpjGroupClient.style.display = 'none';
+                    cpfInputClient.setAttribute('required', 'true');
+                    cnpjInputClient.removeAttribute('required');
+                    cnpjInputClient.value = '';
+                } else if (cpfCnpjSelectClient && cpfCnpjSelectClient.value === 'CNPJ') {
+                    cpfGroupClient.style.display = 'none';
+                    cnpjGroupClient.style.display = 'block';
+                    cnpjInputClient.setAttribute('required', 'true');
+                    cpfInputClient.removeAttribute('required');
+                    cpfInputClient.value = '';
+                } else {
+                    cpfGroupClient.style.display = 'none';
+                    cnpjGroupClient.style.display = 'none';
+                    cpfInputClient.removeAttribute('required');
+                    cnpjInputClient.removeAttribute('required');
+                    cpfInputClient.value = '';
+                    cnpjInputClient.value = '';
+                }
+            };
+
+            if (document.getElementById('cpf_cnpj_select_client')) {
+                document.getElementById('cpf_cnpj_select_client').addEventListener('change', toggleCpfCnpjClientFields);
+                toggleCpfCnpjClientFields();
+            }
+
+            const loadClientsTable = (searchTerm = '') => {
+                clientsTableBody.innerHTML = '';
+
+                const filteredClients = sampleClients.filter(client => {
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                    return client.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           client.primaryKey.toLowerCase().includes(lowerCaseSearchTerm);
+                });
+
+                const sortedClients = [...filteredClients].sort((a, b) => a.nome.localeCompare(b.nome));
+
+                sortedClients.forEach(client => {
+                    const row = clientsTableBody.insertRow();
+                    row.innerHTML = `
+                        <td data-label="Nome">${client.nome}</td>
+                        <td data-label="Chave Primária">${client.primaryKey}</td>
+                        <td data-label="Email">${client.email}</td>
+                        <td data-label="Telefone">${client.telefone}</td>
+                        <td data-label="Data de Cadastro">${client.dataCadastro}</td>
+                        <td data-label="Ações" class="actions-cell">
+                            <button class="edit-btn" data-client-id="${client.id}"><i class="fas fa-edit"></i></button>
+                        </td>
+                    `;
+                });
+
+                document.querySelectorAll('#clients-table-body .edit-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const clientId = event.currentTarget.dataset.clientId;
+                        editClient(clientId);
+                    });
+                });
+            };
+
+            if (clientSearchInput) {
+                clientSearchInput.addEventListener('keyup', (event) => {
+                    loadClientsTable(event.target.value);
+                });
+            }
+
+            const editClient = (clientId) => {
+                const client = sampleClients.find(c => c.id === clientId);
+
+                if (client) {
+                    clientFormTitle.textContent = 'Editar Cliente';
+                    clientFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do cliente.';
+                    clientIdInput.value = client.id;
+
+                    document.getElementById('cpf_cnpj_select_client').value = client.documentType;
+                    document.getElementById('cpf_cnpj_select_client').dispatchEvent(new Event('change'));
+                    document.getElementById('cpf_client').value = client.cpf;
+                    document.getElementById('cnpj_client').value = client.cnpj;
+                    document.getElementById('nome_client').value = client.nome;
+                    document.getElementById('email_client').value = client.email;
+                    document.getElementById('telefone_client').value = client.telefone;
+                    document.getElementById('cep_client').value = client.cep;
+                    document.getElementById('logradouro_client').value = client.logradouro;
+                    document.getElementById('numero_client').value = client.numero;
+                    document.getElementById('complemento_client').value = client.complemento;
+                    document.getElementById('bairro_client').value = client.bairro;
+                    document.getElementById('cidade_client').value = client.cidade;
+                    document.getElementById('estado_client').value = client.estado;
+                    document.getElementById('data_cadastro_client').value = client.dataCadastro;
+                    
+                    deleteClientBtn.style.display = 'inline-block';
+                    deleteClientBtn.onclick = () => deleteClient(client.id);
+
+                    showSection('register-client-section');
+                } else {
+                    console.error('Cliente não encontrado para edição:', clientId);
+                    alert('Cliente não encontrado.');
+                }
+            };
+
+            const resetClientForm = () => {
+                clientFormTitle.textContent = 'Cadastrar Novo Cliente';
+                clientFormDescription.textContent = 'Preencha os campos abaixo para registrar um novo cliente no sistema.';
+                clientIdInput.value = '';
+                clientRegistrationForm.reset();
+                document.getElementById('cpf_cnpj_select_client').dispatchEvent(new Event('change'));
+                deleteClientBtn.style.display = 'none';
+            };
+
+            clientRegistrationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(clientRegistrationForm);
+                const clientData = Object.fromEntries(formData.entries());
+
+                if (clientIdInput.value) {
+                    const clientIndex = sampleClients.findIndex(c => c.id === clientIdInput.value);
+                    if (clientIndex !== -1) {
+                        sampleClients[clientIndex] = {
+                            ...sampleClients[clientIndex],
+                            ...clientData,
+                            primaryKey: clientData.documentType === 'CPF' ? clientData.cpf : clientData.cnpj,
+                        };
+                        alert('Cliente atualizado com sucesso!');
+                    }
+                } else {
+                    const newClient = {
+                        id: 'c' + (sampleClients.length + 1).toString(),
+                        primaryKey: clientData.documentType === 'CPF' ? clientData.cpf : clientData.cnpj,
+                        ...clientData
+                    };
+                    sampleClients.push(newClient);
+                    alert('Cliente cadastrado com sucesso!');
+                }
+                resetClientForm();
+                showSection('list-manage-clients-content');
+            });
+
+            const deleteClient = (clientId) => {
+                if (confirm('Tem certeza que deseja excluir este cliente? Esta ação é irreversível.')) {
+                    const initialLength = sampleClients.length;
+                    sampleClients = sampleClients.filter(c => c.id !== clientId);
+                    if (sampleClients.length < initialLength) {
+                        alert('Cliente excluído com sucesso!');
+                        resetClientForm();
+                        showSection('list-manage-clients-content');
+                    } else {
+                        alert('Erro ao excluir cliente. Cliente não encontrado.');
+                    }
+                }
+            };
+
+            // PROPERTY FUNCTIONS -----------------------------------------------------------
+
+            const loadPropertiesTable = (searchTerm = '') => {
+                propertiesTableBody.innerHTML = '';
+
+                const filteredProperties = sampleProperties.filter(property => {
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                    return property.numeroMatriculaImovel.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           property.endereco.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           property.finalidade.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           property.status.toLowerCase().includes(lowerCaseSearchTerm);
+                });
+
+                const sortedProperties = [...filteredProperties].sort((a, b) => a.endereco.localeCompare(b.endereco));
+
+                sortedProperties.forEach(property => {
+                    // Find owner's name
+                    const owner = sampleClients.find(client => client.id === property.proprietarioId);
+                    const ownerName = owner ? owner.nome : 'Desconhecido';
+
+                    const row = propertiesTableBody.insertRow();
+                    row.innerHTML = `
+                        <td data-label="Matrícula">${property.numeroMatriculaImovel}</td>
+                        <td data-label="Endereço">${property.endereco}, ${property.numero} - ${property.bairro}, ${property.cidade}/${property.estado}</td>
+                        <td data-label="Finalidade">${property.finalidade}</td>
+                        <td data-label="Valor">R$ ${property.valor.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>
+                        <td data-label="Status">${property.status}</td>
+                        <td data-label="Proprietário">${ownerName}</td>
+                        <td data-label="Ações" class="actions-cell">
+                            <button class="edit-btn" data-property-id="${property.id}"><i class="fas fa-edit"></i></button>
+                        </td>
+                    `;
+                });
+
+                document.querySelectorAll('#properties-table-body .edit-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const propertyId = event.currentTarget.dataset.propertyId;
+                        editProperty(propertyId);
+                    });
+                });
+            };
+
+            if (propertySearchInput) {
+                propertySearchInput.addEventListener('keyup', (event) => {
+                    loadPropertiesTable(event.target.value);
+                });
+            }
+
+            const editProperty = (propertyId) => {
+                const property = sampleProperties.find(p => p.id === propertyId);
+
+                if (property) {
+                    propertyFormTitle.textContent = 'Editar Imóvel';
+                    propertyFormDescription.textContent = 'Modifique os campos abaixo para atualizar os dados do imóvel.';
+                    propertyIdInput.value = property.id;
+
+                    // Populate general property fields
+                    document.getElementById('numero_matricula_imovel').value = property.numeroMatriculaImovel;
+                    document.getElementById('finalidade').value = property.finalidade;
+                    document.getElementById('valor').value = property.valor;
+                    document.getElementById('area_total').value = property.areaTotal;
+                    document.getElementById('status').value = property.status;
+                    document.getElementById('data_cadastro_imovel').value = property.dataCadastro;
+                    document.getElementById('data_atualizacao_imovel').value = property.dataAtualizacao;
+                    document.getElementById('proprietario_imovel_select').value = property.proprietarioId;
+                    
+                    // Populate address fields
+                    document.getElementById('cep_imovel').value = property.cep;
+                    document.getElementById('logradouro_imovel').value = property.logradouro;
+                    document.getElementById('numero_imovel').value = property.numero;
+                    document.getElementById('complemento_imovel').value = property.complemento;
+                    document.getElementById('bairro_imovel').value = property.bairro;
+                    document.getElementById('cidade_imovel').value = property.cidade;
+                    document.getElementById('estado_imovel').value = property.estado;
+
+                    // Populate type-specific fields and trigger visibility
+                    tipoImovelSelect.value = property.tipoImovel;
+                    updatePropertyFieldsVisibility(); // This function will hide/show based on selectedType
+                    
+                    // Now populate the specific fields
+                    if (property.tipoImovel === 'TERRENO') {
+                        document.getElementById('topografia').value = property.topografia || '';
+                        document.getElementById('tipo_solo').value = property.tipoSolo || '';
+                    } else if (property.tipoImovel === 'CASA' || property.tipoImovel === 'APARTAMENTO') {
+                        document.getElementById('numero_quartos').value = property.numeroQuartos || '';
+                        document.getElementById('numero_banheiros').value = property.numeroBanheiros || '';
+                        document.getElementById('numero_suites').value = property.numeroSuites || '';
+                        document.getElementById('area_construida').value = property.areaConstruida || '';
+                        document.getElementById('numero_vagas_garagem').value = property.numeroVagasGaragem || '';
+                        document.getElementById('descricao_residencial').value = property.descricaoResidencial || '';
+                        if (property.tipoImovel === 'CASA') {
+                            document.getElementById('possui_quintal').checked = property.possuiQuintal || false;
+                            document.getElementById('numero_pavimentos').value = property.numeroPavimentos || '';
+                        } else if (property.tipoImovel === 'APARTAMENTO') {
+                            document.getElementById('andar').value = property.andar || '';
+                            document.getElementById('numero_apartamento').value = property.numeroApartamento || '';
+                            document.getElementById('possui_elevador').checked = property.possuiElevador || false;
+                        }
+                    } else if (property.tipoImovel === 'PREDIO_COMERCIAL' || property.tipoImovel === 'SALA_COMERCIAL') {
+                        document.getElementById('area_util').value = property.areaUtil || '';
+                        document.getElementById('descricao_comercial').value = property.descricaoComercial || '';
+                        if (property.tipoImovel === 'PREDIO_COMERCIAL') {
+                            document.getElementById('total_andares').value = property.totalAndares || '';
+                            document.getElementById('numero_salas').value = property.numeroSalas || '';
+                            document.getElementById('possui_estacionamento').checked = property.possuiEstacionamento || false;
+                        } else if (property.tipoImovel === 'SALA_COMERCIAL') {
+                            document.getElementById('andar_sala').value = property.andarSala || '';
+                            document.getElementById('numero_sala').value = property.numeroSala || '';
+                        }
+                    }
+
+                    deletePropertyBtn.style.display = 'inline-block';
+                    deletePropertyBtn.onclick = () => deleteProperty(property.id);
+
+                    showSection('register-property-section');
+                } else {
+                    console.error('Imóvel não encontrado para edição:', propertyId);
+                    alert('Imóvel não encontrado.');
+                }
+            };
+
+            const resetPropertyForm = () => {
+                propertyFormTitle.textContent = 'Cadastrar Novo Imóvel';
+                propertyFormDescription.textContent = 'Preencha os campos abaixo para registrar um novo imóvel no sistema.';
+                propertyIdInput.value = '';
+                propertyRegistrationForm.reset();
+                updatePropertyFieldsVisibility(); // Reset specific fields visibility
+                deletePropertyBtn.style.display = 'none';
+            };
+
+            propertyRegistrationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = new FormData(propertyRegistrationForm);
+                const propertyData = Object.fromEntries(formData.entries());
+
+                // Coletar dados dos checkboxes (que FormData trata como 'on' ou ausente)
+                propertyData.possuiQuintal = propertyData.possuiQuintal === 'on';
+                propertyData.possuiElevador = propertyData.possuiElevador === 'on';
+                propertyData.possuiEstacionamento = propertyData.possuiEstacionamento === 'on';
+
+                if (propertyIdInput.value) {
+                    const propertyIndex = sampleProperties.findIndex(p => p.id === propertyIdInput.value);
+                    if (propertyIndex !== -1) {
+                        sampleProperties[propertyIndex] = {
+                            ...sampleProperties[propertyIndex],
+                            ...propertyData,
+                            valor: parseFloat(propertyData.valor),
+                            areaTotal: parseFloat(propertyData.areaTotal),
+                            areaConstruida: parseFloat(propertyData.areaConstruida),
+                            areaUtil: parseFloat(propertyData.areaUtil)
+                        };
+                        alert('Imóvel atualizado com sucesso!');
+                    }
+                } else {
+                    const newProperty = {
+                        id: 'p' + (sampleProperties.length + 1).toString(),
+                        ...propertyData,
+                        valor: parseFloat(propertyData.valor),
+                        areaTotal: parseFloat(propertyData.areaTotal),
+                        areaConstruida: parseFloat(propertyData.areaConstruida),
+                        areaUtil: parseFloat(propertyData.areaUtil)
+                    };
+                    sampleProperties.push(newProperty);
+                    alert('Imóvel cadastrado com sucesso!');
+                }
+                resetPropertyForm();
+                showSection('list-manage-properties-content');
+            });
+
+            const deleteProperty = (propertyId) => {
+                if (confirm('Tem certeza que deseja excluir este imóvel? Esta ação é irreversível.')) {
+                    const initialLength = sampleProperties.length;
+                    sampleProperties = sampleProperties.filter(p => p.id !== propertyId);
+                    if (sampleProperties.length < initialLength) {
+                        alert('Imóvel excluído com sucesso!');
+                        resetPropertyForm();
+                        showSection('list-manage-properties-content');
+                    } else {
+                        alert('Erro ao excluir imóvel. Imóvel não encontrado.');
+                    }
+                }
+            };
+
+            // VISIT AND INTEREST FUNCTIONS -----------------------------------------------------------
+
+            // Function to populate client, property, and realtor selects for the visit form
+            const populateVisitFormSelects = () => {
+                // Populate Client Select
+                clienteVisitaSelect.innerHTML = '<option value="">Selecione o Cliente</option>';
+                sampleClients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = `${client.nome} (${client.documentType}: ${client.primaryKey.substring(0, 3)}...)`;
+                    clienteVisitaSelect.appendChild(option);
+                });
+
+                // Populate Property Select
+                imovelVisitaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
+                sampleProperties.forEach(property => {
+                    const option = document.createElement('option');
+                    option.value = property.id;
+                    option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco}, ${property.numero}${property.complemento ? ', ' + property.complemento : ''}`;
+                    imovelVisitaSelect.appendChild(option);
+                });
+
+                // Populate Realtor Select (only users with cargo 'Corretor')
+                corretorVisitaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
+                sampleUsers.filter(user => user.cargo === 'Corretor').forEach(corretor => {
+                    const option = document.createElement('option');
+                    option.value = corretor.id;
+                    option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.primaryKey.substring(0, 3)}...)`;
+                    corretorVisitaSelect.appendChild(option);
+                });
+            };
+
+            // Function to update visibility of interest fields based on selected property type
+            const updateAvaliacaoFieldsVisibility = () => {
+                const selectedPropertyId = imovelVisitaSelect ? imovelVisitaSelect.value : '';
+                const selectedProperty = sampleProperties.find(p => p.id === selectedPropertyId);
+
+                const allInterestFieldGroups = avaliacaoFields.querySelectorAll('.form-group[data-interest-field]');
+                allInterestFieldGroups.forEach(group => {
+                    group.style.display = 'none';
+                    // Reset radio buttons within this group
+                    group.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                });
+
+                if (selectedProperty && selectedProperty.interessesValidos) {
+                    avaliacaoFields.style.display = 'grid';
+                    avaliacaoImovelTitle.style.display = 'block';
+                    avaliacaoImovelDesc.style.display = 'block';
+
+                    selectedProperty.interessesValidos.forEach(fieldName => {
+                        const fieldGroup = avaliacaoFields.querySelector(`.form-group[data-interest-field="${fieldName}"]`);
+                        if (fieldGroup) {
+                            fieldGroup.style.display = 'block';
+                        }
+                    });
+                } else {
+                    avaliacaoFields.style.display = 'none';
+                    avaliacaoImovelTitle.style.display = 'none';
+                    avaliacaoImovelDesc.style.display = 'none';
+                }
+            };
+            // Event listener for property select change to update interest fields
+            if (imovelVisitaSelect) {
+                imovelVisitaSelect.addEventListener('change', updateAvaliacaoFieldsVisibility);
+            }
+
+            const loadVisitsTable = (searchTerm = '') => {
+                visitsTableBody.innerHTML = '';
+
+                const filteredVisits = sampleVisits.filter(visit => {
+                    const client = sampleClients.find(c => c.id === visit.clienteId);
+                    const property = sampleProperties.find(p => p.id === visit.imovelId);
+                    const corretor = sampleUsers.find(u => u.id === visit.corretorId);
+
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+                    return (client?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
+                           (property?.endereco.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
+                           (property?.numeroMatriculaImovel.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
+                           (corretor?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '');
+                });
+
+                const sortedVisits = [...filteredVisits].sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora)); // Mais recente primeiro
+
+                sortedVisits.forEach(visit => {
+                    const client = sampleClients.find(c => c.id === visit.clienteId);
+                    const property = sampleProperties.find(p => p.id === visit.imovelId);
+                    const corretor = sampleUsers.find(u => u.id === visit.corretorId);
+
+                    const clientName = client ? client.nome : 'N/A';
+                    const propertyAddress = property ? `${property.endereco}, ${property.numero}` : 'N/A';
+                    const corretorName = corretor ? corretor.nome : 'N/A';
+                    const formattedDateTime = new Date(visit.dataHora).toLocaleString('pt-BR');
+
+                    const row = visitsTableBody.insertRow();
+                    row.innerHTML = `
+                        <td data-label="Cliente">${clientName}</td>
+                        <td data-label="Imóvel">${propertyAddress} (Mat. ${property ? property.numeroMatriculaImovel : 'N/A'})</td>
+                        <td data-label="Corretor">${corretorName}</td>
+                        <td data-label="Data/Hora">${formattedDateTime}</td>
+                        <td data-label="Observações">${visit.observacoes || 'Nenhuma'}</td>
+                        <td data-label="Ações" class="actions-cell">
+                            <button class="edit-btn" data-visit-id="${visit.id}"><i class="fas fa-edit"></i></button>
+                        </td>
+                    `;
+                });
+
+                document.querySelectorAll('#visits-table-body .edit-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const visitId = event.currentTarget.dataset.visitId;
+                        editVisit(visitId);
+                    });
+                });
+            };
+
+            if (visitSearchInput) {
+                visitSearchInput.addEventListener('keyup', (event) => {
+                    loadVisitsTable(event.target.value);
+                });
+            }
+
+            const editVisit = (visitId) => {
+                const visit = sampleVisits.find(v => v.id === visitId);
+
+                if (visit) {
+                    visitFormTitle.textContent = 'Editar Visita e Interesse';
+                    visitFormDescription.textContent = 'Modifique os campos abaixo para atualizar o registro da visita e seus interesses.';
+                    visitIdInput.value = visit.id;
+
+                    populateVisitFormSelects(); // Popula os selects antes de definir os valores
+                    clienteVisitaSelect.value = visit.clienteId;
+                    imovelVisitaSelect.value = visit.imovelId;
+                    corretorVisitaSelect.value = visit.corretorId;
+                    document.getElementById('data_hora_visita').value = visit.dataHora;
+                    document.getElementById('observacoes_visita').value = visit.observacoes;
+
+                    // Trigger change on property select to update interest fields visibility
+                    // Using setTimeout to ensure options are rendered before dispatching change event
+                    setTimeout(() => {
+                        imovelVisitaSelect.dispatchEvent(new Event('change'));
+                        // Populate interest ratings after fields are visible
+                        if (visit.interesses) {
+                            for (const key in visit.interesses) {
+                                if (visit.interesses.hasOwnProperty(key)) {
+                                    const ratingValue = visit.interesses[key];
+                                    // Use querySelector to find the correct radio button by name and value
+                                    const radioInput = document.querySelector(`input[name="avaliacao_${key}"][value="${ratingValue}"]`);
+                                    if (radioInput) {
+                                        radioInput.checked = true;
+                                    }
+                                }
+                            }
+                        }
+                    }, 0); // Use setTimeout with 0 to defer execution
+
+                    
+                    deleteVisitBtn.style.display = 'inline-block';
+                    deleteVisitBtn.onclick = () => deleteVisit(visit.id);
+
+                    showSection('register-visit-interest-section');
+                } else {
+                    console.error('Visita não encontrada para edição:', visitId);
+                    alert('Visita não encontrada.');
+                }
+            };
+
+            const resetVisitForm = () => {
+                visitFormTitle.textContent = 'Registrar Visita e Interesse';
+                visitFormDescription.textContent = 'Preencha os campos abaixo para registrar uma nova visita e a avaliação de interesse.';
+                visitIdInput.value = '';
+                visitRegistrationForm.reset();
+                populateVisitFormSelects(); // Reset selects
+                updateAvaliacaoFieldsVisibility(); // Hide/reset interest fields
+                deleteVisitBtn.style.display = 'none';
+            };
+
+            visitRegistrationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(visitRegistrationForm);
+                const visitData = Object.fromEntries(formData.entries());
+
+                // Coletar os interesses avaliados dinamicamente
+                const interesses = {};
+                avaliacaoFields.querySelectorAll('.form-group[data-interest-field]').forEach(group => {
+                    const fieldName = group.dataset.interestField;
+                    const checkedRadio = group.querySelector(`input[name="avaliacao_${fieldName}"]:checked`);
+                    if (checkedRadio) {
+                        interesses[fieldName] = parseInt(checkedRadio.value);
+                    }
+                });
+                visitData.interesses = interesses;
+
+
+                if (visitIdInput.value) {
+                    const visitIndex = sampleVisits.findIndex(v => v.id === visitIdInput.value);
+                    if (visitIndex !== -1) {
+                        sampleVisits[visitIndex] = {
+                            ...sampleVisits[visitIndex],
+                            ...visitData
+                        };
+                        alert('Visita atualizada com sucesso!');
+                    }
+                } else {
+                    const newVisit = {
+                        id: 'v' + (sampleVisits.length + 1).toString(),
+                        ...visitData
+                    };
+                    sampleVisits.push(newVisit);
+                    alert('Visita registrada com sucesso!');
+                }
+                resetVisitForm();
+                showSection('consult-visits-section');
+            });
+
+            const deleteVisit = (visitId) => {
+                if (confirm('Tem certeza que deseja excluir esta visita? Esta ação é irreversível.')) {
+                    const initialLength = sampleVisits.length;
+                    sampleVisits = sampleVisits.filter(v => v.id !== visitId);
+                    if (sampleVisits.length < initialLength) {
+                        alert('Visita excluída com sucesso!');
+                        resetVisitForm();
+                        showSection('consult-visits-section');
+                    } else {
+                        alert('Erro ao excluir visita. Visita não encontrada.');
+                    }
+                }
+            };
+
+            // PROPERTY SUGGESTIONS FUNCTIONS -----------------------------------------------------------
+
+            const loadClientsForSuggestionsTable = (searchTerm = '') => {
+                clientsForSuggestionTableBody.innerHTML = '';
+
+                const filteredClients = sampleClients.filter(client => {
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                    return client.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
+                           client.primaryKey.toLowerCase().includes(lowerCaseSearchTerm);
+                });
+
+                const sortedClients = [...filteredClients].sort((a, b) => a.nome.localeCompare(b.nome));
+
+                if (sortedClients.length === 0) {
+                    const row = clientsForSuggestionTableBody.insertRow();
+                    row.innerHTML = `<td colspan="3" style="text-align: center; color: var(--color-secondary);">Nenhum cliente encontrado.</td>`;
+                    return;
+                }
+
+                sortedClients.forEach(client => {
+                    const row = clientsForSuggestionTableBody.insertRow();
+                    row.innerHTML = `
+                        <td data-label="Nome">${client.nome}</td>
+                        <td data-label="Chave Primária">${client.primaryKey}</td>
+                        <td data-label="Ações" class="actions-cell">
+                            <button class="select-client-btn btn btn-primary" data-client-id="${client.id}"><i class="fas fa-check"></i> Selecionar</button>
+                        </td>
+                    `;
+                });
+
+                document.querySelectorAll('#clients-for-suggestion-table-body .select-client-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const clientId = event.currentTarget.dataset.clientId;
+                        const client = sampleClients.find(c => c.id === clientId);
+                        if (client) {
+                            selectedClientNameForSuggestions.textContent = client.nome;
+                            loadPropertySuggestions(clientId);
+                        }
+                    });
+                });
+            };
+
+            if (clientSuggestionSearchInput) {
+                clientSuggestionSearchInput.addEventListener('keyup', (event) => {
+                    loadClientsForSuggestionsTable(event.target.value);
+                });
+            }
+
+
+            const loadPropertySuggestions = (clientId) => {
+                suggestedPropertiesGallery.innerHTML = ''; // Clear previous suggestions
+
+                if (!clientId) {
+                    suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Selecione um cliente acima para ver as sugestões de imóveis.</p>';
+                    selectedClientNameForSuggestions.textContent = '';
+                    return; 
+                }
+
+                const client = sampleClients.find(c => c.id === clientId);
+                if (!client) {
+                    suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-error);">Cliente não encontrado.</p>';
+                    selectedClientNameForSuggestions.textContent = '';
+                    return;
+                }
+                selectedClientNameForSuggestions.textContent = client.nome;
+
+
+                const clientInterests = sampleVisits
+                    .filter(v => v.clienteId === clientId && v.interesses)
+                    .map(v => v.interesses)
+                    .reduce((acc, current) => {
+                        for (const key in current) {
+                            if (current.hasOwnProperty(key)) {
+                                acc[key] = (acc[key] || 0) + current[key]; // Sum ratings
+                            }
+                        }
+                        return acc;
+                    }, {});
+
+                const propertiesWithCompatibility = sampleProperties.map(property => {
+                    const compatibilityScores = {};
+                    let totalScore = 0;
+                    let attributesCount = 0;
+
+                    // Calculate a simple compatibility score based on client's average interests
+                    if (property.interessesValidos) {
+                        property.interessesValidos.forEach(attr => {
+                            if (clientInterests[attr]) {
+                                // Simulate compatibility: higher client interest means higher compatibility
+                                // This is a placeholder for a real algorithm.
+                                const simulatedRating = Math.min(5, Math.ceil(clientInterests[attr] / Math.max(1, sampleVisits.filter(v => v.clienteId === clientId && v.interesses && v.interesses[attr]).length))); // Average rating for this attribute by client
+                                compatibilityScores[attr] = simulatedRating;
+                                totalScore += simulatedRating;
+                                attributesCount++;
+                            } else {
+                                // If client has no stated interest, assign a neutral or random rating
+                                compatibilityScores[attr] = Math.floor(Math.random() * 3) + 1; // 1-3 stars if no direct interest
+                            }
+                        });
+                    }
+
+                    // Sort attributes by their simulated compatibility score for this property
+                    const sortedAttributes = Object.entries(compatibilityScores)
+                        .sort(([, a], [, b]) => b - a) // Sort descending by score
+                        .slice(0, 5); // Take top 5
+
+                    return {
+                        property: property,
+                        totalCompatibility: attributesCount > 0 ? totalScore / attributesCount : 0, // Average score for sorting
+                        topAttributes: sortedAttributes
+                    };
+                });
+
+                // Sort properties by overall compatibility (highest first)
+                const sortedSuggestedProperties = propertiesWithCompatibility.sort((a, b) => b.totalCompatibility - a.totalCompatibility);
+
+                if (sortedSuggestedProperties.length === 0) {
+                    suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Nenhum imóvel encontrado para sugestão.</p>';
+                    return;
+                }
+
+                sortedSuggestedProperties.forEach(suggestedItem => {
+                    const property = suggestedItem.property;
+                    const topAttributes = suggestedItem.topAttributes;
+
+                    const propertyCard = document.createElement('a');
+                    propertyCard.href = `#register-property-section`; // Link to edit property
+                    propertyCard.classList.add('stat-card', 'action-card');
+                    propertyCard.dataset.propertyId = property.id; // Store property ID
+
+                    const propertyTitle = document.createElement('h3');
+                    propertyTitle.textContent = property.numeroMatriculaImovel;
+                    propertyCard.appendChild(propertyTitle);
+
+                    const compatibilityList = document.createElement('ul');
+                    compatibilityList.style.listStyle = 'none';
+                    compatibilityList.style.padding = '0';
+                    compatibilityList.style.marginTop = '10px';
+
+                    if (topAttributes.length > 0) {
+                        topAttributes.forEach(([attrName, rating]) => {
+                            const listItem = document.createElement('li');
+                            listItem.style.display = 'flex';
+                            listItem.style.justifyContent = 'space-between';
+                            listItem.style.alignItems = 'center';
+                            listItem.style.marginBottom = '5px';
+                            listItem.innerHTML = `<span>${translateFieldName(attrName)}:</span> ${generateStarRating(rating)}`;
+                            compatibilityList.appendChild(listItem);
+                        });
+                    } else {
+                        const noData = document.createElement('p');
+                        noData.textContent = 'Sem dados de compatibilidade disponíveis.';
+                        noData.style.fontSize = '14px';
+                        noData.style.color = 'var(--color-secondary)';
+                        compatibilityList.appendChild(noData);
+                    }
+
+                    propertyCard.appendChild(compatibilityList);
+                    suggestedPropertiesGallery.appendChild(propertyCard);
+                });
+
+                // Attach event listeners to the new suggestion cards
+                document.querySelectorAll('#suggested-properties-gallery .action-card').forEach(card => {
+                    card.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const propertyId = event.currentTarget.dataset.propertyId;
+                        editProperty(propertyId); // Reuse the existing editProperty function
+                    });
+                });
+            };
+
+            // SALES FUNCTIONS -----------------------------------------------------------
+
+            const populateSaleFormSelects = () => {
+                // Populate Imóvel Select
+                imovelVendaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
+                sampleProperties.forEach(property => {
+                    const option = document.createElement('option');
+                    option.value = property.id; // Usamos o ID do imóvel como valor
+                    option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco}, ${property.numero}`;
+                    imovelVendaSelect.appendChild(option);
+                });
+
+                // Populate Cliente Comprador Select
+                clienteCompradorSelect.innerHTML = '<option value="">Selecione o Comprador</option>';
+                sampleClients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = `${client.nome} (${client.documentType}: ${client.primaryKey})`;
+                    clienteCompradorSelect.appendChild(option);
+                });
+
+                // Populate Corretor Responsável Select
+                corretorVendaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
+                sampleUsers.filter(user => user.cargo === 'Corretor').forEach(corretor => {
+                    const option = document.createElement('option');
+                    option.value = corretor.id;
+                    option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.primaryKey})`;
+                    corretorVendaSelect.appendChild(option);
+                });
+
+                // Event Listener para preencher Proprietário automaticamente
+                imovelVendaSelect.addEventListener('change', () => {
+                    const selectedPropertyId = imovelVendaSelect.value;
+                    const selectedProperty = sampleProperties.find(p => p.id === selectedPropertyId);
+                    proprietarioImovelVendaSelect.innerHTML = '<option value="">Proprietário (automático)</option>';
+                    if (selectedProperty && selectedProperty.proprietarioId) {
+                        const owner = sampleClients.find(c => c.id === selectedProperty.proprietarioId);
+                        if (owner) {
+                            const option = document.createElement('option');
+                            option.value = owner.id;
+                            option.textContent = `${owner.nome} (${owner.documentType}: ${owner.primaryKey})`;
+                            option.selected = true; // Seleciona automaticamente
+                            proprietarioImovelVendaSelect.appendChild(option);
+                        }
+                    }
+                });
+            };
+
+            const loadSalesTable = (searchTerm = '') => {
+                salesTableBody.innerHTML = '';
+
+                const filteredSales = sampleSales.filter(sale => {
+                    const property = sampleProperties.find(p => p.id === sale.numeroMatriculaImovel);
+                    const comprador = sampleClients.find(c => c.id === sale.clienteCompradorId);
+                    const proprietario = sampleClients.find(c => c.id === sale.proprietarioImovelId);
+                    const corretor = sampleUsers.find(u => u.id === sale.corretorId);
+
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+                    return (property?.numeroMatriculaImovel.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
+                           (comprador?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
+                           (proprietario?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
+                           (corretor?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '');
+                });
+
+                const sortedSales = [...filteredSales].sort((a, b) => new Date(b.dataVenda) - new Date(a.dataVenda)); // Mais recente primeiro
+
+                if (sortedSales.length === 0) {
+                    const row = salesTableBody.insertRow();
+                    row.innerHTML = `<td colspan="7" style="text-align: center; color: var(--color-secondary);">Nenhuma venda registrada.</td>`;
+                    return;
+                }
+
+                sortedSales.forEach(sale => {
+                    const property = sampleProperties.find(p => p.id === sale.numeroMatriculaImovel);
+                    const comprador = sampleClients.find(c => c.id === sale.clienteCompradorId);
+                    const proprietario = sampleClients.find(c => c.id === sale.proprietarioImovelId);
+                    const corretor = sampleUsers.find(u => u.id === sale.corretorId);
+
+                    const propertyInfo = property ? `${property.numeroMatriculaImovel} (${property.endereco}, ${property.numero})` : 'N/A';
+                    const compradorName = comprador ? comprador.nome : 'N/A';
+                    const proprietarioName = proprietario ? proprietario.nome : 'N/A';
+                    const corretorName = corretor ? corretor.nome : 'N/A';
+                    const formattedDate = new Date(sale.dataVenda).toLocaleString('pt-BR');
+                    const formattedValor = `R$ ${sale.valorFinal.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+
+                    const row = salesTableBody.insertRow();
+                    row.innerHTML = `
+                        <td data-label="Imóvel">${propertyInfo}</td>
+                        <td data-label="Comprador">${compradorName}</td>
+                        <td data-label="Proprietário">${proprietarioName}</td>
+                        <td data-label="Corretor">${corretorName}</td>
+                        <td data-label="Data da Venda">${formattedDate}</td>
+                        <td data-label="Valor Final">${formattedValor}</td>
+                        <td data-label="Ações" class="actions-cell">
+                            <button class="edit-btn" data-sale-id="${sale.id}"><i class="fas fa-edit"></i></button>
+                        </td>
+                    `;
+                });
+
+                document.querySelectorAll('#sales-table-body .edit-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const saleId = event.currentTarget.dataset.saleId;
+                        editSale(saleId);
+                    });
+                });
+            };
+
+            if (saleSearchInput) {
+                saleSearchInput.addEventListener('keyup', (event) => {
+                    loadSalesTable(event.target.value);
+                });
+            }
+
+            const editSale = (saleId) => {
+                const sale = sampleSales.find(s => s.id === saleId);
+
+                if (sale) {
+                    saleFormTitle.textContent = 'Editar Venda';
+                    saleFormDescription.textContent = 'Modifique os campos abaixo para atualizar o registro da venda.';
+                    saleIdInput.value = sale.id;
+
+                    populateSaleFormSelects(); // Popula os selects antes de definir os valores
+
+                    // Preencher os selects e campos
+                    imovelVendaSelect.value = sale.numeroMatriculaImovel;
+                    // Trigger change on property select to automatically set owner
+                    imovelVendaSelect.dispatchEvent(new Event('change')); 
+                    
+                    clienteCompradorSelect.value = sale.clienteCompradorId;
+                    corretorVendaSelect.value = sale.corretorId;
+                    document.getElementById('data_venda').value = sale.dataVenda;
+                    document.getElementById('valor_final').value = sale.valorFinal;
+                    
+                    // Proprietário já deve ter sido preenchido automaticamente pelo change do imóvel
+                    // Se não for o proprietário esperado, indica um problema de dados ou lógica
+                    // For now, we trust the automatic fill.
+
+                    deleteSaleBtn.style.display = 'inline-block';
+                    deleteSaleBtn.onclick = () => deleteSale(sale.id);
+
+                    showSection('register-sale-section');
+                } else {
+                    console.error('Venda não encontrada para edição:', saleId);
+                    alert('Venda não encontrada.');
+                }
+            };
+
+            const resetSaleForm = () => {
+                saleFormTitle.textContent = 'Registrar Nova Venda';
+                saleFormDescription.textContent = 'Preencha os campos abaixo para registrar uma nova venda no sistema.';
+                saleIdInput.value = '';
+                saleRegistrationForm.reset();
+                populateSaleFormSelects(); // Reset selects
+                deleteSaleBtn.style.display = 'none';
+            };
+
+            saleRegistrationForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const formData = new FormData(saleRegistrationForm);
+                const saleData = Object.fromEntries(formData.entries());
+
+                // Mapear IDs para CPFs/CNPJs para a simulação de PK completa
+                const selectedProperty = sampleProperties.find(p => p.id === saleData.numeroMatriculaImovel);
+                const selectedComprador = sampleClients.find(c => c.id === saleData.cpfCnpjClienteComprador);
+                const selectedProprietario = sampleClients.find(c => c.id === proprietarioImovelVendaSelect.value); // Pega o valor real selecionado/auto-preenchido
+                const selectedCorretor = sampleUsers.find(u => u.id === saleData.cpfCnpjCorretor);
+
+                const saleToSave = {
+                    numeroMatriculaImovel: selectedProperty?.numeroMatriculaImovel || 'N/A', // Usar a matrícula do imóvel
+                    clienteCompradorId: selectedComprador?.id || 'N/A',
+                    cpf_cliente_comprador: selectedComprador?.documentType === 'CPF' ? selectedComprador?.primaryKey : '',
+                    cnpj_cliente_comprador: selectedComprador?.documentType === 'CNPJ' ? selectedComprador?.primaryKey : '',
+                    proprietarioImovelId: selectedProprietario?.id || 'N/A',
+                    cpf_proprietario_imovel: selectedProprietario?.documentType === 'CPF' ? selectedProprietario?.primaryKey : '',
+                    cnpj_proprietario_imovel: selectedProprietario?.documentType === 'CNPJ' ? selectedProprietario?.primaryKey : '',
+                    corretorId: selectedCorretor?.id || 'N/A',
+                    cpf_corretor: selectedCorretor?.documentType === 'CPF' ? selectedCorretor?.primaryKey : '',
+                    cnpj_corretor: selectedCorretor?.documentType === 'CNPJ' ? selectedCorretor?.primaryKey : '',
+                    dataVenda: saleData.dataVenda,
+                    valorFinal: parseFloat(saleData.valorFinal)
+                };
+
+                if (saleIdInput.value) {
+                    const saleIndex = sampleSales.findIndex(s => s.id === saleIdInput.value);
+                    if (saleIndex !== -1) {
+                        sampleSales[saleIndex] = {
+                            ...sampleSales[saleIndex],
+                            ...saleToSave
+                        };
+                        alert('Venda atualizada com sucesso!');
+                    }
+                } else {
+                    const newSale = {
+                        id: 's' + (sampleSales.length + 1).toString(),
+                        ...saleToSave
+                    };
+                    sampleSales.push(newSale);
+                    alert('Venda registrada com sucesso!');
+                }
+                resetSaleForm();
+                showSection('track-sales-section');
+            });
+
+            const deleteSale = (saleId) => {
+                if (confirm('Tem certeza que deseja excluir esta venda? Esta ação é irreversível.')) {
+                    const initialLength = sampleSales.length;
+                    sampleSales = sampleSales.filter(s => s.id !== saleId);
+                    if (sampleSales.length < initialLength) {
+                        alert('Venda excluída com sucesso!');
+                        resetSaleForm();
+                        showSection('track-sales-section');
+                    } else {
+                        alert('Erro ao excluir venda. Venda não encontrada.');
+                    }
+                }
+            };
+
+
+            // COMMON FUNCTIONS (between User, Client, Property, etc.) -------------------
+            // Lógica para mostrar/ocultar campos CPF/CNPJ para USUÁRIO
+            const cpfCnpjSelectUser = document.getElementById('cpf_cnpj_select_user');
+            const cpfGroupUser = document.getElementById('cpf_group_user');
+            const cnpjGroupUser = document.getElementById('cnpj_group_user');
+            const cpfInputUser = document.getElementById('cpf_user');
+            const cnpjInputUser = document.getElementById('cnpj_user');
+
+            const toggleCpfCnpjUserFields = () => {
+                if (cpfCnpjSelectUser && cpfCnpjSelectUser.value === 'CPF') {
+                    cpfGroupUser.style.display = 'block';
+                    cnpjGroupUser.style.display = 'none';
+                    cpfInputUser.setAttribute('required', 'true');
+                    cnpjInputUser.removeAttribute('required');
+                    cnpjInputUser.value = '';
+                } else if (cpfCnpjSelectUser && cpfCnpjSelectUser.value === 'CNPJ') {
+                    cpfGroupUser.style.display = 'none';
+                    cnpjGroupUser.style.display = 'block';
+                    cnpjInputUser.setAttribute('required', 'true');
+                    cpfInputUser.removeAttribute('required');
+                    cpfInputUser.value = '';
+                } else {
+                    cpfGroupUser.style.display = 'none';
+                    cnpjGroupUser.style.display = 'none';
+                    cpfInputUser.removeAttribute('required');
+                    cnpjInputUser.removeAttribute('required');
+                    cpfInputUser.value = '';
+                    cnpjInputUser.value = '';
+                }
+            };
+            if (cpfCnpjSelectUser) {
+                cpfCnpjSelectUser.addEventListener('change', toggleCpfCnpjUserFields);
+                toggleCpfCnpjUserFields(); // Initial call to set correct visibility
+            }
+
+
+            // Lógica para mostrar/ocultar Área de Atuação para Corretor
+            const tipoCargoSelect = document.getElementById('tipo_cargo');
+            const areaAtuacaoGroup = document.getElementById('area_atuacao_group');
+            const areaAtuacaoInput = document.getElementById('area_atuacao');
+
+            const toggleAreaAtuacao = () => {
+                if (tipoCargoSelect && tipoCargoSelect.value === 'CORRETOR') {
+                    areaAtuacaoGroup.style.display = 'block';
+                    areaAtuacaoInput.setAttribute('required', 'true');
+                } else {
+                    areaAtuacaoGroup.style.display = 'none';
+                    areaAtuacaoInput.removeAttribute('required');
+                    areaAtuacaoInput.value = '';
+                }
+            };
+
+            if (tipoCargoSelect) {
+                tipoCargoSelect.addEventListener('change', toggleAreaAtuacao);
+                toggleAreaAtuacao(); // Initial call
+            }
+
+            // Lógica para mostrar/ocultar campos específicos do TIPO DE IMÓVEL
+            // Re-organizado para ser uma função mais robusta e reutilizável
+            const updatePropertyFieldsVisibility = () => {
+                const selectedType = tipoImovelSelect ? tipoImovelSelect.value : '';
+
+                allTypeSpecificFieldDivs.forEach(div => {
+                    div.style.display = 'none';
+                    div.querySelectorAll('input, select, textarea').forEach(input => input.removeAttribute('required'));
+                });
+
+                if (typeFieldGroups[selectedType]) {
+                    typeFieldGroups[selectedType].forEach(fieldGroupId => {
+                        const fieldGroupDiv = document.getElementById(fieldGroupId);
+                        if (fieldGroupDiv) {
+                            fieldGroupDiv.style.display = 'grid';
+                        }
+                    });
+
+                    // Set required attributes based on selected type
+                    if (selectedType === 'TERRENO') {
+                        document.getElementById('topografia').setAttribute('required', 'true');
+                    } else if (selectedType === 'CASA' || selectedType === 'APARTAMENTO') {
+                        document.getElementById('numero_quartos').setAttribute('required', 'true');
+                        document.getElementById('numero_banheiros').setAttribute('required', 'true');
+                        document.getElementById('area_construida').setAttribute('required', 'true');
+                        if (selectedType === 'CASA') {
+                            document.getElementById('numero_pavimentos').setAttribute('required', 'true');
+                        } else if (selectedType === 'APARTAMENTO') {
+                            document.getElementById('andar').setAttribute('required', 'true');
+                            document.getElementById('numero_apartamento').setAttribute('required', 'true');
+                        }
+                    } else if (selectedType === 'PREDIO_COMERCIAL' || selectedType === 'SALA_COMERCIAL') {
+                        document.getElementById('area_util').setAttribute('required', 'true');
+                        if (selectedType === 'PREDIO_COMERCIAL') {
+                            document.getElementById('total_andares').setAttribute('required', 'true');
+                            document.getElementById('numero_salas').setAttribute('required', 'true');
+                        } else if (selectedType === 'SALA_COMERCIAL') {
+                            document.getElementById('andar_sala').setAttribute('required', 'true');
+                            document.getElementById('numero_sala').setAttribute('required', 'true');
+                        }
+                    }
+                }
+            };
+
+            if (tipoImovelSelect) {
+                tipoImovelSelect.addEventListener('change', updatePropertyFieldsVisibility);
+                updatePropertyFieldsVisibility(); // Initial call
+            }
+
+            // Lógica para mostrar a seção inicial (Dashboard) ou uma seção específica via hash
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && document.getElementById(initialHash)) {
+                showSection(initialHash);
+            } else {
+                showSection('dashboard-section');
+            }
+        });
+    </script>
+</body>
+</html>

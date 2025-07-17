@@ -1,0 +1,170 @@
+/* Importação da fonte (se estiver usando Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap');
+/* Se usar uma fonte serif para títulos, adicione aqui, ex: */
+/* @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap'); */
+
+
+:root {
+    /* Cores adaptadas ao logo */
+    --color-primary: #1A202C; /* Azul escuro do logo (ou um preto suave) */
+    --color-accent: #D4AF37; /* Dourado/Ouro do logo */
+    --color-secondary: #ADB5BD; /* Cinza médio para texto secundário/neutro */
+    --color-background: #1A202C; /* Off-white para fundo da tela */
+    --color-card-background: #ffffff; /* Branco para fundo de cards/formulários */
+    --color-text-dark: #343A40; /* Texto escuro principal */
+    --color-text-light: #FFFFFF; /* Texto claro */
+    --color-border: #CED4DA; /* Bordas e separadores suaves */
+    --color-error: #DC3545; /* Vermelho para erros */
+
+    /* Sombras */
+    --shadow-light: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra um pouco mais proeminente */
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--color-background);
+    color: var(--color-text-dark);
+    line-height: 1.6;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.login-card {
+    background-color: var(--color-card-background);
+    border-radius: 10px;
+    box-shadow: var(--shadow-light);
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+.login-header {
+    margin-bottom: 30px;
+}
+
+.login-header .logo {
+    max-width: 150px; /* Tamanho do logo ajustado */
+    height: auto;
+    margin-bottom: 25px;
+    /* Para usar o logo MasterHouse.jpg, atualize o HTML para <img src="MasterHouse.jpg" ...> */
+    /* Adicionado para arredondar os cantos */
+    border-radius: 10px; /* Ou o valor que preferir, como 50% para um círculo perfeito se a imagem for quadrada */
+}
+
+
+.login-header h1 {
+    font-size: 26px; /* Tamanho um pouco maior */
+    color: var(--color-primary);
+    margin-bottom: 10px;
+    /* Opcional: Se usar fonte serif para títulos, adicione: font-family: 'Playfair Display', serif; */
+}
+
+.login-header p {
+    font-size: 15px;
+    color: var(--color-secondary);
+}
+
+.login-form .form-group {
+    margin-bottom: 25px; /* Mais espaço entre grupos de formulário */
+    text-align: left;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600; /* Semibold */
+    color: var(--color-text-dark);
+    font-size: 14px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 14px; /* Maior preenchimento para um toque mais moderno */
+    border: 1px solid var(--color-border);
+    border-radius: 6px; /* Bordas levemente mais arredondadas */
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+    outline: none;
+    border-color: var(--color-accent); /* Borda dourada no foco */
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.2); /* Sombra suave dourada no foco */
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 14px 25px; /* Maior preenchimento */
+    border: none;
+    border-radius: 6px;
+    font-size: 17px; /* Texto um pouco maior */
+    font-weight: 700; /* Bold */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--color-accent); /* Fundo dourado */
+    color: var(--color-primary); /* Texto na cor escura do logo para contraste */
+    margin-top: 30px; /* Mais espaço acima do botão */
+}
+
+.btn-primary:hover {
+    background-color: #C0A130; /* Um tom ligeiramente mais escuro do dourado */
+    transform: translateY(-3px); /* Efeito de elevação sutil */
+    box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3); /* Sombra mais intensa no hover */
+}
+
+.login-footer {
+    margin-top: 30px;
+    font-size: 14px;
+}
+
+.login-footer .forgot-password {
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login-footer .forgot-password:hover {
+    color: var(--color-accent); /* Dourado no hover do link */
+    text-decoration: underline;
+}
+
+/* Para telas menores */
+@media (max-width: 600px) {
+    .login-card {
+        margin: 20px;
+        padding: 30px;
+        border-radius: 8px;
+    }
+    .login-header .logo {
+        max-width: 120px;
+    }
+    .login-header h1 {
+        font-size: 22px;
+    }
+    .btn {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+}
