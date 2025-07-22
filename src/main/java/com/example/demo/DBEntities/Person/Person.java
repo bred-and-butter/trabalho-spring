@@ -1,12 +1,20 @@
 package com.example.demo.DBEntities.Person;
 
+import com.example.demo.DBEntities.Client.Client;
+import com.example.demo.DBEntities.Employee.Employee;
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@IdClass(PersonId.class)
 @Table(name = "person")
-abstract public class Person {
-    @EmbeddedId
-    private PersonId id;
+public class Person implements Serializable {
+    @Id
+    private String cpf;
+    @Id
+    private String cnpj;
 
     @Column(nullable = false)
     private String name;
@@ -17,16 +25,30 @@ abstract public class Person {
     @Column(nullable = false)
     private String address;
 
-    public Person (PersonId id, String name, String email, String phone, String address) {
-        this.id = id;
+    //@OneToOne
+    //@MapsId
+    //@JoinColumn(name = "client_id")
+    private Client client;
+
+    //@OneToOne
+    //@MapsId
+    //@JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    public Person (String cpf, String cnpj, String name, String email, String phone, String address) {
+        this.cpf = cpf;
+        this.cnpj = cnpj;
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.address = address;
     }
 
-    public PersonId getId() {return id;}
-    public void setId(PersonId id) {this.id = id;}
+    public String getCpf() {return cpf;}
+    public void setCpf(String cpf) {this.cpf = cpf;}
+
+    public String getCnpj() {return cnpj;}
+    public void setCnpj(String cnpj) {this.cnpj = cnpj;}
 
     public String getName() {return name;}
     public void setName(String name) {this.name = name;}

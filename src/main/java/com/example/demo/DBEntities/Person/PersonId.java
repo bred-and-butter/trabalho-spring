@@ -5,7 +5,6 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Embeddable
 public class PersonId implements Serializable {
     private String cpf;
     private String cnpj;
