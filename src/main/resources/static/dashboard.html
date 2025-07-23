@@ -39,33 +39,34 @@
         </nav>
 
         <main class="main-content">
+
             <section id="dashboard-section" class="content-section active">
                 <h2>Dashboard do Administrador</h2>
                 <p>Visão geral e acesso a todas as funcionalidades do sistema.</p>
                 <div class="dashboard-stats">
                     <a href="#list-manage-users-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-users-content">
                         <h3>Total de Usuários (Funcionários)</h3>
-                        <p class="stat-number">17</p>
+                        <p class="stat-number" id="stat-total-users">0</p>
                     </a>
                     <a href="#list-manage-clients-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-clients-content">
                         <h3>Total de Clientes</h3>
-                        <p class="stat-number">250</p>
+                        <p class="stat-number" id="stat-total-clients">0</p>
                     </a>
                     <a href="#list-manage-properties-content" class="stat-card action-card sidebar-link" data-content-id="list-manage-properties-content">
                         <h3>Imóveis Cadastrados</h3>
-                        <p class="stat-number">85</p>
+                        <p class="stat-number" id="stat-total-properties">0</p>
                     </a>
                     <a href="#track-sales-section" class="stat-card action-card sidebar-link" data-content-id="track-sales-section">
                         <h3>Vendas Concluídas</h3>
-                        <p class="stat-number">15</p>
+                        <p class="stat-number" id="stat-total-sales">0</p>
                     </a>
                     <a href="#consult-visits-section" class="stat-card action-card sidebar-link" data-content-id="consult-visits-section">
                         <h3>Visitas Registradas Hoje</h3>
-                        <p class="stat-number">3</p>
+                        <p class="stat-number" id="stat-visits-today">0</p>
                     </a>
                     <a href="#consult-visits-section" class="stat-card action-card sidebar-link" data-content-id="consult-visits-section">
                         <h3>Interesses Registrados (Últ. 7 dias)</h3>
-                        <p class="stat-number">20</p>
+                        <p class="stat-number" id="stat-interests-7days">0</p>
                     </a>
                 </div>
             </section>
@@ -88,7 +89,7 @@
             <section id="register-user-section" class="content-section">
                 <h2 id="user-form-title">Cadastrar Novo Usuário</h2>
                 <p id="user-form-description">Preencha os campos abaixo para registrar um novo usuário no sistema.</p>
-                <form action="/admin/usuarios/salvar" method="POST" class="user-form" id="user-registration-form">
+                <form action="#" method="POST" class="user-form" id="user-registration-form">
                     <input type="hidden" id="user_id" name="userId">
                     <h3>Dados Pessoais</h3>
                     <div class="form-group-grid">
@@ -100,13 +101,13 @@
                                 <option value="CNPJ">CNPJ</option>
                             </select>
                         </div>
-                        <div class="form-group" id="cpf_group_user">
+                       <div class="form-group" id="cpf_group_user">
                             <label for="cpf_user">CPF:</label>
-                            <input type="text" id="cpf_user" name="cpf" placeholder="Ex: 123.456.789-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                            <input type="text" id="cpf_user" name="cpf" placeholder="Ex: 123.456.789-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" oninput="this.value = formatCpf(this.value)">
                         </div>
                         <div class="form-group" id="cnpj_group_user" style="display: none;">
                             <label for="cnpj_user">CNPJ:</label>
-                            <input type="text" id="cnpj_user" name="cnpj" placeholder="Ex: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}">
+                            <input type="text" id="cnpj_user" name="cnpj" placeholder="Ex: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" oninput="this.value = formatCnpj(this.value)">
                         </div>
                         <div class="form-group full-width">
                             <label for="nome_user">Nome Completo:</label>
@@ -248,11 +249,11 @@
                         </div>
                         <div class="form-group" id="cpf_group_client">
                             <label for="cpf_client">CPF:</label>
-                            <input type="text" id="cpf_client" name="cpf" placeholder="Ex: 123.456.789-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}">
+                            <input type="text" id="cpf_client" name="cpf" placeholder="Ex: 123.456.789-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" oninput="this.value = formatCpf(this.value)">
                         </div>
                         <div class="form-group" id="cnpj_group_client" style="display: none;">
                             <label for="cnpj_client">CNPJ:</label>
-                            <input type="text" id="cnpj_client" name="cnpj" placeholder="Ex: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}">
+                            <input type="text" id="cnpj_client" name="cnpj" placeholder="Ex: 00.000.000/0000-00" pattern="\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}" oninput="this.value = formatCnpj(this.value)">
                         </div>
                         <div class="form-group full-width">
                             <label for="nome_client">Nome Completo:</label>
@@ -1052,125 +1053,19 @@
     </div>
 
     <script>
-        // Dados de exemplo para usuários (simulando dados do backend)
-        let sampleUsers = [ 
-            { id: '1', nome: 'Ana Paula Silva', primaryKey: '123.456.789-00', status: 'Ativo', cargo: 'Corretor', documentType: 'CPF', cpf: '123.456.789-00', cnpj: '', email: 'ana.silva@exemplo.com', telefone: '(11) 98765-4321', cep: '01000-000', logradouro: 'Rua das Flores', numero: '100', complemento: 'Apto 10', bairro: 'Centro', cidade: 'São Paulo', estado: 'SP', areaAtuacao: 'Zona Sul', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: true },
-            { id: '2', nome: 'Carlos Eduardo Santos', primaryKey: '987.654.321-00', status: 'Ativo', cargo: 'Gerente', documentType: 'CPF', cpf: '987.654.321-00', cnpj: '', email: 'carlos.santos@exemplo.com', telefone: '(21) 91234-5678', cep: '20000-000', logradouro: 'Avenida Principal', numero: '500', complemento: '', bairro: 'Copacabana', cidade: 'Rio de Janeiro', estado: 'RJ', areaAtuacao: '', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: true },
-            { id: '3', nome: 'Empresa Alpha Ltda.', primaryKey: '12.345.678/0001-00', status: 'Ativo', cargo: 'Administrador', documentType: 'CNPJ', cpf: '', cnpj: '12.345.678/0001-00', email: 'contato@alpha.com', telefone: '(31) 3232-1212', cep: '30000-000', logradouro: 'Rua Comercial', numero: '200', complemento: 'Sala 1', bairro: 'Centro', cidade: 'Belo Horizonte', estado: 'MG', areaAtuacao: '', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: true },
-            { id: '4', nome: 'Fernanda Oliveira', primaryKey: '111.222.333-44', status: 'Inativo', cargo: 'Corretor', documentType: 'CPF', cpf: '111.222.333-44', cnpj: '', email: 'fernanda.o@exemplo.com', telefone: '(41) 99887-7665', cep: '80000-000', logradouro: 'Travessa Curitiba', numero: '30', complemento: '', bairro: 'Centro', cidade: 'Curitiba', estado: 'PR', areaAtuacao: 'Centro', senha: 'hashed_password', confirmarSenha: 'hashed_password', ativo: false }
-        ];
+        // Comentário: Define a URL base para todas as requisições à API.
+        const API_BASE_URL = 'http://localhost:8080/api'; // Substitua pela URL do seu backend Spring
+        // Comentário: Chave para armazenar e recuperar o token JWT do sessionStorage.
+        const AUTH_TOKEN_KEY = 'masterhouse_jwt_token';
 
-        // Dados de exemplo para clientes (simulando dados do backend)
-        let sampleClients = [
-            { id: 'c1', nome: 'Maria Eduarda Costa', primaryKey: '000.111.222-33', documentType: 'CPF', cpf: '000.111.222-33', cnpj: '', email: 'maria.costa@email.com', telefone: '(51) 99988-7766', cep: '90000-000', logradouro: 'Rua das Palmeiras', numero: '50', complemento: '', bairro: 'Jardim', cidade: 'Porto Alegre', estado: 'RS', dataCadastro: '2023-01-15' },
-            { id: 'c2', nome: 'Construtora Solida S.A.', primaryKey: '45.678.901/0001-00', documentType: 'CNPJ', cpf: '', cnpj: '45.678.901/0001-00', email: 'contato@construtorasolida.com', telefone: '(11) 2233-4455', cep: '03000-000', logradouro: 'Avenida das Indústrias', numero: '1000', complemento: 'Andar 5', bairro: 'Distrito Industrial', cidade: 'São Paulo', estado: 'SP', dataCadastro: '2022-05-20' },
-            { id: 'c3', nome: 'João Pedro Alves', primaryKey: '333.444.555-66', documentType: 'CPF', cpf: '333.444.555-66', cnpj: '', email: 'joao.alves@email.com', telefone: '(61) 98765-1234', cep: '70000-000', logradouro: 'SQN 101 Bloco A', numero: '1', complemento: 'Apto 202', bairro: 'Asa Norte', cidade: 'Brasília', estado: 'DF', dataCadastro: '2024-02-01' }
-        ];
+        // Comentário: Funções auxiliares para gerenciar o token JWT no sessionStorage.
+        const getToken = () => sessionStorage.getItem(AUTH_TOKEN_KEY);
+        const removeToken = () => sessionStorage.removeItem(AUTH_TOKEN_KEY);
 
-        // Dados de exemplo para imóveis (simulando dados do backend)
-        let sampleProperties = [
-            {
-                id: 'p1', numeroMatriculaImovel: '12345-ABC', finalidade: 'VENDA', valor: 550000.00, areaTotal: 180.50, status: 'DISPONIVEL', dataCadastro: '2023-01-20', dataAtualizacao: '2024-06-01', proprietarioId: 'c1',
-                endereco: 'Rua das Camélias', numero: '123', complemento: '', bairro: 'Jardim Botânico', cidade: 'Porto Alegre', estado: 'RS', cep: '90000-000',
-                tipoImovel: 'CASA', numeroQuartos: 3, numeroBanheiros: 2, numeroSuites: 1, areaConstruida: 120.00, numeroVagasGaragem: 2, descricaoResidencial: 'Casa espaçosa com quintal grande.', possuiQuintal: true, numeroPavimentos: 2,
-                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'numeroQuartos', 'numeroBanheiros', 'numeroSuites', 'areaConstruida', 'numeroVagasGaragem', 'possuiQuintal', 'numeroPavimentos'] // Campos para avaliação
-            },
-            {
-                id: 'p2', numeroMatriculaImovel: '67890-XYZ', finalidade: 'ALUGUEL', valor: 2500.00, areaTotal: 75.00, status: 'DISPONIVEL', dataCadastro: '2023-03-10', dataAtualizacao: '2024-05-15', proprietarioId: 'c2',
-                endereco: 'Av. Paulista', numero: '1500', complemento: 'Apto 101', bairro: 'Bela Vista', cidade: 'São Paulo', estado: 'SP', cep: '01310-100',
-                tipoImovel: 'APARTAMENTO', numeroQuartos: 2, numeroBanheiros: 1, numeroSuites: 0, areaConstruida: 65.00, numeroVagasGaragem: 1, descricaoResidencial: 'Apartamento moderno com vista para a cidade.', andar: 10, numeroApartamento: '101', possuiElevador: true,
-                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'numeroQuartos', 'numeroBanheiros', 'numeroSuites', 'areaConstruida', 'numeroVagasGaragem', 'andar', 'possuiElevador'] // Campos para avaliação
-            },
-            {
-                id: 'p3', numeroMatriculaImovel: '11223-DEF', finalidade: 'VENDA', valor: 1200000.00, areaTotal: 500.00, status: 'EM_NEGOCIACAO', dataCadastro: '2022-11-05', dataAtualizacao: '2024-06-20', proprietarioId: 'c3',
-                endereco: 'Rua do Comércio', numero: '50', complemento: '', bairro: 'Centro', cidade: 'Belo Horizonte', estado: 'MG', cep: '30110-000',
-                tipoImovel: 'SALA_COMERCIAL', areaUtil: 80.00, descricaoComercial: 'Sala comercial ampla com divisórias.', andarSala: 5, numeroSala: '502',
-                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'areaUtil', 'andarSala'] // Removi 'numeroSala' por ser um identificador, não um atributo avaliativo
-            },
-            {
-                id: 'p4', numeroMatriculaImovel: '99887-GHI', finalidade: 'VENDA', valor: 300000.00, areaTotal: 450.00, status: 'DISPONIVEL', dataCadastro: '2024-01-01', dataAtualizacao: '', proprietarioId: 'c1',
-                endereco: 'Estrada do Forte', numero: 'S/N', complemento: '', bairro: 'Zona Rural', cidade: 'Gramado', estado: 'RS', cep: '95670-000',
-                tipoImovel: 'TERRENO', topografia: 'Plana', tipoSolo: 'Argiloso',
-                interessesValidos: ['bairro', 'cidade', 'estado', 'areaTotal', 'valor', 'topografia', 'tipoSolo'] // Campos para avaliação
-            }
-        ];
-
-        // Dados de exemplo para Visitas e Interesses
-        let sampleVisits = [
-            {
-                id: 'v1', clienteId: 'c1', imovelId: 'p1', corretorId: '1', dataHora: '2024-06-25T10:00', observacoes: 'Cliente muito interessada na casa, principalmente no quintal.',
-                interesses: { bairro: 5, cidade: 4, estado: 5, areaTotal: 4, valor: 3, numeroQuartos: 5, numeroBanheiros: 4, numeroSuites: 3, areaConstruida: 4, numeroVagasGaragem: 5, possuiQuintal: 5, numeroPavimentos: 4 }
-            },
-            {
-                id: 'v2', clienteId: 'c3', imovelId: 'p3', corretorId: '1', dataHora: '2024-06-26T14:30', observacoes: 'Visita para possível investimento. Cliente pediu mais detalhes sobre zoneamento.',
-                interesses: { bairro: 4, cidade: 5, estado: 5, areaTotal: 3, valor: 4, areaUtil: 4, andarSala: 5 } // numeroSala não é um atributo de avaliação
-            },
-            {
-                id: 'v3', clienteId: 'c2', imovelId: 'p2', corretorId: '4', dataHora: '2024-06-27T11:00', observacoes: 'Empresa buscando espaço para nova filial. Gostou da localização.',
-                interesses: { bairro: 5, cidade: 5, estado: 5, areaTotal: 4, valor: 3, numeroQuartos: 3, numeroBanheiros: 2, numeroSuites: 0, areaConstruida: 4, numeroVagasGaragem: 1, andar: 4, possuiElevador: 5 }
-            }
-        ];
-
-        // Dados de exemplo para Vendas (NOVOS)
-        let sampleSales = [
-            {
-                id: 's1',
-                numeroMatriculaImovel: '12345-ABC',
-                clienteCompradorId: 'c1', // ID do cliente comprador
-                proprietarioImovelId: 'c1', // ID do proprietário do imóvel (inferido do p1)
-                corretorId: '1', // ID do corretor
-                dataVenda: '2024-06-28T14:00',
-                valorFinal: 540000.00
-            },
-            {
-                id: 's2',
-                numeroMatriculaImovel: '11223-DEF',
-                clienteCompradorId: 'c2',
-                proprietarioImovelId: 'c3',
-                corretorId: '4',
-                dataVenda: '2024-06-29T10:30',
-                valorFinal: 1150000.00
-            }
-        ];
-
-
-        // Mapeamento de tipos de imóvel para os IDs dos grupos de campos específicos.
-        const typeFieldGroups = {
-            TERRENO: ['terreno_fields'],
-            CASA: ['unidade_residencial_fields', 'casa_fields'],
-            APARTAMENTO: ['unidade_residencial_fields', 'apartamento_fields'],
-            PREDIO_COMERCIAL: ['unidade_comercial_fields', 'predio_comercial_fields'],
-            SALA_COMERCIAL: ['unidade_comercial_fields', 'sala_comercial_fields']
-        };
-
-        // Função para traduzir nomes de campos para nomes amigáveis
-        const translateFieldName = (fieldName) => {
-            const translations = {
-                bairro: "Bairro",
-                cidade: "Cidade",
-                estado: "Estado",
-                areaTotal: "Área Total",
-                valor: "Valor",
-                topografia: "Topografia",
-                tipoSolo: "Tipo de Solo",
-                numeroQuartos: "Quartos",
-                numeroBanheiros: "Banheiros",
-                numeroSuites: "Suítes",
-                areaConstruida: "Área Construída",
-                numeroVagasGaragem: "Vagas Garagem",
-                possuiQuintal: "Quintal",
-                numeroPavimentos: "Nº Pavimentos",
-                andar: "Andar Apartamento",
-                possuiElevador: "Elevador",
-                areaUtil: "Área Útil",
-                totalAndares: "Total Andares",
-                numeroSalas: "Salas",
-                possuiEstacionamento: "Estacionamento",
-                andarSala: "Andar Sala",
-                numeroSala: "Nº Sala Comercial"
-            };
-            return translations[fieldName] || fieldName;
-        };
+        // Comentário: Removemos os 'sampleData' globais, pois os dados virão do backend.
+        // As referências a esses dados fictícios serão substituídas por chamadas assíncronas ao backend.
+        // As demais variáveis de elementos HTML e funções auxiliares permanecem inalteradas.
+        
 
         // Função para gerar as estrelas de avaliação
         const generateStarRating = (rating) => {
@@ -1238,13 +1133,18 @@
             });
             
             const targetSection = document.getElementById(contentId);
-            
-            if (targetSection) {
+
+             if (targetSection) {
                 targetSection.style.display = 'block';
-                void targetSection.offsetWidth; // Força um reflow para a transição
+                void targetSection.offsetWidth;
                 targetSection.classList.add('active');
                 targetSection.style.opacity = '1';
 
+                // Comentário: Nova lógica: Ao exibir a seção do dashboard, carrega as estatísticas.
+                if (contentId === 'dashboard-section') { 
+                    loadDashboardStats();
+                }
+            
                 // Lógica específica para cada seção ao exibi-la
                 if (contentId === 'list-manage-users-content') {
                     loadUsersTable();
@@ -1324,6 +1224,27 @@
             }
         };
 
+        // Comentário: Funções auxiliares para formatação de CPF/CNPJ
+        const formatCpf = (value) => {
+            value = value.replace(/\D/g, ""); // Remove tudo que não é dígito
+            value = value.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca ponto entre o terceiro e o quarto dígitos
+            value = value.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca ponto entre o sexto e o sétimo dígitos
+            value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca hífen entre o nono e o décimo dígitos
+            return value;
+        };
+
+        const formatCnpj = (value) => {
+            value = value.replace(/\D/g, ""); // Remove tudo que não é dígito
+            value = value.replace(/^(\d{2})(\d)/, "$1.$2"); // Coloca ponto entre o segundo e o terceiro dígitos
+            value = value.replace(/^(\d{2}).(\d{3})(\d)/, "$1.$2.$3"); // Coloca ponto entre o quinto e o sexto dígitos
+            value = value.replace(/.(\d{3})(\d)/, ".$1/$2"); // Coloca barra entre o oitavo e o nono dígitos
+            value = value.replace(/(\d{4})(\d)/, "$1-$2"); // Coloca hífen depois dos quatro primeiros dígitos (antes do final)
+            return value;
+        };
+
+        const unformatDocument = (value) => {
+            return value.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             const usersTableBody = document.getElementById('users-table-body');
@@ -1397,6 +1318,62 @@
             const proprietarioImovelVendaSelect = document.getElementById('proprietario_imovel_venda_select');
             const corretorVendaSelect = document.getElementById('corretor_venda_select');
 
+            // Comentário: Função assíncrona para buscar as estatísticas do dashboard do backend.
+            const loadDashboardStats = async () => {
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint que retorna o total de usuários.
+                    // Comentário: O Spring Boot precisará expor um endpoint como '/api/dashboard/users/count' que retorna um número inteiro.
+                    const usersCountResponse = await fetch(`${API_BASE_URL}/dashboard/users/count`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` } // Envia o token de autenticação
+                    });
+                    const usersCount = await usersCountResponse.json(); // Espera que a resposta seja um número JSON.
+                    document.getElementById('stat-total-users').textContent = usersCount; // Atualiza o elemento HTML.
+
+                    // Comentário: Repita o padrão para os outros contadores do dashboard.
+                    // Comentário: Certifique-se de que seus endpoints no Spring Boot retornem apenas o número esperado.
+                    const clientsCountResponse = await fetch(`${API_BASE_URL}/dashboard/clients/count`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    const clientsCount = await clientsCountResponse.json();
+                    document.getElementById('stat-total-clients').textContent = clientsCount;
+
+                    const propertiesCountResponse = await fetch(`${API_BASE_URL}/dashboard/properties/count`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    const propertiesCount = await propertiesCountResponse.json();
+                    document.getElementById('stat-total-properties').textContent = propertiesCount;
+
+                    const salesCountResponse = await fetch(`${API_BASE_URL}/dashboard/sales/count`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    const salesCount = await salesCountResponse.json();
+                    document.getElementById('stat-total-sales').textContent = salesCount;
+
+                    const visitsTodayResponse = await fetch(`${API_BASE_URL}/dashboard/visits/countToday`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    const visitsToday = await visitsTodayResponse.json();
+                    document.getElementById('stat-visits-today').textContent = visitsToday;
+
+                    const interests7DaysResponse = await fetch(`${API_BASE_URL}/dashboard/interests/countLast7Days`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    const interests7Days = await interests7DaysResponse.json();
+                    document.getElementById('stat-interests-7days').textContent = interests7Days;
+
+                } catch (error) {
+                    // Comentário: Em caso de erro, exibe mensagens no console e alerta o usuário.
+                    console.error('Erro ao carregar estatísticas do dashboard:', error);
+                    alert('Erro ao carregar dados do dashboard.');
+                    // Comentário: Considerar limpar o token e redirecionar para o login se o erro for 401/403.
+                    if (error.message.includes('Sessão expirada') || error.message.includes('não autorizado')) {
+                        removeToken();
+                        window.location.href = 'login.html';
+                    }
+                }
+            };
+
+            
 
             // Anexar event listeners aos links da barra lateral
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
@@ -1426,81 +1403,141 @@
 
             // USER FUNCTIONS -----------------------------------------------------------
 
-            const loadUsersTable = (searchTerm = '') => {
-                usersTableBody.innerHTML = '';
+            // Comentário: Função assíncrona para carregar e exibir os usuários na tabela a partir do backend.
+            const loadUsersTable = async (searchTerm = '') => {
+                // Comentário: Exibe uma mensagem de carregamento enquanto os dados são buscados.
+                usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carregando usuários...</td></tr>'; 
 
-                const filteredUsers = sampleUsers.filter(user => {
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-                    return user.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           user.primaryKey.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           user.cargo.toLowerCase().includes(lowerCaseSearchTerm);
-                });
-
-                const sortedUsers = [...filteredUsers].sort((a, b) => a.nome.localeCompare(b.nome));
-
-                sortedUsers.forEach(user => {
-                    const row = usersTableBody.insertRow();
-                    row.innerHTML = `
-                        <td data-label="Nome">${user.nome}</td>
-                        <td data-label="Chave Primária">${user.primaryKey}</td>
-                        <td data-label="Status">${user.status}</td>
-                        <td data-label="Cargo">${user.cargo}</td>
-                        <td data-label="Ações" class="actions-cell">
-                            <button class="edit-btn" data-user-id="${user.id}"><i class="fas fa-edit"></i></button>
-                        </td>
-                    `;
-                });
-
-                document.querySelectorAll('.edit-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const userId = event.currentTarget.dataset.userId;
-                        editUser(userId);
+                try {
+                    // Comentário: Realiza uma requisição GET para o endpoint de listagem de usuários do seu backend Spring Boot.
+                    // Comentário: O termo de pesquisa é enviado como um parâmetro de query string, e o token JWT é incluído no cabeçalho 'Authorization'.
+                    const response = await fetch(`${API_BASE_URL}/users?search=${encodeURIComponent(searchTerm)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}` // Envia o token de autenticação
+                        }
                     });
-                });
+
+                    // Comentário: Verifica se a resposta da requisição foi bem-sucedida (status 2xx).
+                    if (!response.ok) {
+                        // Comentário: Lida com respostas de erro comuns de autenticação/autorização.
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken(); // Limpa o token inválido
+                            window.location.href = 'login.html'; // Redireciona para o login
+                            return;
+                        }
+                        const errorData = await response.json(); // Tenta ler o corpo da resposta como JSON de erro.
+                        throw new Error(errorData.message || 'Erro ao carregar usuários.');
+                    }
+
+                    const users = await response.json(); // Converte a resposta JSON para um array de objetos JavaScript.
+
+                    usersTableBody.innerHTML = ''; // Limpa o conteúdo atual da tabela.
+
+                    // Comentário: Se nenhum usuário for retornado, exibe uma mensagem indicando isso.
+                    if (users.length === 0) {
+                        usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-secondary);">Nenhum usuário encontrado.</td></tr>'; 
+                        return;
+                    }
+
+                    // Comentário: Itera sobre o array de usuários recebido do backend para popular as linhas da tabela.
+                    users.forEach(user => { 
+                        const row = usersTableBody.insertRow();
+                        // Comentário: Acessa propriedades como 'nome', 'primaryKey', 'ativo', 'tipoCargo' que devem vir do backend.
+                        row.innerHTML = `
+                            <td data-label="Nome">${user.nome}</td>
+                            <td data-label="Chave Primária">${user.primaryKey || user.cpf || user.cnpj || 'N/A'}</td>
+                            <td data-label="Status">${user.ativo ? 'Ativo' : 'Inativo'}</td>
+                            <td data-label="Cargo">${user.tipoCargo}</td>
+                            <td data-label="Ações" class="actions-cell">
+                                <button class="edit-btn" data-user-id="${user.id}"><i class="fas fa-edit"></i></button>
+                            </td>
+                        `;
+                    });
+
+                    // Comentário: Adiciona event listeners aos botões de edição após a tabela ser preenchida dinamicamente.
+                    document.querySelectorAll('#users-table-body .edit-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const userId = event.currentTarget.dataset.userId;
+                            editUser(userId); // Chama a função 'editUser' com o ID do usuário clicado.
+                        });
+                    });
+
+                } catch (error) {
+                    // Comentário: Captura e exibe erros que podem ocorrer durante a requisição ou processamento.
+                    console.error('Erro ao buscar usuários:', error);
+                    usersTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--color-error);">Erro ao carregar usuários: ${error.message}</td></tr>`; 
+                }
             };
 
-            if (userSearchInput) {
-                userSearchInput.addEventListener('keyup', (event) => {
-                    loadUsersTable(event.target.value);
-                });
-            }
+            // Comentário: Adiciona um event listener ao campo de pesquisa. Sempre que o usuário digita, a tabela é recarregada com o termo de pesquisa.
+            if (userSearchInput) { //
+                userSearchInput.addEventListener('keyup', (event) => { //
+                    loadUsersTable(event.target.value); //
+                }); //
+            } 
 
-            const editUser = (userId) => {
-                const user = sampleUsers.find(u => u.id === userId);
+            // Comentário: Função assíncrona para carregar os dados de um usuário específico para edição.
+            const editUser = async (userId) => { // Adicionado 'async'
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de detalhe de usuário do Spring Boot.
+                    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        }
+                    });
 
-                if (user) {
-                    userFormTitle.textContent = 'Editar Usuário';
-                    userFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do usuário.';
-                    userIdInput.value = user.id;
+                    // Comentário: Verifica a resposta e trata erros.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Usuário não encontrado.');
+                    }
 
-                    document.getElementById('cpf_cnpj_select_user').value = user.documentType;
+                    const user = await response.json(); // Converte a resposta JSON para um objeto JavaScript.
+
+                    // Comentário: Atualiza o título e descrição do formulário para modo de edição.
+                    userFormTitle.textContent = 'Editar Usuário'; 
+                    userFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do usuário.'; 
+                    userIdInput.value = user.id; // Define o ID do usuário no campo hidden.
+
+                    // Comentário: Preenche os campos do formulário com os dados recebidos do backend.
+                    // Comentário: Dispara eventos 'change' para garantir que a lógica de visibilidade de campos (CPF/CNPJ, Área de Atuação) seja atualizada.
+                    document.getElementById('cpf_cnpj_select_user').value = user.documentType || '';
                     document.getElementById('cpf_cnpj_select_user').dispatchEvent(new Event('change'));
-                    document.getElementById('cpf_user').value = user.cpf;
-                    document.getElementById('cnpj_user').value = user.cnpj;
-                    document.getElementById('nome_user').value = user.nome;
-                    document.getElementById('email_user').value = user.email;
-                    document.getElementById('telefone_user').value = user.telefone;
-                    document.getElementById('cep_user').value = user.cep;
-                    document.getElementById('logradouro_user').value = user.logradouro;
-                    document.getElementById('numero_user').value = user.numero;
-                    document.getElementById('complemento_user').value = user.complemento;
-                    document.getElementById('bairro_user').value = user.bairro;
-                    document.getElementById('cidade_user').value = user.cidade;
-                    document.getElementById('estado_user').value = user.estado;
-                    document.getElementById('tipo_cargo').value = user.cargo.toUpperCase();
+                    document.getElementById('cpf_user').value = user.cpf ? formatCpf(user.cpf) : '';
+                    document.getElementById('cnpj_user').value = user.cnpj ? formatCnpj(user.cnpj) : '';
+                    document.getElementById('nome_user').value = user.nome || '';
+                    document.getElementById('email_user').value = user.email || '';
+                    document.getElementById('telefone_user').value = user.telefone || '';
+                    document.getElementById('cep_user').value = user.endereco?.cep || ''; // Acessa sub-propriedade 'endereco.cep'
+                    document.getElementById('logradouro_user').value = user.endereco?.logradouro || '';
+                    document.getElementById('numero_user').value = user.endereco?.numero || '';
+                    document.getElementById('complemento_user').value = user.endereco?.complemento || '';
+                    document.getElementById('bairro_user').value = user.endereco?.bairro || '';
+                    document.getElementById('cidade_user').value = user.endereco?.cidade || '';
+                    document.getElementById('estado_user').value = user.endereco?.estado || '';
+                    document.getElementById('tipo_cargo').value = user.tipoCargo || ''; // 'tipoCargo' deve ser o nome da propriedade no backend
                     document.getElementById('tipo_cargo').dispatchEvent(new Event('change'));
-                    document.getElementById('area_atuacao').value = user.areaAtuacao;
-                    document.getElementById('senha').value = ''; 
+                    document.getElementById('area_atuacao').value = user.areaAtuacao || '';
+                    document.getElementById('senha').value = ''; // Senha geralmente não é pré-preenchida por segurança.
                     document.getElementById('confirmar_senha').value = '';
-                    document.getElementById('ativo').checked = user.ativo;
+                    document.getElementById('ativo').checked = user.ativo; // 'ativo' deve ser um booleano do backend.
 
+                    // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteUser'.
                     deleteUserBtn.style.display = 'inline-block';
                     deleteUserBtn.onclick = () => deleteUser(user.id);
 
-                    showSection('register-user-section');
-                } else {
-                    console.error('Usuário não encontrado para edição:', userId);
-                    alert('Usuário não encontrado.');
+                    showSection('register-user-section'); // Exibe a seção do formulário de registro/edição.
+
+                } catch (error) {
+                    console.error('Erro ao carregar usuário para edição:', error);
+                    alert(`Erro ao carregar usuário: ${error.message}`);
                 }
             };
 
@@ -1514,54 +1551,120 @@
                 deleteUserBtn.style.display = 'none';
             };
 
-            userRegistrationForm.addEventListener('submit', (event) => {
+
+            // Comentário: Event listener para a submissão do formulário de cadastro/edição de usuário.
+           clientRegistrationForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
-                const formData = new FormData(userRegistrationForm);
-                const userData = Object.fromEntries(formData.entries());
+                const formData = new FormData(clientRegistrationForm);
+                const clientData = Object.fromEntries(formData.entries());
 
-                if (userData.senha !== userData.confirmarSenha) {
-                    alert('As senhas não coincidem!');
-                    return;
+                // Desformatar CPF/CNPJ antes de criar clientToSend
+                if (clientData.documentType === 'CPF' && clientData.cpf) {
+                    clientData.cpf = unformatDocument(clientData.cpf);
+                }
+                if (clientData.documentType === 'CNPJ' && clientData.cnpj) {
+                    clientData.cnpj = unformatDocument(clientData.cnpj);
                 }
 
-                if (userIdInput.value) {
-                    const userIndex = sampleUsers.findIndex(u => u.id === userIdInput.value);
-                    if (userIndex !== -1) {
-                        sampleUsers[userIndex] = {
-                            ...sampleUsers[userIndex],
-                            ...userData,
-                            primaryKey: userData.documentType === 'CPF' ? userData.cpf : userData.cnpj,
-                            status: userData.ativo === 'on' ? 'Ativo' : 'Inativo',
-                            ativo: userData.ativo === 'on'
-                        };
-                        alert('Usuário atualizado com sucesso!');
+                // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de cliente no Spring.
+                const clientToSend = {
+                    id: clientData.clientId || null,
+                    nome: clientData.nome,
+                    email: clientData.email,
+                    telefone: clientData.telefone,
+                    documentType: clientData.documentType,
+                    cpf: clientData.cpf, // Já desformatado
+                    cnpj: clientData.cnpj, // Já desformatado
+                    dataCadastro: clientData.dataCadastro,
+                    endereco: {
+                        cep: clientData.cep,
+                        logradouro: clientData.logradouro,
+                        numero: clientData.numero,
+                        complemento: clientData.complemento,
+                        bairro: clientData.bairro,
+                        cidade: clientData.cidade,
+                        estado: clientData.estado
                     }
-                } else {
-                    const newUser = {
-                        id: (sampleUsers.length + 1).toString(),
-                        primaryKey: userData.documentType === 'CPF' ? userData.cpf : userData.cnpj,
-                        status: userData.ativo === 'on' ? 'Ativo' : 'Inativo',
-                        ...userData,
-                        ativo: userData.ativo === 'on'
-                    };
-                    sampleUsers.push(newUser);
-                    alert('Usuário cadastrado com sucesso!');
+                };
+
+                // Comentário: Ajusta o valor do checkbox 'ativo' para um booleano (true/false) esperado pelo backend.
+                userData.ativo = userData.ativo === 'on';
+
+                // Comentário: Determina o método HTTP (POST para novo usuário, PUT para edição) e a URL do endpoint.
+                const isEditing = !!userIdInput.value; // Verifica se há um ID de usuário, indicando edição.
+                const method = isEditing ? 'PUT' : 'POST';
+                const url = isEditing ? `${API_BASE_URL}/users/${userIdInput.value}` : `${API_BASE_URL}/users`;
+
+                try {
+                    // Comentário: Envia os dados do usuário para o backend.
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        },
+                        // Comentário: Converte o objeto userData para JSON. Remova 'confirmarSenha' antes de enviar, pois não é uma propriedade do modelo de backend.
+                        body: JSON.stringify({ ...userData, confirmarSenha: undefined }) 
+                    });
+
+                    // Comentário: Verifica se a operação no backend foi bem-sucedida.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} usuário.`);
+                    }
+
+                    // Comentário: Mensagem de sucesso e redirecionamento para a lista de usuários.
+                    alert(`Usuário ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`);
+                    resetUserForm(); // Limpa o formulário
+                    showSection('list-manage-users-content'); // Volta para a lista
+                } catch (error) {
+                    // Comentário: Captura e exibe erros da requisição.
+                    console.error(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} usuário:`, error);
+                    alert(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} usuário: ${error.message}`);
                 }
-                resetUserForm();
-                showSection('list-manage-users-content');
             });
 
-            const deleteUser = (userId) => {
+            // Comentário: Função assíncrona para excluir um usuário do backend.
+            const deleteUser = async (userId) => { // Adicionado 'async'
+                // Comentário: Confirmação antes de prosseguir com a exclusão.
                 if (confirm('Tem certeza que deseja excluir este usuário? Esta ação é irreversível.')) {
-                    const initialLength = sampleUsers.length;
-                    sampleUsers = sampleUsers.filter(u => u.id !== userId);
-                    if (sampleUsers.length < initialLength) {
+                    try {
+                        // Comentário: Envia uma requisição DELETE para o endpoint de exclusão de usuário do Spring Boot.
+                        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                            }
+                        });
+
+                        // Comentário: Verifica se a exclusão foi bem-sucedida (status 204 No Content ou 200 OK).
+                        if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                                removeToken();
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                            // Comentário: Se houver um corpo de erro, tenta lê-lo.
+                            const errorData = response.status !== 204 ? await response.json() : { message: 'Erro desconhecido.' };
+                            throw new Error(errorData.message || 'Erro ao excluir usuário.');
+                        }
+
+                        // Comentário: Mensagem de sucesso e recarregamento da lista de usuários.
                         alert('Usuário excluído com sucesso!');
-                        resetUserForm();
-                        showSection('list-manage-users-content');
-                    } else {
-                        alert('Erro ao excluir usuário. Usuário não encontrado.');
+                        resetUserForm(); // Limpa o formulário
+                        showSection('list-manage-users-content'); // Volta para a lista de usuários
+                    } catch (error) {
+                        // Comentário: Captura e exibe erros da requisição de exclusão.
+                        console.error('Erro ao excluir usuário:', error);
+                        alert(`Erro ao excluir usuário: ${error.message}`);
                     }
                 }
             };
@@ -1602,37 +1705,66 @@
                 toggleCpfCnpjClientFields();
             }
 
-            const loadClientsTable = (searchTerm = '') => {
-                clientsTableBody.innerHTML = '';
+            // Comentário: Função assíncrona para carregar e exibir os clientes na tabela a partir do backend.
+            const loadClientsTable = async (searchTerm = '') => { // Adicionado 'async'
+                clientsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Carregando clientes...</td></tr>';
 
-                const filteredClients = sampleClients.filter(client => {
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-                    return client.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           client.primaryKey.toLowerCase().includes(lowerCaseSearchTerm);
-                });
-
-                const sortedClients = [...filteredClients].sort((a, b) => a.nome.localeCompare(b.nome));
-
-                sortedClients.forEach(client => {
-                    const row = clientsTableBody.insertRow();
-                    row.innerHTML = `
-                        <td data-label="Nome">${client.nome}</td>
-                        <td data-label="Chave Primária">${client.primaryKey}</td>
-                        <td data-label="Email">${client.email}</td>
-                        <td data-label="Telefone">${client.telefone}</td>
-                        <td data-label="Data de Cadastro">${client.dataCadastro}</td>
-                        <td data-label="Ações" class="actions-cell">
-                            <button class="edit-btn" data-client-id="${client.id}"><i class="fas fa-edit"></i></button>
-                        </td>
-                    `;
-                });
-
-                document.querySelectorAll('#clients-table-body .edit-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const clientId = event.currentTarget.dataset.clientId;
-                        editClient(clientId);
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de listagem de clientes do Spring Boot.
+                    // Comentário: O termo de pesquisa é enviado como um parâmetro de query string, e o token JWT é incluído no cabeçalho.
+                    const response = await fetch(`${API_BASE_URL}/clients?search=${encodeURIComponent(searchTerm)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
                     });
-                });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erro ao carregar clientes.');
+                    }
+
+                    const clients = await response.json(); // Converte a resposta JSON para um array de objetos JavaScript.
+
+                    clientsTableBody.innerHTML = '';
+
+                    if (clients.length === 0) {
+                        clientsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-secondary);">Nenhum cliente encontrado.</td></tr>';
+                        return;
+                    }
+
+                    clients.forEach(client => {
+                        const row = clientsTableBody.insertRow();
+                        // Comentário: Ajuste para primaryKey, que pode ser cpf ou cnpj no seu backend.
+                        const primaryKeyValue = client.documentType === 'CPF' ? client.cpf : client.cnpj;
+                        row.innerHTML = `
+                            <td data-label="Nome">${client.nome}</td>
+                            <td data-label="Chave Primária">${primaryKeyValue || 'N/A'}</td>
+                            <td data-label="Email">${client.email || 'N/A'}</td>
+                            <td data-label="Telefone">${client.telefone || 'N/A'}</td>
+                            <td data-label="Data de Cadastro">${client.dataCadastro || 'N/A'}</td>
+                            <td data-label="Ações" class="actions-cell">
+                                <button class="edit-btn" data-client-id="${client.id}"><i class="fas fa-edit"></i></button>
+                            </td>
+                        `;
+                    });
+
+                    document.querySelectorAll('#clients-table-body .edit-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const clientId = event.currentTarget.dataset.clientId;
+                            editClient(clientId);
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao buscar clientes:', error);
+                    clientsTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-error);">Erro ao carregar clientes: ${error.message}</td></tr>`;
+                }
             };
 
             if (clientSearchInput) {
@@ -1641,37 +1773,62 @@
                 });
             }
 
-            const editClient = (clientId) => {
-                const client = sampleClients.find(c => c.id === clientId);
+            // Comentário: Função assíncrona para carregar os dados de um cliente específico para edição.
+            const editClient = async (clientId) => { // Adicionado 'async'
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de detalhe de cliente do Spring Boot.
+                    const response = await fetch(`${API_BASE_URL}/clients/${clientId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        }
+                    });
 
-                if (client) {
+                    // Comentário: Verifica a resposta e trata erros.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Cliente não encontrado.');
+                    }
+
+                    const client = await response.json(); // Converte a resposta JSON para um objeto JavaScript.
+
+                    // Comentário: Atualiza o título e descrição do formulário para modo de edição.
                     clientFormTitle.textContent = 'Editar Cliente';
                     clientFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do cliente.';
-                    clientIdInput.value = client.id;
+                    clientIdInput.value = client.id; // Define o ID do cliente no campo hidden.
 
-                    document.getElementById('cpf_cnpj_select_client').value = client.documentType;
+                    // Comentário: Preenche os campos do formulário com os dados recebidos do backend.
+                    // Comentário: Dispara eventos 'change' para garantir que a lógica de visibilidade de campos (CPF/CNPJ) seja atualizada.
+                    document.getElementById('cpf_cnpj_select_client').value = client.documentType || '';
                     document.getElementById('cpf_cnpj_select_client').dispatchEvent(new Event('change'));
-                    document.getElementById('cpf_client').value = client.cpf;
-                    document.getElementById('cnpj_client').value = client.cnpj;
-                    document.getElementById('nome_client').value = client.nome;
-                    document.getElementById('email_client').value = client.email;
-                    document.getElementById('telefone_client').value = client.telefone;
-                    document.getElementById('cep_client').value = client.cep;
-                    document.getElementById('logradouro_client').value = client.logradouro;
-                    document.getElementById('numero_client').value = client.numero;
-                    document.getElementById('complemento_client').value = client.complemento;
-                    document.getElementById('bairro_client').value = client.bairro;
-                    document.getElementById('cidade_client').value = client.cidade;
-                    document.getElementById('estado_client').value = client.estado;
-                    document.getElementById('data_cadastro_client').value = client.dataCadastro;
+                    document.getElementById('cpf_client').value = client.cpf ? formatCpf(client.cpf) : '';
+                    document.getElementById('cnpj_client').value = client.cnpj ? formatCnpj(client.cnpj) : '';
+                    document.getElementById('nome_client').value = client.nome || '';
+                    document.getElementById('email_client').value = client.email || '';
+                    document.getElementById('telefone_client').value = client.telefone || '';
+                    document.getElementById('cep_client').value = client.endereco?.cep || ''; // Acessa sub-propriedade 'endereco.cep'
+                    document.getElementById('logradouro_client').value = client.endereco?.logradouro || '';
+                    document.getElementById('numero_client').value = client.endereco?.numero || '';
+                    document.getElementById('complemento_client').value = client.endereco?.complemento || '';
+                    document.getElementById('bairro_client').value = client.endereco?.bairro || '';
+                    document.getElementById('cidade_client').value = client.endereco?.cidade || '';
+                    document.getElementById('estado_client').value = client.endereco?.estado || '';
+                    document.getElementById('data_cadastro_client').value = client.dataCadastro || ''; // Ajuste para formato de data
                     
+                    // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteClient'.
                     deleteClientBtn.style.display = 'inline-block';
                     deleteClientBtn.onclick = () => deleteClient(client.id);
 
-                    showSection('register-client-section');
-                } else {
-                    console.error('Cliente não encontrado para edição:', clientId);
-                    alert('Cliente não encontrado.');
+                    showSection('register-client-section'); // Exibe a seção do formulário de registro/edição.
+
+                } catch (error) {
+                    console.error('Erro ao carregar cliente para edição:', error);
+                    alert(`Erro ao carregar cliente: ${error.message}`);
                 }
             };
 
@@ -1684,89 +1841,173 @@
                 deleteClientBtn.style.display = 'none';
             };
 
-            clientRegistrationForm.addEventListener('submit', (event) => {
+            // Comentário: Event listener para a submissão do formulário de cadastro/edição de cliente.
+            clientRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
                 event.preventDefault();
 
                 const formData = new FormData(clientRegistrationForm);
-                const clientData = Object.fromEntries(formData.entries());
+                const clientData = Object.fromEntries(formData.entries()); // Converte os dados do formulário em um objeto JavaScript.
 
-                if (clientIdInput.value) {
-                    const clientIndex = sampleClients.findIndex(c => c.id === clientIdInput.value);
-                    if (clientIndex !== -1) {
-                        sampleClients[clientIndex] = {
-                            ...sampleClients[clientIndex],
-                            ...clientData,
-                            primaryKey: clientData.documentType === 'CPF' ? clientData.cpf : clientData.cnpj,
-                        };
-                        alert('Cliente atualizado com sucesso!');
+                // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de cliente no Spring.
+                const clientToSend = {
+                    id: clientData.clientId || null, // Se for edição, o ID já estará presente
+                    nome: clientData.nome,
+                    email: clientData.email,
+                    telefone: clientData.telefone,
+                    documentType: clientData.documentType,
+                    cpf: clientData.cpf,
+                    cnpj: clientData.cnpj,
+                    dataCadastro: clientData.dataCadastro,
+                    cep: clientData.cep,
+                    endereco: clientData.logradouro,
+                    numero: clientData.numero,
+                    complemento: clientData.complemento,
+                    bairro: clientData.bairro,
+                    cidade: clientData.cidade,
+                    estado: clientData.estado
+                    
+                };
+
+                // Comentário: Determina o método HTTP (POST para novo, PUT para edição) e a URL do endpoint.
+                const isEditing = !!clientIdInput.value;
+                const method = isEditing ? 'PUT' : 'POST';
+                const url = isEditing ? `${API_BASE_URL}/clients/${clientIdInput.value}` : `${API_BASE_URL}/clients`;
+
+                try {
+                    // Comentário: Envia os dados do cliente para o backend.
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        },
+                        body: JSON.stringify(clientToSend) // Converte o objeto cliente para JSON.
+                    });
+
+                    // Comentário: Verifica se a operação no backend foi bem-sucedida.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} cliente.`);
                     }
-                } else {
-                    const newClient = {
-                        id: 'c' + (sampleClients.length + 1).toString(),
-                        primaryKey: clientData.documentType === 'CPF' ? clientData.cpf : clientData.cnpj,
-                        ...clientData
-                    };
-                    sampleClients.push(newClient);
-                    alert('Cliente cadastrado com sucesso!');
+
+                    // Comentário: Mensagem de sucesso e redirecionamento.
+                    alert(`Cliente ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`);
+                    resetClientForm();
+                    showSection('list-manage-clients-content');
+                } catch (error) {
+                    console.error(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} cliente:`, error);
+                    alert(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} cliente: ${error.message}`);
                 }
-                resetClientForm();
-                showSection('list-manage-clients-content');
             });
 
-            const deleteClient = (clientId) => {
+// Comentário: Função assíncrona para excluir um cliente do backend.
+            const deleteClient = async (clientId) => { // Adicionado 'async'
                 if (confirm('Tem certeza que deseja excluir este cliente? Esta ação é irreversível.')) {
-                    const initialLength = sampleClients.length;
-                    sampleClients = sampleClients.filter(c => c.id !== clientId);
-                    if (sampleClients.length < initialLength) {
+                    try {
+                        // Comentário: Envia uma requisição DELETE para o endpoint de exclusão de cliente do Spring Boot.
+                        const response = await fetch(`${API_BASE_URL}/clients/${clientId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                            }
+                        });
+
+                        // Comentário: Verifica se a exclusão foi bem-sucedida.
+                        if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                                removeToken();
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                            const errorData = response.status !== 204 ? await response.json() : { message: 'Erro desconhecido.' };
+                            throw new Error(errorData.message || 'Erro ao excluir cliente.');
+                        }
+
+                        // Comentário: Mensagem de sucesso e recarregamento da lista de clientes.
                         alert('Cliente excluído com sucesso!');
                         resetClientForm();
                         showSection('list-manage-clients-content');
-                    } else {
-                        alert('Erro ao excluir cliente. Cliente não encontrado.');
+                    } catch (error) {
+                        console.error('Erro ao excluir cliente:', error);
+                        alert(`Erro ao excluir cliente: ${error.message}`);
                     }
                 }
             };
 
             // PROPERTY FUNCTIONS -----------------------------------------------------------
 
-            const loadPropertiesTable = (searchTerm = '') => {
-                propertiesTableBody.innerHTML = '';
 
-                const filteredProperties = sampleProperties.filter(property => {
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-                    return property.numeroMatriculaImovel.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           property.endereco.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           property.finalidade.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           property.status.toLowerCase().includes(lowerCaseSearchTerm);
-                });
+            // Comentário: Função assíncrona para carregar e exibir os imóveis na tabela a partir do backend.
+            const loadPropertiesTable = async (searchTerm = '') => { // Adicionado 'async'
+                propertiesTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Carregando imóveis...</td></tr>';
 
-                const sortedProperties = [...filteredProperties].sort((a, b) => a.endereco.localeCompare(b.endereco));
-
-                sortedProperties.forEach(property => {
-                    // Find owner's name
-                    const owner = sampleClients.find(client => client.id === property.proprietarioId);
-                    const ownerName = owner ? owner.nome : 'Desconhecido';
-
-                    const row = propertiesTableBody.insertRow();
-                    row.innerHTML = `
-                        <td data-label="Matrícula">${property.numeroMatriculaImovel}</td>
-                        <td data-label="Endereço">${property.endereco}, ${property.numero} - ${property.bairro}, ${property.cidade}/${property.estado}</td>
-                        <td data-label="Finalidade">${property.finalidade}</td>
-                        <td data-label="Valor">R$ ${property.valor.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</td>
-                        <td data-label="Status">${property.status}</td>
-                        <td data-label="Proprietário">${ownerName}</td>
-                        <td data-label="Ações" class="actions-cell">
-                            <button class="edit-btn" data-property-id="${property.id}"><i class="fas fa-edit"></i></button>
-                        </td>
-                    `;
-                });
-
-                document.querySelectorAll('#properties-table-body .edit-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const propertyId = event.currentTarget.dataset.propertyId;
-                        editProperty(propertyId);
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de listagem de imóveis do Spring Boot.
+                    // Comentário: O termo de pesquisa é enviado como um parâmetro de query string. O backend deve filtrar por matrícula, endereço, finalidade, etc.
+                    const response = await fetch(`${API_BASE_URL}/properties?search=${encodeURIComponent(searchTerm)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
                     });
-                });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erro ao carregar imóveis.');
+                    }
+
+                    const properties = await response.json(); // Converte a resposta JSON para um array de objetos JavaScript.
+
+                    propertiesTableBody.innerHTML = '';
+
+                    if (properties.length === 0) {
+                        propertiesTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--color-secondary);">Nenhum imóvel encontrado.</td></tr>';
+                        return;
+                    }
+
+                    properties.forEach(property => {
+                        // Comentário: Assume que o objeto 'property' vindo do backend já inclui informações do proprietário (ex: 'proprietario.nome').
+                        // Comentário: Ou que o backend retorna o ID do proprietário e você faz uma busca local/cacheada.
+                        // Comentário: Idealmente, o backend já "joinaria" essas informações para o frontend.
+                        const ownerName = property.nomeProprietario; // Acessa a propriedade 'nome' dentro de 'proprietario'
+
+                        const row = propertiesTableBody.insertRow();
+                        row.innerHTML = `
+                            <td data-label="Matrícula">${property.numeroMatriculaImovel || 'N/A'}</td>
+                            <td data-label="Endereço">${property.endereco || ''}, ${property.numero || ''} - ${property.bairro || ''}, ${property.cidade || ''}/${property.estado || ''}</td>
+                            <td data-label="Finalidade">${property.finalidade || 'N/A'}</td>
+                            <td data-label="Valor">R$ ${property.valor ? property.valor.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '0,00'}</td>
+                            <td data-label="Status">${property.status || 'N/A'}</td>
+                            <td data-label="Proprietário">${ownerName}</td>
+                            <td data-label="Ações" class="actions-cell">
+                                <button class="edit-btn" data-property-id="${property.id}"><i class="fas fa-edit"></i></button>
+                            </td>
+                        `;
+                    });
+
+                    document.querySelectorAll('#properties-table-body .edit-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const propertyId = event.currentTarget.dataset.propertyId;
+                            editProperty(propertyId);
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao buscar imóveis:', error);
+                    propertiesTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-error);">Erro ao carregar imóveis: ${error.message}</td></tr>`;
+                }
             };
 
             if (propertySearchInput) {
@@ -1775,42 +2016,64 @@
                 });
             }
 
-            const editProperty = (propertyId) => {
-                const property = sampleProperties.find(p => p.id === propertyId);
+// Comentário: Função assíncrona para carregar os dados de um imóvel específico para edição.
+            const editProperty = async (propertyId) => { // Adicionado 'async'
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de detalhe de imóvel do Spring Boot.
+                    const response = await fetch(`${API_BASE_URL}/properties/${propertyId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        }
+                    });
 
-                if (property) {
+                    // Comentário: Verifica a resposta e trata erros.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Imóvel não encontrado.');
+                    }
+
+                    const property = await response.json(); // Converte a resposta JSON para um objeto JavaScript.
+
+                    // Comentário: Atualiza o título e descrição do formulário para modo de edição.
                     propertyFormTitle.textContent = 'Editar Imóvel';
                     propertyFormDescription.textContent = 'Modifique os campos abaixo para atualizar os dados do imóvel.';
-                    propertyIdInput.value = property.id;
+                    propertyIdInput.value = property.id; // Define o ID do imóvel no campo hidden.
 
-                    // Populate general property fields
-                    document.getElementById('numero_matricula_imovel').value = property.numeroMatriculaImovel;
-                    document.getElementById('finalidade').value = property.finalidade;
-                    document.getElementById('valor').value = property.valor;
-                    document.getElementById('area_total').value = property.areaTotal;
-                    document.getElementById('status').value = property.status;
-                    document.getElementById('data_cadastro_imovel').value = property.dataCadastro;
-                    document.getElementById('data_atualizacao_imovel').value = property.dataAtualizacao;
-                    document.getElementById('proprietario_imovel_select').value = property.proprietarioId;
+                    // Comentário: Preenche os campos gerais do imóvel.
+                    document.getElementById('numero_matricula_imovel').value = property.numeroMatriculaImovel || '';
+                    document.getElementById('finalidade').value = property.finalidade || '';
+                    document.getElementById('valor').value = property.valor || '';
+                    document.getElementById('area_total').value = property.areaTotal || '';
+                    document.getElementById('status').value = property.status || '';
+                    document.getElementById('data_cadastro_imovel').value = property.dataCadastro || '';
+                    document.getElementById('data_atualizacao_imovel').value = property.dataAtualizacao || '';
+                    // Comentário: Assume que 'proprietario' é um objeto aninhado no backend com 'id'.
+                    document.getElementById('proprietario_imovel_select').value = property.proprietario?.id || ''; 
                     
-                    // Populate address fields
-                    document.getElementById('cep_imovel').value = property.cep;
-                    document.getElementById('logradouro_imovel').value = property.logradouro;
-                    document.getElementById('numero_imovel').value = property.numero;
-                    document.getElementById('complemento_imovel').value = property.complemento;
-                    document.getElementById('bairro_imovel').value = property.bairro;
-                    document.getElementById('cidade_imovel').value = property.cidade;
-                    document.getElementById('estado_imovel').value = property.estado;
+                    // Comentário: Preenche os campos de endereço.
+                    document.getElementById('cep_imovel').value = property.endereco?.cep || '';
+                    document.getElementById('logradouro_imovel').value = property.endereco?.logradouro || '';
+                    document.getElementById('numero_imovel').value = property.endereco?.numero || '';
+                    document.getElementById('complemento_imovel').value = property.endereco?.complemento || '';
+                    document.getElementById('bairro_imovel').value = property.endereco?.bairro || '';
+                    document.getElementById('cidade_imovel').value = property.endereco?.cidade || '';
+                    document.getElementById('estado_imovel').value = property.endereco?.estado || '';
 
-                    // Populate type-specific fields and trigger visibility
-                    tipoImovelSelect.value = property.tipoImovel;
-                    updatePropertyFieldsVisibility(); // This function will hide/show based on selectedType
+                    // Comentário: Preenche os campos específicos do tipo de imóvel e dispara a visibilidade.
+                    tipoImovelSelect.value = property.tipoImovel || '';
+                    tipoImovelSelect.dispatchEvent(new Event('change')); // Força a atualização da visibilidade dos campos específicos.
                     
-                    // Now populate the specific fields
+                    // Comentário: Popula os campos específicos com base no tipo de imóvel (sem precisar de 'if/else if' aqui, pois a função 'updatePropertyFieldsVisibility' já faz o show/hide).
                     if (property.tipoImovel === 'TERRENO') {
                         document.getElementById('topografia').value = property.topografia || '';
                         document.getElementById('tipo_solo').value = property.tipoSolo || '';
-                    } else if (property.tipoImovel === 'CASA' || property.tipoImovel === 'APARTAMENTO') {
+                    } else if (['CASA', 'APARTAMENTO'].includes(property.tipoImovel)) { // Agrupado para unidade residencial
                         document.getElementById('numero_quartos').value = property.numeroQuartos || '';
                         document.getElementById('numero_banheiros').value = property.numeroBanheiros || '';
                         document.getElementById('numero_suites').value = property.numeroSuites || '';
@@ -1825,7 +2088,7 @@
                             document.getElementById('numero_apartamento').value = property.numeroApartamento || '';
                             document.getElementById('possui_elevador').checked = property.possuiElevador || false;
                         }
-                    } else if (property.tipoImovel === 'PREDIO_COMERCIAL' || property.tipoImovel === 'SALA_COMERCIAL') {
+                    } else if (['PREDIO_COMERCIAL', 'SALA_COMERCIAL'].includes(property.tipoImovel)) { // Agrupado para unidade comercial
                         document.getElementById('area_util').value = property.areaUtil || '';
                         document.getElementById('descricao_comercial').value = property.descricaoComercial || '';
                         if (property.tipoImovel === 'PREDIO_COMERCIAL') {
@@ -1838,13 +2101,15 @@
                         }
                     }
 
+                    // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteProperty'.
                     deletePropertyBtn.style.display = 'inline-block';
                     deletePropertyBtn.onclick = () => deleteProperty(property.id);
 
-                    showSection('register-property-section');
-                } else {
-                    console.error('Imóvel não encontrado para edição:', propertyId);
-                    alert('Imóvel não encontrado.');
+                    showSection('register-property-section'); // Exibe a seção do formulário.
+
+                } catch (error) {
+                    console.error('Erro ao carregar imóvel para edição:', error);
+                    alert(`Erro ao carregar imóvel: ${error.message}`);
                 }
             };
 
@@ -1857,172 +2122,332 @@
                 deletePropertyBtn.style.display = 'none';
             };
 
-            propertyRegistrationForm.addEventListener('submit', (event) => {
+// Comentário: Event listener para a submissão do formulário de cadastro/edição de imóvel.
+            propertyRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
                 event.preventDefault();
                 const formData = new FormData(propertyRegistrationForm);
-                const propertyData = Object.fromEntries(formData.entries());
+                const propertyData = Object.fromEntries(formData.entries()); // Converte os dados do formulário em um objeto JavaScript.
 
-                // Coletar dados dos checkboxes (que FormData trata como 'on' ou ausente)
+                // Comentário: Coletar dados dos checkboxes e converter para booleanos.
                 propertyData.possuiQuintal = propertyData.possuiQuintal === 'on';
                 propertyData.possuiElevador = propertyData.possuiElevador === 'on';
                 propertyData.possuiEstacionamento = propertyData.possuiEstacionamento === 'on';
 
-                if (propertyIdInput.value) {
-                    const propertyIndex = sampleProperties.findIndex(p => p.id === propertyIdInput.value);
-                    if (propertyIndex !== -1) {
-                        sampleProperties[propertyIndex] = {
-                            ...sampleProperties[propertyIndex],
-                            ...propertyData,
-                            valor: parseFloat(propertyData.valor),
-                            areaTotal: parseFloat(propertyData.areaTotal),
-                            areaConstruida: parseFloat(propertyData.areaConstruida),
-                            areaUtil: parseFloat(propertyData.areaUtil)
-                        };
-                        alert('Imóvel atualizado com sucesso!');
+                // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de imóvel no Spring.
+                const propertyToSend = {
+                    id: propertyData.propertyId || null,
+                    numeroMatriculaImovel: propertyData.numeroMatriculaImovel,
+                    finalidade: propertyData.finalidade,
+                    valor: parseFloat(propertyData.valor),
+                    areaTotal: parseFloat(propertyData.areaTotal),
+                    status: propertyData.status,
+                    dataCadastro: propertyData.dataCadastro,
+                    dataAtualizacao: propertyData.dataAtualizacao || null, // Pode ser nulo
+                    // Comentário: 'proprietario' deve ser um objeto com o ID, ou um DTO simplificado, dependendo do seu backend.
+                    proprietario: { id: propertyData.proprietarioImovel }, 
+                    endereco: { // Endereço como um objeto aninhado
+                        cep: propertyData.cep,
+                        logradouro: propertyData.logradouro,
+                        numero: propertyData.numero,
+                        complemento: propertyData.complemento,
+                        bairro: propertyData.bairro,
+                        cidade: propertyData.cidade,
+                        estado: propertyData.estado
+                    },
+                    tipoImovel: propertyData.tipoImovel,
+                    // Comentário: Campos específicos do tipo de imóvel, enviados apenas se o tipo for o correspondente.
+                    // Comentário: O backend pode ignorar campos extras ou você pode construir o objeto de forma mais dinâmica.
+                    topografia: propertyData.topografia || null,
+                    tipoSolo: propertyData.tipoSolo || null,
+                    numeroQuartos: parseInt(propertyData.numeroQuartos) || null,
+                    numeroBanheiros: parseInt(propertyData.numeroBanheiros) || null,
+                    numeroSuites: parseInt(propertyData.numeroSuites) || null,
+                    areaConstruida: parseFloat(propertyData.areaConstruida) || null,
+                    numeroVagasGaragem: parseInt(propertyData.numeroVagasGaragem) || null,
+                    descricaoResidencial: propertyData.descricaoResidencial || null,
+                    possuiQuintal: propertyData.possuiQuintal,
+                    numeroPavimentos: parseInt(propertyData.numeroPavimentos) || null,
+                    andar: parseInt(propertyData.andar) || null,
+                    numeroApartamento: propertyData.numeroApartamento || null,
+                    possuiElevador: propertyData.possuiElevador,
+                    areaUtil: parseFloat(propertyData.areaUtil) || null,
+                    descricaoComercial: propertyData.descricaoComercial || null,
+                    totalAndares: parseInt(propertyData.totalAndares) || null,
+                    numeroSalas: parseInt(propertyData.numeroSalas) || null,
+                    possuiEstacionamento: propertyData.possuiEstacionamento,
+                    andarSala: parseInt(propertyData.andarSala) || null,
+                    numeroSala: propertyData.numeroSala || null
+                };
+
+                // Comentário: Determina o método HTTP (POST para novo, PUT para edição) e a URL do endpoint.
+                const isEditing = !!propertyIdInput.value;
+                const method = isEditing ? 'PUT' : 'POST';
+                const url = isEditing ? `${API_BASE_URL}/properties/${propertyIdInput.value}` : `${API_BASE_URL}/properties`;
+
+                try {
+                    // Comentário: Envia os dados do imóvel para o backend.
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        },
+                        body: JSON.stringify(propertyToSend) // Converte o objeto imóvel para JSON.
+                    });
+
+                    // Comentário: Verifica se a operação no backend foi bem-sucedida.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} imóvel.`);
                     }
-                } else {
-                    const newProperty = {
-                        id: 'p' + (sampleProperties.length + 1).toString(),
-                        ...propertyData,
-                        valor: parseFloat(propertyData.valor),
-                        areaTotal: parseFloat(propertyData.areaTotal),
-                        areaConstruida: parseFloat(propertyData.areaConstruida),
-                        areaUtil: parseFloat(propertyData.areaUtil)
-                    };
-                    sampleProperties.push(newProperty);
-                    alert('Imóvel cadastrado com sucesso!');
+
+                    // Comentário: Mensagem de sucesso e redirecionamento.
+                    alert(`Imóvel ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`);
+                    resetPropertyForm();
+                    showSection('list-manage-properties-content');
+                } catch (error) {
+                    console.error(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} imóvel:`, error);
+                    alert(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} imóvel: ${error.message}`);
                 }
-                resetPropertyForm();
-                showSection('list-manage-properties-content');
             });
 
-            const deleteProperty = (propertyId) => {
+// Comentário: Função assíncrona para excluir um imóvel do backend.
+            const deleteProperty = async (propertyId) => { // Adicionado 'async'
                 if (confirm('Tem certeza que deseja excluir este imóvel? Esta ação é irreversível.')) {
-                    const initialLength = sampleProperties.length;
-                    sampleProperties = sampleProperties.filter(p => p.id !== propertyId);
-                    if (sampleProperties.length < initialLength) {
+                    try {
+                        // Comentário: Envia uma requisição DELETE para o endpoint de exclusão de imóvel do Spring Boot.
+                        const response = await fetch(`${API_BASE_URL}/properties/${propertyId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                            }
+                        });
+
+                        // Comentário: Verifica se a exclusão foi bem-sucedida.
+                        if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                                removeToken();
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                            const errorData = response.status !== 204 ? await response.json() : { message: 'Erro desconhecido.' };
+                            throw new Error(errorData.message || 'Erro ao excluir imóvel.');
+                        }
+
+                        // Comentário: Mensagem de sucesso e recarregamento da lista de imóveis.
                         alert('Imóvel excluído com sucesso!');
                         resetPropertyForm();
                         showSection('list-manage-properties-content');
-                    } else {
-                        alert('Erro ao excluir imóvel. Imóvel não encontrado.');
+                    } catch (error) {
+                        console.error('Erro ao excluir imóvel:', error);
+                        alert(`Erro ao excluir imóvel: ${error.message}`);
                     }
                 }
             };
 
             // VISIT AND INTEREST FUNCTIONS -----------------------------------------------------------
 
-            // Function to populate client, property, and realtor selects for the visit form
-            const populateVisitFormSelects = () => {
-                // Populate Client Select
+// Comentário: Função assíncrona para popular os selects de cliente, imóvel e corretor no formulário de visita, buscando dados do backend.
+            const populateVisitFormSelects = async () => { // Adicionado 'async'
+                // Comentário: Popula o Select de Clientes.
                 clienteVisitaSelect.innerHTML = '<option value="">Selecione o Cliente</option>';
-                sampleClients.forEach(client => {
-                    const option = document.createElement('option');
-                    option.value = client.id;
-                    option.textContent = `${client.nome} (${client.documentType}: ${client.primaryKey.substring(0, 3)}...)`;
-                    clienteVisitaSelect.appendChild(option);
-                });
+                try {
+                    const clientsResponse = await fetch(`${API_BASE_URL}/clients?active=true`, { // Busca apenas clientes ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (clientsResponse.ok) {
+                        const clients = await clientsResponse.json();
+                        clients.forEach(client => {
+                            const option = document.createElement('option');
+                            option.value = client.id;
+                            option.textContent = `${client.nome} (${client.documentType}: ${client.cpf || client.cnpj})`;
+                            clienteVisitaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar clientes para o select:', await clientsResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar clientes:', error); }
 
-                // Populate Property Select
+                // Comentário: Popula o Select de Imóveis.
                 imovelVisitaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
-                sampleProperties.forEach(property => {
-                    const option = document.createElement('option');
-                    option.value = property.id;
-                    option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco}, ${property.numero}${property.complemento ? ', ' + property.complemento : ''}`;
-                    imovelVisitaSelect.appendChild(option);
-                });
+                try {
+                    const propertiesResponse = await fetch(`${API_BASE_URL}/properties?status=DISPONIVEL`, { // Busca apenas imóveis disponíveis
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (propertiesResponse.ok) {
+                        const properties = await propertiesResponse.json();
+                        properties.forEach(property => {
+                            const option = document.createElement('option');
+                            option.value = property.id;
+                            option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''}`;
+                            imovelVisitaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar imóveis para o select:', await propertiesResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar imóveis:', error); }
 
-                // Populate Realtor Select (only users with cargo 'Corretor')
+                // Comentário: Popula o Select de Corretores (apenas usuários com cargo 'CORRETOR').
                 corretorVisitaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
-                sampleUsers.filter(user => user.cargo === 'Corretor').forEach(corretor => {
-                    const option = document.createElement('option');
-                    option.value = corretor.id;
-                    option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.primaryKey.substring(0, 3)}...)`;
-                    corretorVisitaSelect.appendChild(option);
-                });
+                try {
+                    const corretoresResponse = await fetch(`${API_BASE_URL}/users?tipoCargo=CORRETOR&ativo=true`, { // Busca apenas corretores ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (corretoresResponse.ok) {
+                        const corretores = await corretoresResponse.json();
+                        corretores.forEach(corretor => {
+                            const option = document.createElement('option');
+                            option.value = corretor.id;
+                            option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.cpf || corretor.cnpj})`;
+                            corretorVisitaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar corretores para o select:', await corretoresResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar corretores:', error); }
             };
 
-            // Function to update visibility of interest fields based on selected property type
-            const updateAvaliacaoFieldsVisibility = () => {
+// Comentário: Função assíncrona para atualizar a visibilidade dos campos de interesse/avaliação.
+            // Comentário: Essa função agora buscará os detalhes do imóvel (incluindo seus 'interessesValidos') do backend.
+            const updateAvaliacaoFieldsVisibility = async () => { // Adicionado 'async'
                 const selectedPropertyId = imovelVisitaSelect ? imovelVisitaSelect.value : '';
-                const selectedProperty = sampleProperties.find(p => p.id === selectedPropertyId);
 
                 const allInterestFieldGroups = avaliacaoFields.querySelectorAll('.form-group[data-interest-field]');
                 allInterestFieldGroups.forEach(group => {
                     group.style.display = 'none';
-                    // Reset radio buttons within this group
+                    // Comentário: Limpa os radio buttons de avaliação quando a visibilidade é resetada.
                     group.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
                 });
 
-                if (selectedProperty && selectedProperty.interessesValidos) {
-                    avaliacaoFields.style.display = 'grid';
-                    avaliacaoImovelTitle.style.display = 'block';
-                    avaliacaoImovelDesc.style.display = 'block';
+                if (!selectedPropertyId) { // Se nenhum imóvel for selecionado, oculta tudo.
+                    avaliacaoFields.style.display = 'none';
+                    avaliacaoImovelTitle.style.display = 'none';
+                    avaliacaoImovelDesc.style.display = 'none';
+                    return;
+                }
 
-                    selectedProperty.interessesValidos.forEach(fieldName => {
-                        const fieldGroup = avaliacaoFields.querySelector(`.form-group[data-interest-field="${fieldName}"]`);
-                        if (fieldGroup) {
-                            fieldGroup.style.display = 'block';
+                try {
+                    // Comentário: Busca os detalhes do imóvel selecionado do backend para obter os 'interessesValidos'.
+                    const response = await fetch(`${API_BASE_URL}/properties/${selectedPropertyId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
                         }
                     });
-                } else {
+
+                    if (!response.ok) {
+                        // Comentário: Em caso de erro (ex: imóvel não encontrado, sessão expirada), oculta os campos.
+                        console.error('Erro ao buscar detalhes do imóvel para avaliação:', await response.text());
+                        avaliacaoFields.style.display = 'none';
+                        avaliacaoImovelTitle.style.display = 'none';
+                        avaliacaoImovelDesc.style.display = 'none';
+                        return;
+                    }
+
+                    const selectedProperty = await response.json(); // Obtém o objeto do imóvel do backend.
+
+                    // Comentário: Agora, usa os 'interessesValidos' que vieram do backend.
+                    if (selectedProperty && selectedProperty.interessesValidos && selectedProperty.interessesValidos.length > 0) {
+                        avaliacaoFields.style.display = 'grid';
+                        avaliacaoImovelTitle.style.display = 'block';
+                        avaliacaoImovelDesc.style.display = 'block';
+
+                        selectedProperty.interessesValidos.forEach(fieldName => {
+                            const fieldGroup = avaliacaoFields.querySelector(`.form-group[data-interest-field="${fieldName}"]`);
+                            if (fieldGroup) {
+                                fieldGroup.style.display = 'block';
+                            }
+                        });
+                    } else {
+                        // Comentário: Se o imóvel não tiver interesses válidos configurados, oculta os campos.
+                        avaliacaoFields.style.display = 'none';
+                        avaliacaoImovelTitle.style.display = 'none';
+                        avaliacaoImovelDesc.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Erro de rede ao buscar detalhes do imóvel para avaliação:', error);
                     avaliacaoFields.style.display = 'none';
                     avaliacaoImovelTitle.style.display = 'none';
                     avaliacaoImovelDesc.style.display = 'none';
                 }
             };
+
             // Event listener for property select change to update interest fields
             if (imovelVisitaSelect) {
                 imovelVisitaSelect.addEventListener('change', updateAvaliacaoFieldsVisibility);
             }
 
-            const loadVisitsTable = (searchTerm = '') => {
-                visitsTableBody.innerHTML = '';
+            // Comentário: Função assíncrona para carregar e exibir as visitas na tabela a partir do backend.
+            const loadVisitsTable = async (searchTerm = '') => { // Adicionado 'async'
+                visitsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Carregando visitas...</td></tr>';
 
-                const filteredVisits = sampleVisits.filter(visit => {
-                    const client = sampleClients.find(c => c.id === visit.clienteId);
-                    const property = sampleProperties.find(p => p.id === visit.imovelId);
-                    const corretor = sampleUsers.find(u => u.id === visit.corretorId);
-
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-
-                    return (client?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
-                           (property?.endereco.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
-                           (property?.numeroMatriculaImovel.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
-                           (corretor?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '');
-                });
-
-                const sortedVisits = [...filteredVisits].sort((a, b) => new Date(b.dataHora) - new Date(a.dataHora)); // Mais recente primeiro
-
-                sortedVisits.forEach(visit => {
-                    const client = sampleClients.find(c => c.id === visit.clienteId);
-                    const property = sampleProperties.find(p => p.id === visit.imovelId);
-                    const corretor = sampleUsers.find(u => u.id === visit.corretorId);
-
-                    const clientName = client ? client.nome : 'N/A';
-                    const propertyAddress = property ? `${property.endereco}, ${property.numero}` : 'N/A';
-                    const corretorName = corretor ? corretor.nome : 'N/A';
-                    const formattedDateTime = new Date(visit.dataHora).toLocaleString('pt-BR');
-
-                    const row = visitsTableBody.insertRow();
-                    row.innerHTML = `
-                        <td data-label="Cliente">${clientName}</td>
-                        <td data-label="Imóvel">${propertyAddress} (Mat. ${property ? property.numeroMatriculaImovel : 'N/A'})</td>
-                        <td data-label="Corretor">${corretorName}</td>
-                        <td data-label="Data/Hora">${formattedDateTime}</td>
-                        <td data-label="Observações">${visit.observacoes || 'Nenhuma'}</td>
-                        <td data-label="Ações" class="actions-cell">
-                            <button class="edit-btn" data-visit-id="${visit.id}"><i class="fas fa-edit"></i></button>
-                        </td>
-                    `;
-                });
-
-                document.querySelectorAll('#visits-table-body .edit-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const visitId = event.currentTarget.dataset.visitId;
-                        editVisit(visitId);
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de listagem de visitas do Spring Boot.
+                    // Comentário: O termo de pesquisa é enviado como um parâmetro de query string. O backend deve filtrar por cliente, imóvel, corretor, etc.
+                    const response = await fetch(`${API_BASE_URL}/visits?search=${encodeURIComponent(searchTerm)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
                     });
-                });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erro ao carregar visitas.');
+                    }
+
+                    const visits = await response.json(); // Converte a resposta JSON para um array de objetos JavaScript.
+
+                    visitsTableBody.innerHTML = '';
+
+                    if (visits.length === 0) {
+                        visitsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-secondary);">Nenhuma visita encontrada.</td></tr>';
+                        return;
+                    }
+
+                    visits.forEach(visit => {
+                        // Comentário: Assume que o objeto 'visit' vindo do backend já inclui informações aninhadas de cliente, imóvel e corretor.
+                        const clientName = visit.cliente?.nome || 'N/A';
+                        const propertyAddress = visit.imovel ? `${visit.imovel.logradouro || ''}, ${visit.imovel.numero || ''}` : 'N/A';
+                        const propertyMatricula = visit.imovel?.numeroMatriculaImovel || 'N/A';
+                        const corretorName = visit.corretor?.nome || 'N/A';
+                        const formattedDateTime = visit.dataHora ? new Date(visit.dataHora).toLocaleString('pt-BR') : 'N/A';
+
+                        const row = visitsTableBody.insertRow();
+                        row.innerHTML = `
+                            <td data-label="Cliente">${clientName}</td>
+                            <td data-label="Imóvel">${propertyAddress} (Mat. ${propertyMatricula})</td>
+                            <td data-label="Corretor">${corretorName}</td>
+                            <td data-label="Data/Hora">${formattedDateTime}</td>
+                            <td data-label="Observações">${visit.observacoes || 'Nenhuma'}</td>
+                            <td data-label="Ações" class="actions-cell">
+                                <button class="edit-btn" data-visit-id="${visit.id}"><i class="fas fa-edit"></i></button>
+                            </td>
+                        `;
+                    });
+
+                    document.querySelectorAll('#visits-table-body .edit-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const visitId = event.currentTarget.dataset.visitId;
+                            editVisit(visitId);
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao buscar visitas:', error);
+                    visitsTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--color-error);">Erro ao carregar visitas: ${error.message}</td></tr>`;
+                }
             };
 
             if (visitSearchInput) {
@@ -2031,31 +2456,54 @@
                 });
             }
 
-            const editVisit = (visitId) => {
-                const visit = sampleVisits.find(v => v.id === visitId);
 
-                if (visit) {
+
+// Comentário: Função assíncrona para carregar os dados de uma visita específica para edição.
+            const editVisit = async (visitId) => { // Adicionado 'async'
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de detalhe de visita do Spring Boot.
+                    const response = await fetch(`${API_BASE_URL}/visits/${visitId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        }
+                    });
+
+                    // Comentário: Verifica a resposta e trata erros.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Visita não encontrada.');
+                    }
+
+                    const visit = await response.json(); // Converte a resposta JSON para um objeto JavaScript.
+
+                    // Comentário: Atualiza o título e descrição do formulário.
                     visitFormTitle.textContent = 'Editar Visita e Interesse';
                     visitFormDescription.textContent = 'Modifique os campos abaixo para atualizar o registro da visita e seus interesses.';
-                    visitIdInput.value = visit.id;
+                    visitIdInput.value = visit.id; // Define o ID da visita no campo hidden.
 
-                    populateVisitFormSelects(); // Popula os selects antes de definir os valores
-                    clienteVisitaSelect.value = visit.clienteId;
-                    imovelVisitaSelect.value = visit.imovelId;
-                    corretorVisitaSelect.value = visit.corretorId;
-                    document.getElementById('data_hora_visita').value = visit.dataHora;
-                    document.getElementById('observacoes_visita').value = visit.observacoes;
+                    await populateVisitFormSelects(); // Popula os selects assincronamente antes de definir os valores.
+                    // Comentário: Preenche os selects com os IDs do objeto 'visit' recebido.
+                    clienteVisitaSelect.value = visit.cliente?.id || '';
+                    imovelVisitaSelect.value = visit.imovel?.id || '';
+                    corretorVisitaSelect.value = visit.corretor?.id || '';
+                    document.getElementById('data_hora_visita').value = visit.dataHora || '';
+                    document.getElementById('observacoes_visita').value = visit.observacoes || '';
 
-                    // Trigger change on property select to update interest fields visibility
-                    // Using setTimeout to ensure options are rendered before dispatching change event
+                    // Comentário: Dispara change no select de imóvel para atualizar campos de avaliação.
+                    // Comentário: Usar setTimeout para garantir que as opções do select sejam renderizadas antes do dispatch.
                     setTimeout(() => {
                         imovelVisitaSelect.dispatchEvent(new Event('change'));
-                        // Populate interest ratings after fields are visible
+                        // Comentário: Popula as avaliações de interesse após os campos estarem visíveis.
                         if (visit.interesses) {
                             for (const key in visit.interesses) {
                                 if (visit.interesses.hasOwnProperty(key)) {
                                     const ratingValue = visit.interesses[key];
-                                    // Use querySelector to find the correct radio button by name and value
                                     const radioInput = document.querySelector(`input[name="avaliacao_${key}"][value="${ratingValue}"]`);
                                     if (radioInput) {
                                         radioInput.checked = true;
@@ -2063,16 +2511,17 @@
                                 }
                             }
                         }
-                    }, 0); // Use setTimeout with 0 to defer execution
+                    }, 0);
 
-                    
+                    // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteVisit'.
                     deleteVisitBtn.style.display = 'inline-block';
                     deleteVisitBtn.onclick = () => deleteVisit(visit.id);
 
-                    showSection('register-visit-interest-section');
-                } else {
-                    console.error('Visita não encontrada para edição:', visitId);
-                    alert('Visita não encontrada.');
+                    showSection('register-visit-interest-section'); // Exibe a seção do formulário.
+
+                } catch (error) {
+                    console.error('Erro ao carregar visita para edição:', error);
+                    alert(`Erro ao carregar visita: ${error.message}`);
                 }
             };
 
@@ -2086,13 +2535,14 @@
                 deleteVisitBtn.style.display = 'none';
             };
 
-            visitRegistrationForm.addEventListener('submit', (event) => {
+// Comentário: Event listener para a submissão do formulário de cadastro/edição de visita.
+            visitRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
                 event.preventDefault();
 
                 const formData = new FormData(visitRegistrationForm);
-                const visitData = Object.fromEntries(formData.entries());
+                const visitData = Object.fromEntries(formData.entries()); // Converte os dados do formulário em um objeto JavaScript.
 
-                // Coletar os interesses avaliados dinamicamente
+                // Comentário: Coleta os interesses avaliados dinamicamente a partir dos campos de rádio.
                 const interesses = {};
                 avaliacaoFields.querySelectorAll('.form-group[data-interest-field]').forEach(group => {
                     const fieldName = group.dataset.interestField;
@@ -2101,84 +2551,152 @@
                         interesses[fieldName] = parseInt(checkedRadio.value);
                     }
                 });
-                visitData.interesses = interesses;
 
+                // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de visita no Spring.
+                const visitToSend = {
+                    id: visitData.visitId || null,
+                    // Comentário: Envia apenas o ID do cliente, imóvel e corretor.
+                    cliente: { id: visitData.clienteVisita }, 
+                    imovel: { id: visitData.imovelVisita },
+                    corretor: { id: visitData.corretorVisita },
+                    dataHora: visitData.dataHora,
+                    observacoes: visitData.observacoes,
+                    interesses: interesses // Inclui o objeto de interesses.
+                };
 
-                if (visitIdInput.value) {
-                    const visitIndex = sampleVisits.findIndex(v => v.id === visitIdInput.value);
-                    if (visitIndex !== -1) {
-                        sampleVisits[visitIndex] = {
-                            ...sampleVisits[visitIndex],
-                            ...visitData
-                        };
-                        alert('Visita atualizada com sucesso!');
+                // Comentário: Determina o método HTTP (POST para novo, PUT para edição) e a URL do endpoint.
+                const isEditing = !!visitIdInput.value;
+                const method = isEditing ? 'PUT' : 'POST';
+                const url = isEditing ? `${API_BASE_URL}/visits/${visitIdInput.value}` : `${API_BASE_URL}/visits`;
+
+                try {
+                    // Comentário: Envia os dados da visita para o backend.
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        },
+                        body: JSON.stringify(visitToSend) // Converte o objeto visita para JSON.
+                    });
+
+                    // Comentário: Verifica se a operação no backend foi bem-sucedida.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} visita.`);
                     }
-                } else {
-                    const newVisit = {
-                        id: 'v' + (sampleVisits.length + 1).toString(),
-                        ...visitData
-                    };
-                    sampleVisits.push(newVisit);
-                    alert('Visita registrada com sucesso!');
+
+                    // Comentário: Mensagem de sucesso e redirecionamento.
+                    alert(`Visita ${isEditing ? 'atualizada' : 'cadastrada'} com sucesso!`);
+                    resetVisitForm();
+                    showSection('consult-visits-section');
+                } catch (error) {
+                    console.error(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} visita:`, error);
+                    alert(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} visita: ${error.message}`);
                 }
-                resetVisitForm();
-                showSection('consult-visits-section');
             });
 
-            const deleteVisit = (visitId) => {
+// Comentário: Função assíncrona para excluir uma visita do backend.
+            const deleteVisit = async (visitId) => { // Adicionado 'async'
                 if (confirm('Tem certeza que deseja excluir esta visita? Esta ação é irreversível.')) {
-                    const initialLength = sampleVisits.length;
-                    sampleVisits = sampleVisits.filter(v => v.id !== visitId);
-                    if (sampleVisits.length < initialLength) {
+                    try {
+                        // Comentário: Envia uma requisição DELETE para o endpoint de exclusão de visita do Spring Boot.
+                        const response = await fetch(`${API_BASE_URL}/visits/${visitId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                            }
+                        });
+
+                        // Comentário: Verifica se a exclusão foi bem-sucedida.
+                        if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                                removeToken();
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                            const errorData = response.status !== 204 ? await response.json() : { message: 'Erro desconhecido.' };
+                            throw new Error(errorData.message || 'Erro ao excluir visita.');
+                        }
+
+                        // Comentário: Mensagem de sucesso e recarregamento da lista de visitas.
                         alert('Visita excluída com sucesso!');
                         resetVisitForm();
                         showSection('consult-visits-section');
-                    } else {
-                        alert('Erro ao excluir visita. Visita não encontrada.');
+                    } catch (error) {
+                        console.error('Erro ao excluir visita:', error);
+                        alert(`Erro ao excluir visita: ${error.message}`);
                     }
                 }
             };
 
             // PROPERTY SUGGESTIONS FUNCTIONS -----------------------------------------------------------
 
-            const loadClientsForSuggestionsTable = (searchTerm = '') => {
-                clientsForSuggestionTableBody.innerHTML = '';
+// Comentário: Função assíncrona para carregar e exibir os clientes na tabela de seleção para sugestão de imóveis.
+            const loadClientsForSuggestionsTable = async (searchTerm = '') => { // Adicionado 'async'
+                clientsForSuggestionTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Carregando clientes...</td></tr>';
 
-                const filteredClients = sampleClients.filter(client => {
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-                    return client.nome.toLowerCase().includes(lowerCaseSearchTerm) ||
-                           client.primaryKey.toLowerCase().includes(lowerCaseSearchTerm);
-                });
-
-                const sortedClients = [...filteredClients].sort((a, b) => a.nome.localeCompare(b.nome));
-
-                if (sortedClients.length === 0) {
-                    const row = clientsForSuggestionTableBody.insertRow();
-                    row.innerHTML = `<td colspan="3" style="text-align: center; color: var(--color-secondary);">Nenhum cliente encontrado.</td>`;
-                    return;
-                }
-
-                sortedClients.forEach(client => {
-                    const row = clientsForSuggestionTableBody.insertRow();
-                    row.innerHTML = `
-                        <td data-label="Nome">${client.nome}</td>
-                        <td data-label="Chave Primária">${client.primaryKey}</td>
-                        <td data-label="Ações" class="actions-cell">
-                            <button class="select-client-btn btn btn-primary" data-client-id="${client.id}"><i class="fas fa-check"></i> Selecionar</button>
-                        </td>
-                    `;
-                });
-
-                document.querySelectorAll('#clients-for-suggestion-table-body .select-client-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const clientId = event.currentTarget.dataset.clientId;
-                        const client = sampleClients.find(c => c.id === clientId);
-                        if (client) {
-                            selectedClientNameForSuggestions.textContent = client.nome;
-                            loadPropertySuggestions(clientId);
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de listagem de clientes.
+                    // Comentário: O backend deve retornar uma lista de clientes filtrada pelo termo de busca.
+                    const response = await fetch(`${API_BASE_URL}/clients?search=${encodeURIComponent(searchTerm)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
                         }
                     });
-                });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erro ao carregar clientes para sugestão.');
+                    }
+
+                    const clients = await response.json(); // Converte a resposta JSON para um array de objetos JavaScript.
+
+                    clientsForSuggestionTableBody.innerHTML = '';
+
+                    if (clients.length === 0) {
+                        clientsForSuggestionTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--color-secondary);">Nenhum cliente encontrado.</td></tr>';
+                        return;
+                    }
+
+                    clients.forEach(client => {
+                        const row = clientsForSuggestionTableBody.insertRow();
+                        const primaryKeyValue = client.documentType === 'CPF' ? client.cpf : client.cnpj;
+                        row.innerHTML = `
+                            <td data-label="Nome">${client.nome}</td>
+                            <td data-label="Chave Primária">${primaryKeyValue || 'N/A'}</td>
+                            <td data-label="Ações" class="actions-cell">
+                                <button class="select-client-btn btn btn-primary" data-client-id="${client.id}" data-client-name="${client.nome}"><i class="fas fa-check"></i> Selecionar</button>
+                            </td>
+                        `;
+                    });
+
+                    document.querySelectorAll('#clients-for-suggestion-table-body .select-client-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const clientId = event.currentTarget.dataset.clientId;
+                            const clientName = event.currentTarget.dataset.clientName; // Obtém o nome do cliente do data attribute
+                            selectedClientNameForSuggestions.textContent = clientName;
+                            loadPropertySuggestions(clientId); // Chama a função para carregar sugestões com o ID do cliente.
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao buscar clientes para sugestão:', error);
+                    clientsForSuggestionTableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--color-error);">Erro ao carregar clientes: ${error.message}</td></tr>`;
+                }
             };
 
             if (clientSuggestionSearchInput) {
@@ -2188,234 +2706,268 @@
             }
 
 
-            const loadPropertySuggestions = (clientId) => {
-                suggestedPropertiesGallery.innerHTML = ''; // Clear previous suggestions
+            // Comentário: Função assíncrona para carregar sugestões de imóveis para um cliente específico do backend.
+            const loadPropertySuggestions = async (clientId) => { // Adicionado 'async'
+                suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center;">Carregando sugestões de imóveis...</p>';
 
                 if (!clientId) {
                     suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Selecione um cliente acima para ver as sugestões de imóveis.</p>';
                     selectedClientNameForSuggestions.textContent = '';
-                    return; 
-                }
-
-                const client = sampleClients.find(c => c.id === clientId);
-                if (!client) {
-                    suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-error);">Cliente não encontrado.</p>';
-                    selectedClientNameForSuggestions.textContent = '';
                     return;
                 }
-                selectedClientNameForSuggestions.textContent = client.nome;
 
+                // Comentário: Não precisamos buscar o cliente aqui, pois o nome já foi passado via data-attribute no loadClientsForSuggestionsTable.
+                // Comentário: A lógica de compatibilidade e ordenação é totalmente transferida para o backend.
 
-                const clientInterests = sampleVisits
-                    .filter(v => v.clienteId === clientId && v.interesses)
-                    .map(v => v.interesses)
-                    .reduce((acc, current) => {
-                        for (const key in current) {
-                            if (current.hasOwnProperty(key)) {
-                                acc[key] = (acc[key] || 0) + current[key]; // Sum ratings
-                            }
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de sugestões de imóveis no Spring Boot.
+                    // Comentário: Assume-se que o backend receberá o clientId e usará sua lógica interna (interesses do cliente, características dos imóveis)
+                    // Comentário: para calcular e retornar uma lista de imóveis já ordenados por compatibilidade,
+                    // Comentário: e que cada imóvel retornado terá um array 'topAttributes' com nome do atributo e pontuação de interesse/compatibilidade.
+                    const response = await fetch(`${API_BASE_URL}/clients/${clientId}/suggested-properties`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
                         }
-                        return acc;
-                    }, {});
-
-                const propertiesWithCompatibility = sampleProperties.map(property => {
-                    const compatibilityScores = {};
-                    let totalScore = 0;
-                    let attributesCount = 0;
-
-                    // Calculate a simple compatibility score based on client's average interests
-                    if (property.interessesValidos) {
-                        property.interessesValidos.forEach(attr => {
-                            if (clientInterests[attr]) {
-                                // Simulate compatibility: higher client interest means higher compatibility
-                                // This is a placeholder for a real algorithm.
-                                const simulatedRating = Math.min(5, Math.ceil(clientInterests[attr] / Math.max(1, sampleVisits.filter(v => v.clienteId === clientId && v.interesses && v.interesses[attr]).length))); // Average rating for this attribute by client
-                                compatibilityScores[attr] = simulatedRating;
-                                totalScore += simulatedRating;
-                                attributesCount++;
-                            } else {
-                                // If client has no stated interest, assign a neutral or random rating
-                                compatibilityScores[attr] = Math.floor(Math.random() * 3) + 1; // 1-3 stars if no direct interest
-                            }
-                        });
-                    }
-
-                    // Sort attributes by their simulated compatibility score for this property
-                    const sortedAttributes = Object.entries(compatibilityScores)
-                        .sort(([, a], [, b]) => b - a) // Sort descending by score
-                        .slice(0, 5); // Take top 5
-
-                    return {
-                        property: property,
-                        totalCompatibility: attributesCount > 0 ? totalScore / attributesCount : 0, // Average score for sorting
-                        topAttributes: sortedAttributes
-                    };
-                });
-
-                // Sort properties by overall compatibility (highest first)
-                const sortedSuggestedProperties = propertiesWithCompatibility.sort((a, b) => b.totalCompatibility - a.totalCompatibility);
-
-                if (sortedSuggestedProperties.length === 0) {
-                    suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Nenhum imóvel encontrado para sugestão.</p>';
-                    return;
-                }
-
-                sortedSuggestedProperties.forEach(suggestedItem => {
-                    const property = suggestedItem.property;
-                    const topAttributes = suggestedItem.topAttributes;
-
-                    const propertyCard = document.createElement('a');
-                    propertyCard.href = `#register-property-section`; // Link to edit property
-                    propertyCard.classList.add('stat-card', 'action-card');
-                    propertyCard.dataset.propertyId = property.id; // Store property ID
-
-                    const propertyTitle = document.createElement('h3');
-                    propertyTitle.textContent = property.numeroMatriculaImovel;
-                    propertyCard.appendChild(propertyTitle);
-
-                    const compatibilityList = document.createElement('ul');
-                    compatibilityList.style.listStyle = 'none';
-                    compatibilityList.style.padding = '0';
-                    compatibilityList.style.marginTop = '10px';
-
-                    if (topAttributes.length > 0) {
-                        topAttributes.forEach(([attrName, rating]) => {
-                            const listItem = document.createElement('li');
-                            listItem.style.display = 'flex';
-                            listItem.style.justifyContent = 'space-between';
-                            listItem.style.alignItems = 'center';
-                            listItem.style.marginBottom = '5px';
-                            listItem.innerHTML = `<span>${translateFieldName(attrName)}:</span> ${generateStarRating(rating)}`;
-                            compatibilityList.appendChild(listItem);
-                        });
-                    } else {
-                        const noData = document.createElement('p');
-                        noData.textContent = 'Sem dados de compatibilidade disponíveis.';
-                        noData.style.fontSize = '14px';
-                        noData.style.color = 'var(--color-secondary)';
-                        compatibilityList.appendChild(noData);
-                    }
-
-                    propertyCard.appendChild(compatibilityList);
-                    suggestedPropertiesGallery.appendChild(propertyCard);
-                });
-
-                // Attach event listeners to the new suggestion cards
-                document.querySelectorAll('#suggested-properties-gallery .action-card').forEach(card => {
-                    card.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        const propertyId = event.currentTarget.dataset.propertyId;
-                        editProperty(propertyId); // Reuse the existing editProperty function
                     });
-                });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erro ao carregar sugestões de imóveis.');
+                    }
+
+                    // Comentário: O backend DEVE retornar uma lista de objetos de imóvel, cada um com uma propriedade 'topAttributes'
+                    // Comentário: que é um array de { name: 'nomeDoAtributo', score: 4 }
+                    const suggestedProperties = await response.json();
+
+                    suggestedPropertiesGallery.innerHTML = '';
+
+                    if (suggestedProperties.length === 0) {
+                        suggestedPropertiesGallery.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--color-secondary);">Nenhum imóvel sugerido encontrado para este cliente.</p>';
+                        return;
+                    }
+
+                    suggestedProperties.forEach(property => {
+                        const propertyCard = document.createElement('a');
+                        propertyCard.href = `#register-property-section`; // Link para a seção de edição do imóvel
+                        propertyCard.classList.add('stat-card', 'action-card');
+                        propertyCard.dataset.propertyId = property.id; // Armazena o ID do imóvel
+
+                        const propertyTitle = document.createElement('h3');
+                        propertyTitle.textContent = property.numeroMatriculaImovel || 'Imóvel sem Matrícula';
+                        propertyCard.appendChild(propertyTitle);
+
+                        const propertyAddress = document.createElement('p');
+                        propertyAddress.textContent = `${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''} - ${property.endereco?.bairro || ''}`; // Assume endereco aninhado
+                        propertyCard.appendChild(propertyAddress);
+
+                        const compatibilityList = document.createElement('ul');
+                        compatibilityList.style.listStyle = 'none';
+                        compatibilityList.style.padding = '0';
+                        compatibilityList.style.marginTop = '10px';
+
+                        // Comentário: Agora, itera sobre 'topAttributes' que veio *do backend*.
+                        const topAttributes = property.topAttributes || [];
+
+                        if (topAttributes.length > 0) {
+                            topAttributes.forEach(attr => {
+                                const listItem = document.createElement('li');
+                                listItem.style.display = 'flex';
+                                listItem.style.justifyContent = 'space-between';
+                                listItem.style.alignItems = 'center';
+                                listItem.style.marginBottom = '5px';
+                                // Comentário: Usa 'translateFieldName' para nomes amigáveis e 'generateStarRating' para estrelas.
+                                listItem.innerHTML = `<span>${translateFieldName(attr.name)}:</span> ${generateStarRating(attr.score)}`;
+                                compatibilityList.appendChild(listItem);
+                            });
+                        } else {
+                            const noData = document.createElement('p');
+                            noData.textContent = 'Sem dados de compatibilidade disponíveis.';
+                            noData.style.fontSize = '14px';
+                            noData.style.color = 'var(--color-secondary)';
+                            compatibilityList.appendChild(noData);
+                        }
+
+                        propertyCard.appendChild(compatibilityList);
+                        suggestedPropertiesGallery.appendChild(propertyCard);
+                    });
+
+                    document.querySelectorAll('#suggested-properties-gallery .action-card').forEach(card => {
+                        card.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const propertyId = event.currentTarget.dataset.propertyId;
+                            editProperty(propertyId);
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao buscar sugestões de imóveis:', error);
+                    suggestedPropertiesGallery.innerHTML = `<p style="grid-column: 1 / -1; text-align: center; color: var(--color-error);">Erro ao carregar sugestões: ${error.message}</p>`;
+                }
             };
 
             // SALES FUNCTIONS -----------------------------------------------------------
 
-            const populateSaleFormSelects = () => {
-                // Populate Imóvel Select
+// Comentário: Função assíncrona para popular os selects de imóvel, cliente comprador e corretor no formulário de venda.
+            const populateSaleFormSelects = async () => { // Adicionado 'async'
+                // Comentário: Popula o Select de Imóveis.
                 imovelVendaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
-                sampleProperties.forEach(property => {
-                    const option = document.createElement('option');
-                    option.value = property.id; // Usamos o ID do imóvel como valor
-                    option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco}, ${property.numero}`;
-                    imovelVendaSelect.appendChild(option);
-                });
-
-                // Populate Cliente Comprador Select
-                clienteCompradorSelect.innerHTML = '<option value="">Selecione o Comprador</option>';
-                sampleClients.forEach(client => {
-                    const option = document.createElement('option');
-                    option.value = client.id;
-                    option.textContent = `${client.nome} (${client.documentType}: ${client.primaryKey})`;
-                    clienteCompradorSelect.appendChild(option);
-                });
-
-                // Populate Corretor Responsável Select
-                corretorVendaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
-                sampleUsers.filter(user => user.cargo === 'Corretor').forEach(corretor => {
-                    const option = document.createElement('option');
-                    option.value = corretor.id;
-                    option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.primaryKey})`;
-                    corretorVendaSelect.appendChild(option);
-                });
-
-                // Event Listener para preencher Proprietário automaticamente
-                imovelVendaSelect.addEventListener('change', () => {
-                    const selectedPropertyId = imovelVendaSelect.value;
-                    const selectedProperty = sampleProperties.find(p => p.id === selectedPropertyId);
-                    proprietarioImovelVendaSelect.innerHTML = '<option value="">Proprietário (automático)</option>';
-                    if (selectedProperty && selectedProperty.proprietarioId) {
-                        const owner = sampleClients.find(c => c.id === selectedProperty.proprietarioId);
-                        if (owner) {
+                try {
+                    const propertiesResponse = await fetch(`${API_BASE_URL}/properties?status=DISPONIVEL`, { // Busca apenas imóveis disponíveis
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (propertiesResponse.ok) {
+                        const properties = await propertiesResponse.json();
+                        properties.forEach(property => {
                             const option = document.createElement('option');
-                            option.value = owner.id;
-                            option.textContent = `${owner.nome} (${owner.documentType}: ${owner.primaryKey})`;
-                            option.selected = true; // Seleciona automaticamente
-                            proprietarioImovelVendaSelect.appendChild(option);
+                            option.value = property.id;
+                            option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''}`;
+                            option.dataset.proprietarioId = property.proprietario?.id; // Armazena o ID do proprietário no data attribute
+                            imovelVendaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar imóveis para o select:', await propertiesResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar imóveis:', error); }
+
+                // Comentário: Popula o Select de Cliente Comprador.
+                clienteCompradorSelect.innerHTML = '<option value="">Selecione o Comprador</option>';
+                try {
+                    const clientsResponse = await fetch(`${API_BASE_URL}/clients?active=true`, { // Busca apenas clientes ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (clientsResponse.ok) {
+                        const clients = await clientsResponse.json();
+                        clients.forEach(client => {
+                            const option = document.createElement('option');
+                            option.value = client.id;
+                            option.textContent = `${client.nome} (${client.documentType}: ${client.cpf || client.cnpj})`;
+                            clienteCompradorSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar clientes para o select:', await clientsResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar clientes:', error); }
+
+                // Comentário: Popula o Select de Corretor Responsável.
+                corretorVendaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
+                try {
+                    const corretoresResponse = await fetch(`${API_BASE_URL}/users?tipoCargo=CORRETOR&ativo=true`, { // Busca apenas corretores ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (corretoresResponse.ok) {
+                        const corretores = await corretoresResponse.json();
+                        corretores.forEach(corretor => {
+                            const option = document.createElement('option');
+                            option.value = corretor.id;
+                            option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.cpf || corretor.cnpj})`;
+                            corretorVendaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar corretores para o select:', await corretoresResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar corretores:', error); }
+
+                // Comentário: Event Listener para preencher Proprietário automaticamente com base no imóvel selecionado.
+                imovelVendaSelect.addEventListener('change', async () => { // Adicionado 'async'
+                    const selectedPropertyId = imovelVendaSelect.value;
+                    proprietarioImovelVendaSelect.innerHTML = '<option value="">Proprietário (automático)</option>'; // Limpa e adiciona opção padrão
+                    if (selectedPropertyId) {
+                        // Comentário: Se o ID do proprietário foi armazenado no data attribute, usa ele.
+                        const proprietarioId = imovelVendaSelect.options[imovelVendaSelect.selectedIndex].dataset.proprietarioId;
+                        if (proprietarioId) {
+                            try {
+                                const ownerResponse = await fetch(`${API_BASE_URL}/clients/${proprietarioId}`, { // Busca os dados do proprietário por ID
+                                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                                });
+                                if (ownerResponse.ok) {
+                                    const owner = await ownerResponse.json();
+                                    const option = document.createElement('option');
+                                    option.value = owner.id;
+                                    option.textContent = `${owner.nome} (${owner.documentType}: ${owner.cpf || owner.cnpj})`;
+                                    option.selected = true; // Seleciona automaticamente
+                                    proprietarioImovelVendaSelect.appendChild(option);
+                                } else {
+                                    console.error('Erro ao carregar proprietário para o select:', await ownerResponse.text());
+                                }
+                            } catch (error) { console.error('Erro de rede ao carregar proprietário:', error); }
                         }
                     }
                 });
             };
 
-            const loadSalesTable = (searchTerm = '') => {
-                salesTableBody.innerHTML = '';
+// Comentário: Função assíncrona para carregar e exibir as vendas na tabela a partir do backend.
+            const loadSalesTable = async (searchTerm = '') => { // Adicionado 'async'
+                salesTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Carregando vendas...</td></tr>';
 
-                const filteredSales = sampleSales.filter(sale => {
-                    const property = sampleProperties.find(p => p.id === sale.numeroMatriculaImovel);
-                    const comprador = sampleClients.find(c => c.id === sale.clienteCompradorId);
-                    const proprietario = sampleClients.find(c => c.id === sale.proprietarioImovelId);
-                    const corretor = sampleUsers.find(u => u.id === sale.corretorId);
-
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-
-                    return (property?.numeroMatriculaImovel.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
-                           (comprador?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
-                           (proprietario?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '') ||
-                           (corretor?.nome.toLowerCase().includes(lowerCaseSearchTerm) || '');
-                });
-
-                const sortedSales = [...filteredSales].sort((a, b) => new Date(b.dataVenda) - new Date(a.dataVenda)); // Mais recente primeiro
-
-                if (sortedSales.length === 0) {
-                    const row = salesTableBody.insertRow();
-                    row.innerHTML = `<td colspan="7" style="text-align: center; color: var(--color-secondary);">Nenhuma venda registrada.</td>`;
-                    return;
-                }
-
-                sortedSales.forEach(sale => {
-                    const property = sampleProperties.find(p => p.id === sale.numeroMatriculaImovel);
-                    const comprador = sampleClients.find(c => c.id === sale.clienteCompradorId);
-                    const proprietario = sampleClients.find(c => c.id === sale.proprietarioImovelId);
-                    const corretor = sampleUsers.find(u => u.id === sale.corretorId);
-
-                    const propertyInfo = property ? `${property.numeroMatriculaImovel} (${property.endereco}, ${property.numero})` : 'N/A';
-                    const compradorName = comprador ? comprador.nome : 'N/A';
-                    const proprietarioName = proprietario ? proprietario.nome : 'N/A';
-                    const corretorName = corretor ? corretor.nome : 'N/A';
-                    const formattedDate = new Date(sale.dataVenda).toLocaleString('pt-BR');
-                    const formattedValor = `R$ ${sale.valorFinal.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
-
-                    const row = salesTableBody.insertRow();
-                    row.innerHTML = `
-                        <td data-label="Imóvel">${propertyInfo}</td>
-                        <td data-label="Comprador">${compradorName}</td>
-                        <td data-label="Proprietário">${proprietarioName}</td>
-                        <td data-label="Corretor">${corretorName}</td>
-                        <td data-label="Data da Venda">${formattedDate}</td>
-                        <td data-label="Valor Final">${formattedValor}</td>
-                        <td data-label="Ações" class="actions-cell">
-                            <button class="edit-btn" data-sale-id="${sale.id}"><i class="fas fa-edit"></i></button>
-                        </td>
-                    `;
-                });
-
-                document.querySelectorAll('#sales-table-body .edit-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const saleId = event.currentTarget.dataset.saleId;
-                        editSale(saleId);
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de listagem de vendas do Spring Boot.
+                    // Comentário: O termo de pesquisa é enviado como um parâmetro de query string. O backend deve filtrar por imóvel, comprador, proprietário, corretor, etc.
+                    const response = await fetch(`${API_BASE_URL}/sales?search=${encodeURIComponent(searchTerm)}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
                     });
-                });
+
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erro ao carregar vendas.');
+                    }
+
+                    const sales = await response.json(); // Converte a resposta JSON para um array de objetos JavaScript.
+
+                    salesTableBody.innerHTML = '';
+
+                    if (sales.length === 0) {
+                        salesTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--color-secondary);">Nenhuma venda registrada.</td></tr>';
+                        return;
+                    }
+
+                    sales.forEach(sale => {
+                        // Comentário: Assume que o objeto 'sale' vindo do backend já inclui informações aninhadas de imóvel, comprador, proprietário e corretor.
+                        const propertyInfo = sale.imovel ? `${sale.imovel.numeroMatriculaImovel || 'N/A'} (${sale.imovel.logradouro || ''}, ${sale.imovel.numero || ''})` : 'N/A';
+                        const compradorName = sale.comprador?.nome || 'N/A';
+                        const proprietarioName = sale.proprietario?.nome || 'N/A';
+                        const corretorName = sale.corretor?.nome || 'N/A';
+                        const formattedDate = sale.dataVenda ? new Date(sale.dataVenda).toLocaleString('pt-BR') : 'N/A';
+                        const formattedValor = sale.valorFinal ? `R$ ${sale.valorFinal.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}` : 'R$ 0,00';
+
+                        const row = salesTableBody.insertRow();
+                        row.innerHTML = `
+                            <td data-label="Imóvel">${propertyInfo}</td>
+                            <td data-label="Comprador">${compradorName}</td>
+                            <td data-label="Proprietário">${proprietarioName}</td>
+                            <td data-label="Corretor">${corretorName}</td>
+                            <td data-label="Data da Venda">${formattedDate}</td>
+                            <td data-label="Valor Final">${formattedValor}</td>
+                            <td data-label="Ações" class="actions-cell">
+                                <button class="edit-btn" data-sale-id="${sale.id}"><i class="fas fa-edit"></i></button>
+                            </td>
+                        `;
+                    });
+
+                    document.querySelectorAll('#sales-table-body .edit-btn').forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            const saleId = event.currentTarget.dataset.saleId;
+                            editSale(saleId);
+                        });
+                    });
+
+                } catch (error) {
+                    console.error('Erro ao buscar vendas:', error);
+                    salesTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--color-error);">Erro ao carregar vendas: ${error.message}</td></tr>`;
+                }
             };
 
             if (saleSearchInput) {
@@ -2424,37 +2976,58 @@
                 });
             }
 
-            const editSale = (saleId) => {
-                const sale = sampleSales.find(s => s.id === saleId);
+// Comentário: Função assíncrona para carregar os dados de uma venda específica para edição.
+            const editSale = async (saleId) => { // Adicionado 'async'
+                try {
+                    // Comentário: Faz uma requisição GET para o endpoint de detalhe de venda do Spring Boot.
+                    const response = await fetch(`${API_BASE_URL}/sales/${saleId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        }
+                    });
 
-                if (sale) {
+                    // Comentário: Verifica a resposta e trata erros.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Venda não encontrada.');
+                    }
+
+                    const sale = await response.json(); // Converte a resposta JSON para um objeto JavaScript.
+
+                    // Comentário: Atualiza o título e descrição do formulário.
                     saleFormTitle.textContent = 'Editar Venda';
                     saleFormDescription.textContent = 'Modifique os campos abaixo para atualizar o registro da venda.';
-                    saleIdInput.value = sale.id;
+                    saleIdInput.value = sale.id; // Define o ID da venda no campo hidden.
 
-                    populateSaleFormSelects(); // Popula os selects antes de definir os valores
+                    await populateSaleFormSelects(); // Popula os selects assincronamente antes de definir os valores.
 
-                    // Preencher os selects e campos
-                    imovelVendaSelect.value = sale.numeroMatriculaImovel;
-                    // Trigger change on property select to automatically set owner
+                    // Comentário: Preenche os selects e campos com os IDs/valores do objeto 'sale' recebido.
+                    imovelVendaSelect.value = sale.imovel?.id || '';
+                    // Comentário: Dispara change no select de imóvel para automaticamente definir o proprietário.
                     imovelVendaSelect.dispatchEvent(new Event('change')); 
                     
-                    clienteCompradorSelect.value = sale.clienteCompradorId;
-                    corretorVendaSelect.value = sale.corretorId;
-                    document.getElementById('data_venda').value = sale.dataVenda;
-                    document.getElementById('valor_final').value = sale.valorFinal;
+                    clienteCompradorSelect.value = sale.comprador?.id || '';
+                    corretorVendaSelect.value = sale.corretor?.id || '';
+                    document.getElementById('data_venda').value = sale.dataVenda || '';
+                    document.getElementById('valor_final').value = sale.valorFinal || '';
                     
-                    // Proprietário já deve ter sido preenchido automaticamente pelo change do imóvel
-                    // Se não for o proprietário esperado, indica um problema de dados ou lógica
-                    // For now, we trust the automatic fill.
+                    // Comentário: Proprietário já deve ter sido preenchido automaticamente pelo change do imóvel.
 
+                    // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteSale'.
                     deleteSaleBtn.style.display = 'inline-block';
                     deleteSaleBtn.onclick = () => deleteSale(sale.id);
 
-                    showSection('register-sale-section');
-                } else {
-                    console.error('Venda não encontrada para edição:', saleId);
-                    alert('Venda não encontrada.');
+                    showSection('register-sale-section'); // Exibe a seção do formulário.
+
+                } catch (error) {
+                    console.error('Erro ao carregar venda para edição:', error);
+                    alert('Venda não encontrada para edição.');
                 }
             };
 
@@ -2467,64 +3040,94 @@
                 deleteSaleBtn.style.display = 'none';
             };
 
-            saleRegistrationForm.addEventListener('submit', (event) => {
+// Comentário: Event listener para a submissão do formulário de cadastro/edição de venda.
+            saleRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
                 event.preventDefault();
 
                 const formData = new FormData(saleRegistrationForm);
-                const saleData = Object.fromEntries(formData.entries());
+                const saleData = Object.fromEntries(formData.entries()); // Converte os dados do formulário em um objeto JavaScript.
 
-                // Mapear IDs para CPFs/CNPJs para a simulação de PK completa
-                const selectedProperty = sampleProperties.find(p => p.id === saleData.numeroMatriculaImovel);
-                const selectedComprador = sampleClients.find(c => c.id === saleData.cpfCnpjClienteComprador);
-                const selectedProprietario = sampleClients.find(c => c.id === proprietarioImovelVendaSelect.value); // Pega o valor real selecionado/auto-preenchido
-                const selectedCorretor = sampleUsers.find(u => u.id === saleData.cpfCnpjCorretor);
-
-                const saleToSave = {
-                    numeroMatriculaImovel: selectedProperty?.numeroMatriculaImovel || 'N/A', // Usar a matrícula do imóvel
-                    clienteCompradorId: selectedComprador?.id || 'N/A',
-                    cpf_cliente_comprador: selectedComprador?.documentType === 'CPF' ? selectedComprador?.primaryKey : '',
-                    cnpj_cliente_comprador: selectedComprador?.documentType === 'CNPJ' ? selectedComprador?.primaryKey : '',
-                    proprietarioImovelId: selectedProprietario?.id || 'N/A',
-                    cpf_proprietario_imovel: selectedProprietario?.documentType === 'CPF' ? selectedProprietario?.primaryKey : '',
-                    cnpj_proprietario_imovel: selectedProprietario?.documentType === 'CNPJ' ? selectedProprietario?.primaryKey : '',
-                    corretorId: selectedCorretor?.id || 'N/A',
-                    cpf_corretor: selectedCorretor?.documentType === 'CPF' ? selectedCorretor?.primaryKey : '',
-                    cnpj_corretor: selectedCorretor?.documentType === 'CNPJ' ? selectedCorretor?.primaryKey : '',
+                // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de venda no Spring.
+                const saleToSend = {
+                    id: saleData.saleId || null,
+                    // Comentário: Envia apenas o ID do imóvel, comprador, proprietário e corretor.
+                    imovel: { id: saleData.numeroMatriculaImovel }, 
+                    comprador: { id: saleData.cpfCnpjClienteComprador },
+                    proprietario: { id: saleData.cpfCnpjProprietarioImovel }, // Proprietário vem do select desabilitado
+                    corretor: { id: saleData.cpfCnpjCorretor },
                     dataVenda: saleData.dataVenda,
                     valorFinal: parseFloat(saleData.valorFinal)
                 };
 
-                if (saleIdInput.value) {
-                    const saleIndex = sampleSales.findIndex(s => s.id === saleIdInput.value);
-                    if (saleIndex !== -1) {
-                        sampleSales[saleIndex] = {
-                            ...sampleSales[saleIndex],
-                            ...saleToSave
-                        };
-                        alert('Venda atualizada com sucesso!');
+                // Comentário: Determina o método HTTP (POST para novo, PUT para edição) e a URL do endpoint.
+                const isEditing = !!saleIdInput.value;
+                const method = isEditing ? 'PUT' : 'POST';
+                const url = isEditing ? `${API_BASE_URL}/sales/${saleIdInput.value}` : `${API_BASE_URL}/sales`;
+
+                try {
+                    // Comentário: Envia os dados da venda para o backend.
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                        },
+                        body: JSON.stringify(saleToSend) // Converte o objeto venda para JSON.
+                    });
+
+                    // Comentário: Verifica se a operação no backend foi bem-sucedida.
+                    if (!response.ok) {
+                        if (response.status === 401 || response.status === 403) {
+                            alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                            removeToken();
+                            window.location.href = 'login.html';
+                            return;
+                        }
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} venda.`);
                     }
-                } else {
-                    const newSale = {
-                        id: 's' + (sampleSales.length + 1).toString(),
-                        ...saleToSave
-                    };
-                    sampleSales.push(newSale);
-                    alert('Venda registrada com sucesso!');
+
+                    // Comentário: Mensagem de sucesso e redirecionamento.
+                    alert(`Venda ${isEditing ? 'atualizada' : 'cadastrada'} com sucesso!`);
+                    resetSaleForm();
+                    showSection('track-sales-section');
+                } catch (error) {
+                    console.error(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} venda:`, error);
+                    alert(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} venda: ${error.message}`);
                 }
-                resetSaleForm();
-                showSection('track-sales-section');
             });
 
-            const deleteSale = (saleId) => {
+// Comentário: Função assíncrona para excluir uma venda do backend.
+            const deleteSale = async (saleId) => { // Adicionado 'async'
                 if (confirm('Tem certeza que deseja excluir esta venda? Esta ação é irreversível.')) {
-                    const initialLength = sampleSales.length;
-                    sampleSales = sampleSales.filter(s => s.id !== saleId);
-                    if (sampleSales.length < initialLength) {
+                    try {
+                        // Comentário: Envia uma requisição DELETE para o endpoint de exclusão de venda do Spring Boot.
+                        const response = await fetch(`${API_BASE_URL}/sales/${saleId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${getToken()}` // Envia o token JWT
+                            }
+                        });
+
+                        // Comentário: Verifica se a exclusão foi bem-sucedida.
+                        if (!response.ok) {
+                            if (response.status === 401 || response.status === 403) {
+                                alert('Sessão expirada ou não autorizado. Por favor, faça login novamente.');
+                                removeToken();
+                                window.location.href = 'login.html';
+                                return;
+                            }
+                            const errorData = response.status !== 204 ? await response.json() : { message: 'Erro desconhecido.' };
+                            throw new Error(errorData.message || 'Erro ao excluir venda.');
+                        }
+
+                        // Comentário: Mensagem de sucesso e recarregamento da lista de vendas.
                         alert('Venda excluída com sucesso!');
                         resetSaleForm();
                         showSection('track-sales-section');
-                    } else {
-                        alert('Erro ao excluir venda. Venda não encontrada.');
+                    } catch (error) {
+                        console.error('Erro ao excluir venda:', error);
+                        alert(`Erro ao excluir venda: ${error.message}`);
                     }
                 }
             };
@@ -2636,13 +3239,13 @@
                 updatePropertyFieldsVisibility(); // Initial call
             }
 
-            // Lógica para mostrar a seção inicial (Dashboard) ou uma seção específica via hash
-            const initialHash = window.location.hash.substring(1);
-            if (initialHash && document.getElementById(initialHash)) {
-                showSection(initialHash);
+            // Comentário: Lógica para mostrar a seção inicial (Dashboard) ou uma seção específica via hash.
+            const initialHash = window.location.hash.substring(1); //
+            if (initialHash && document.getElementById(initialHash)) { //
+                showSection(initialHash); //
             } else {
                 showSection('dashboard-section');
-            }
+            } 
         });
     </script>
 </body>

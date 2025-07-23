@@ -32,28 +32,68 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('login-form');
+<script>
+    // Variáveis globais para URL do backend e chave do token de autenticação
+    // Comentário: API_BASE_URL deve ser a URL base do seu backend Spring Boot.
+    // Comentário: AUTH_TOKEN_KEY é o nome da chave para armazenar o token JWT no sessionStorage.
+    const API_BASE_URL = 'http://localhost:8080/api'; // Substitua pela URL do seu backend Spring
+    const AUTH_TOKEN_KEY = 'masterhouse_jwt_token';
 
-            if (loginForm) {
-                loginForm.addEventListener('submit', (event) => {
-                    event.preventDefault(); // Impede o envio padrão do formulário
+    // Comentário: Função auxiliar para armazenar o token JWT no sessionStorage.
+    // Comentário: O sessionStorage é usado para que o token seja limpo ao fechar a aba/navegador.
+    const setToken = (token) => sessionStorage.setItem(AUTH_TOKEN_KEY, token);
 
-                    // Aqui você adicionaria sua lógica de autenticação real (AJAX para o backend)
-                    // Para fins de demonstração, vamos apenas redirecionar
-                    
-                    // Simula um login bem-sucedido
-                    alert('Login bem-sucedido! Redirecionando para o Dashboard.');
-                    window.location.replace('dashboard_adm.html'); // Redireciona para o dashboard
-                    /*const userAction = async () => {
-                        const response = await fetch('http:localhost:8080/dashboard');
-                        const myJson = await response.json(); //extract JSON from the http response
-                        // do something with myJson
-                    }*/
-                });
-            }
-        });
-    </script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('login-form');
+
+        if (loginForm) {
+            // Comentário: O event listener agora é 'async' para permitir o uso de 'await' nas chamadas 'fetch'.
+            loginForm.addEventListener('submit', async (event) => { 
+                event.preventDefault(); // Impede o envio padrão do formulário
+
+                const usernameInput = document.getElementById('username');
+                const passwordInput = document.getElementById('password');
+
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+
+                try {
+                    // Comentário: 1. Requisição POST para o endpoint de login do seu backend Spring.
+                    // Comentário: Envia os dados de login (username e password) como um objeto JSON no corpo da requisição.
+                    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password }) 
+                    });
+
+                    // Comentário: 2. Verifica se a resposta da requisição foi bem-sucedida (status 2xx).
+                    if (!response.ok) {
+                        const errorData = await response.json(); // Tenta ler o corpo da resposta como JSON de erro
+                        // Comentário: Lida com diferentes códigos de erro HTTP retornados pelo backend.
+                        if (response.status === 401) {
+                            alert('Credenciais inválidas. Verifique seu usuário e senha.');
+                        } else {
+                            alert(errorData.message || 'Ocorreu um erro no login.');
+                        }
+                        return; // Impede o redirecionamento em caso de erro
+                    }
+
+                    // Comentário: 3. Processa a resposta: assume que o backend retorna um JSON com um token JWT.
+                    const data = await response.json();
+                    setToken(data.token); // Armazena o token JWT recebido no sessionStorage.
+
+                    alert('Login bem-sucedido! Redirecionando para o Dashboard.'); //
+                    window.location.href = 'dashboard_adm.html'; // Redireciona para o dashboard após login bem-sucedido
+
+                } catch (error) {
+                    console.error('Erro na requisição de login:', error);
+                    alert('Erro de conexão. Tente novamente mais tarde.');
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
