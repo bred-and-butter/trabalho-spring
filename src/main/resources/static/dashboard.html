@@ -1742,6 +1742,8 @@
                         const row = clientsTableBody.insertRow();
                         // Comentário: Ajuste para primaryKey, que pode ser cpf ou cnpj no seu backend.
                         const primaryKeyValue = client.documentType === 'CPF' ? client.cpf : client.cnpj;
+                        const cleanId = primaryKeyValue.replace(/\//g, '');
+                        const clientId = `${client.documentType}${cleanId}`;
                         row.innerHTML = `
                             <td data-label="Nome">${client.nome}</td>
                             <td data-label="Chave Primária">${primaryKeyValue || 'N/A'}</td>
@@ -1749,7 +1751,7 @@
                             <td data-label="Telefone">${client.telefone || 'N/A'}</td>
                             <td data-label="Data de Cadastro">${client.dataCadastro || 'N/A'}</td>
                             <td data-label="Ações" class="actions-cell">
-                                <button class="edit-btn" data-client-id="${client.id}"><i class="fas fa-edit"></i></button>
+                                <button class="edit-btn" data-client-id="${clientId}"><i class="fas fa-edit"></i></button>
                             </td>
                         `;
                     });
@@ -1800,7 +1802,7 @@
                     // Comentário: Atualiza o título e descrição do formulário para modo de edição.
                     clientFormTitle.textContent = 'Editar Cliente';
                     clientFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do cliente.';
-                    clientIdInput.value = client.id; // Define o ID do cliente no campo hidden.
+                    clientIdInput.value = clientId; // Define o ID do cliente no campo hidden.
 
                     // Comentário: Preenche os campos do formulário com os dados recebidos do backend.
                     // Comentário: Dispara eventos 'change' para garantir que a lógica de visibilidade de campos (CPF/CNPJ) seja atualizada.
@@ -1811,18 +1813,18 @@
                     document.getElementById('nome_client').value = client.nome || '';
                     document.getElementById('email_client').value = client.email || '';
                     document.getElementById('telefone_client').value = client.telefone || '';
-                    document.getElementById('cep_client').value = client.endereco?.cep || ''; // Acessa sub-propriedade 'endereco.cep'
-                    document.getElementById('logradouro_client').value = client.endereco?.logradouro || '';
-                    document.getElementById('numero_client').value = client.endereco?.numero || '';
-                    document.getElementById('complemento_client').value = client.endereco?.complemento || '';
-                    document.getElementById('bairro_client').value = client.endereco?.bairro || '';
-                    document.getElementById('cidade_client').value = client.endereco?.cidade || '';
-                    document.getElementById('estado_client').value = client.endereco?.estado || '';
+                    document.getElementById('cep_client').value = client.cep || '';
+                    document.getElementById('logradouro_client').value = client.endereco || '';
+                    document.getElementById('numero_client').value = client.numero || '';
+                    document.getElementById('complemento_client').value = client.complemento || '';
+                    document.getElementById('bairro_client').value = client.bairro || '';
+                    document.getElementById('cidade_client').value = client.cidade || '';
+                    document.getElementById('estado_client').value = client.estado || '';
                     document.getElementById('data_cadastro_client').value = client.dataCadastro || ''; // Ajuste para formato de data
                     
                     // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteClient'.
                     deleteClientBtn.style.display = 'inline-block';
-                    deleteClientBtn.onclick = () => deleteClient(client.id);
+                    deleteClientBtn.onclick = () => deleteClient(clientId);
 
                     showSection('register-client-section'); // Exibe a seção do formulário de registro/edição.
 
@@ -1899,7 +1901,7 @@
                     // Comentário: Mensagem de sucesso e redirecionamento.
                     alert(`Cliente ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`);
                     resetClientForm();
-                    showSection('list-manage-clients-content');
+                    //showSection('list-manage-clients-content');
                 } catch (error) {
                     console.error(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} cliente:`, error);
                     alert(`Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} cliente: ${error.message}`);

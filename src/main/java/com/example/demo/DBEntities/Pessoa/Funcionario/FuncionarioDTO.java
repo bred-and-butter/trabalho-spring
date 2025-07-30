@@ -1,6 +1,6 @@
-package com.example.demo.DBEntities.Pessoa.Cliente;
+package com.example.demo.DBEntities.Pessoa.Funcionario;
 
-public class ClienteDTO {
+public class FuncionarioDTO {
 
     private String nome;
     private String cpf;
@@ -14,27 +14,31 @@ public class ClienteDTO {
     private String cidade;
     private String estado;
     private String cep;
-    private String dataCadastro;
+    private String tipoCargo;
+    private String areaAtuacao;
     private String numero;
+    private Boolean ativo;
 
-    public ClienteDTO() {
+    public FuncionarioDTO() {
     }
 
-    public ClienteDTO(Cliente cliente) {
-        this.nome = cliente.getPessoa().getNome();
-        this.email = cliente.getPessoa().getEmail();
-        this.telefone = cliente.getPessoa().getTelefone();
-        this.documentType = cliente.getDocumentType();
-        this.cpf = cliente.getCpf();
-        this.cnpj = cliente.getCnpj();
-        this.endereco = cliente.getPessoa().getEndereco();
-        this.bairro = cliente.getPessoa().getBairro();
-        this.cidade = cliente.getPessoa().getCidade();
-        this.complemento = cliente.getPessoa().getComplemento();
-        this.estado = cliente.getPessoa().getEstado();
-        this.cep = cliente.getPessoa().getCep();
-        this.dataCadastro = cliente.getDataCadastro().toString();
-        this.numero = cliente.getPessoa().getNumero();
+    public FuncionarioDTO(Funcionario funcionario) {
+        this.nome = funcionario.getPessoa().getNome();
+        this.email = funcionario.getPessoa().getEmail();
+        this.telefone = funcionario.getPessoa().getTelefone();
+        this.documentType = funcionario.getDocumentType();
+        this.cpf = funcionario.getCpf();
+        this.cnpj = funcionario.getCnpj();
+        this.endereco = funcionario.getPessoa().getEndereco();
+        this.bairro = funcionario.getPessoa().getBairro();
+        this.cidade = funcionario.getPessoa().getCidade();
+        this.complemento = funcionario.getPessoa().getComplemento();
+        this.estado = funcionario.getPessoa().getEstado();
+        this.cep = funcionario.getPessoa().getCep();
+        this.tipoCargo = funcionario.getTipoCargo();
+        this.areaAtuacao = funcionario.getAreaAtuacao();
+        this.ativo = funcionario.getAtivo();
+        this.numero = funcionario.getPessoa().getNumero();
     }
 
     public String getNome() {
@@ -86,21 +90,13 @@ public class ClienteDTO {
     }
 
     public String getEndereco() {
-    return endereco;
+        return endereco;
     }
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
     }
 
-    public String getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(String dataCadastro) {
-        this.dataCadastro = dataCadastro;
-    }
-    
     public String getBairro() {
         return bairro;
     }
@@ -133,12 +129,36 @@ public class ClienteDTO {
         this.cep = cep;
     }
 
+    public String getComplemento() {
+        return complemento;
+    }
+
     public void setComplemento(String complemento) {
         this.complemento = complemento;
     }
 
-    public String getComplemento() {
-        return complemento;
+    public String getTipoCargo() {
+        return tipoCargo;
+    }
+
+    public void setTipoCargo(String tipoCargo) {
+        this.tipoCargo = tipoCargo;
+    }
+
+    public String getAreaAtuacao() {
+        return areaAtuacao;
+    }
+
+    public void setAreaAtuacao(String areaAtuacao) {
+        this.areaAtuacao = areaAtuacao;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 
     public void setNumero(String numero) {

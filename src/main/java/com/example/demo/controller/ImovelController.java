@@ -22,7 +22,7 @@ public class ImovelController {
 public List<ImovelDTO> listarImoveis(@RequestParam(required = false) String search) {
     List<Object[]> resultados;
 
-    if (!search.isEmpty()) {
+    if (search != null && !search.isEmpty()) {
         resultados = imovelRepository.findAllWithTipoInfoFiltrada(search);
     } else {
         resultados = imovelRepository.findAllWithTipoInfo();

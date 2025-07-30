@@ -9,6 +9,7 @@ CREATE TABLE PESSOA (
     bairro VARCHAR(100),
     cidade VARCHAR(100),
     estado VARCHAR(2),
+    numero VARCHAR(10),
     complemento VARCHAR(100),
     cep VARCHAR(10),
     PRIMARY KEY (cpf, cnpj),

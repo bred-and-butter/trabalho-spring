@@ -26,6 +26,8 @@ public class Pessoa {
     private String estado;
     @Column(length = 10)
     private String cep;
+    @Column(length = 10)
+    private String numero;
 
     public PessoaId getId() {
         return id;
@@ -117,5 +119,13 @@ public class Pessoa {
 
     public String getComplemento() {
         return complemento;
+    }
+
+     public void setNumero(String numero) {
+        this.complemento = complemento;
+    }
+
+    public String getNumero() {
+        return numero;
     }
 }
