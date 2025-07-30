@@ -52,6 +52,7 @@ public class FuncionarioController {
         pessoa.setCep(dto.getCep());
         pessoa.setComplemento(dto.getComplemento());
         pessoa.setNumero(dto.getNumero());
+        System.out.println(dto.getNumero());
 
         PessoaId id = new PessoaId(dto.getCpf(), dto.getCnpj());
         pessoa.setId(id);
@@ -108,8 +109,6 @@ public class FuncionarioController {
         } else if (id.toLowerCase().startsWith("cnpj")) {
             cnpj = id.substring(4); // remove "cnpj"
             // Insere barra depois do 8º caractere
-
-            cnpj = cnpj.substring(0, 10) + "/" + cnpj.substring(10);
 
         } else {
             return ResponseEntity.badRequest().build(); // formato inválido

@@ -122,7 +122,7 @@ public class Pessoa {
     }
 
      public void setNumero(String numero) {
-        this.complemento = complemento;
+        this.numero = numero;
     }
 
     public String getNumero() {

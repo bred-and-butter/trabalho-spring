@@ -171,7 +171,7 @@ public class FuncionarioDTO {
     }
 
      public void setSenha(String senha) {
-        this.numero = senha;
+        this.senha = senha;
     }
 
     public String getSenha() {

@@ -88,8 +88,6 @@ public class ClienteController {
             cnpj = id.substring(4); // remove "cnpj"
             // Insere barra depois do 8º caractere
             
-                cnpj = cnpj.substring(0, 10) + "/" + cnpj.substring(10);
-            
         } else {
             return ResponseEntity.badRequest().build(); // formato inválido
         }
