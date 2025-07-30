@@ -64,6 +64,7 @@ public class FuncionarioController {
         funcionario.setTipoCargo(dto.getTipoCargo());
         funcionario.setAreaAtuacao(dto.getAreaAtuacao());
         funcionario.setAtivo(dto.getAtivo());
+        funcionario.setSenha(dto.getSenha());
 
         funcionarioRepository.save(funcionario);
 

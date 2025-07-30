@@ -17,6 +17,7 @@ public class FuncionarioDTO {
     private String tipoCargo;
     private String areaAtuacao;
     private String numero;
+    private String senha;
     private Boolean ativo;
 
     public FuncionarioDTO() {
@@ -167,5 +168,13 @@ public class FuncionarioDTO {
 
     public String getNumero() {
         return numero;
+    }
+
+     public void setSenha(String senha) {
+        this.numero = senha;
+    }
+
+    public String getSenha() {
+        return senha;
     }
 }

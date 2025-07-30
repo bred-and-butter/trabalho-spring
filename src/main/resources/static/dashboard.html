@@ -1553,43 +1553,43 @@
 
 
             // Comentário: Event listener para a submissão do formulário de cadastro/edição de usuário.
-           clientRegistrationForm.addEventListener('submit', async (event) => {
+           userRegistrationForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
-                const formData = new FormData(clientRegistrationForm);
-                const clientData = Object.fromEntries(formData.entries());
+                const formData = new FormData(userRegistrationForm);
+                const userData = Object.fromEntries(formData.entries());
 
                 // Desformatar CPF/CNPJ antes de criar clientToSend
-                if (clientData.documentType === 'CPF' && clientData.cpf) {
-                    clientData.cpf = unformatDocument(clientData.cpf);
+                if (userData.documentType === 'CPF' && userData.cpf) {
+                    userData.cpf = unformatDocument(userData.cpf);
                 }
-                if (clientData.documentType === 'CNPJ' && clientData.cnpj) {
-                    clientData.cnpj = unformatDocument(clientData.cnpj);
+                if (userData.documentType === 'CNPJ' && userData.cnpj) {
+                    userData.cnpj = unformatDocument(userData.cnpj);
                 }
 
                 // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de cliente no Spring.
-                const clientToSend = {
-                    id: clientData.clientId || null,
-                    nome: clientData.nome,
-                    email: clientData.email,
-                    telefone: clientData.telefone,
-                    documentType: clientData.documentType,
-                    cpf: clientData.cpf, // Já desformatado
-                    cnpj: clientData.cnpj, // Já desformatado
-                    dataCadastro: clientData.dataCadastro,
-                    endereco: {
-                        cep: clientData.cep,
-                        logradouro: clientData.logradouro,
-                        numero: clientData.numero,
-                        complemento: clientData.complemento,
-                        bairro: clientData.bairro,
-                        cidade: clientData.cidade,
-                        estado: clientData.estado
-                    }
+                const userToSend = {
+                    id: userData.userId || null,
+                    nome: userData.nome,
+                    email: userData.email,
+                    telefone: userData.telefone,
+                    documentType: userData.documentType,
+                    cpf: userData.cpf,
+                    cnpj: userData.cnpj,
+                    endereco: userData.logradouro, // logradouro vira 'endereco'
+                    bairro: userData.bairro,
+                    cidade: userData.cidade,
+                    complemento: userData.complemento,
+                    estado: userData.estado,
+                    cep: userData.cep,
+                    tipoCargo: userData.tipoCargo,
+                    areaAtuacao: userData.areaAtuacao,
+                    ativo: userData.ativo,
+                    numero: userData.numero,
+                    senha: userData.senha // Inclua se o backend espera esse campo para cadastro/edição
                 };
 
-                // Comentário: Ajusta o valor do checkbox 'ativo' para um booleano (true/false) esperado pelo backend.
-                userData.ativo = userData.ativo === 'on';
+                userToSend.ativo = userToSend.ativo === "on";
 
                 // Comentário: Determina o método HTTP (POST para novo usuário, PUT para edição) e a URL do endpoint.
                 const isEditing = !!userIdInput.value; // Verifica se há um ID de usuário, indicando edição.
@@ -1605,7 +1605,7 @@
                             'Authorization': `Bearer ${getToken()}` // Envia o token JWT
                         },
                         // Comentário: Converte o objeto userData para JSON. Remova 'confirmarSenha' antes de enviar, pois não é uma propriedade do modelo de backend.
-                        body: JSON.stringify({ ...userData, confirmarSenha: undefined }) 
+                        body: JSON.stringify(userToSend) 
                     });
 
                     // Comentário: Verifica se a operação no backend foi bem-sucedida.
