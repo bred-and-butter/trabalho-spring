@@ -1079,7 +1079,13 @@
             }
             return `<div class="rating-display">${starsHtml}</div>`;
         };
-
+         const typeFieldGroups = {
+            'TERRENO': ['terreno_fields'],
+            'CASA': ['unidade_residencial_fields', 'casa_fields'],
+            'APARTAMENTO': ['unidade_residencial_fields', 'apartamento_fields'],
+            'PREDIO_COMERCIAL': ['unidade_comercial_fields', 'predio_comercial_fields'],
+            'SALA_COMERCIAL': ['unidade_comercial_fields', 'sala_comercial_fields']
+    };
 
         // Função showSection movida para o escopo global
         const showSection = (contentId) => {
