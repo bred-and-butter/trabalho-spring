@@ -62,7 +62,7 @@ public class Apartamento {
         return numeroApartamento;
     }
 
-    public void numeroApartamento(String numeroApartamento) {
+    public void setNumeroApartamento(String numeroApartamento) {
         this.numeroApartamento = numeroApartamento;
     }
 }

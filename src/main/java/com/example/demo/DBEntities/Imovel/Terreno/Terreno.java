@@ -24,6 +24,14 @@ public class Terreno {
 
     // Getters e Setters
 
+    public String getNumeroMatriculaImovel() {
+        return numeroMatriculaImovel;
+    }
+
+    public void setNumeroMatriculaImovel(String numeroMatriculaImovel) {
+        this.numeroMatriculaImovel = numeroMatriculaImovel;
+    }
+
     public String getTopografia() {
         return topografia;
     }

@@ -31,6 +31,14 @@ public class UnidadeResidencial{
 
     // Getters e Setters
 
+    public String getNumeroMatriculaImovel() {
+        return numeroMatriculaImovel;
+    }
+
+    public void setNumeroMatriculaImovel(String numeroMatriculaImovel) {
+        this.numeroMatriculaImovel = numeroMatriculaImovel;
+    }
+
     public Integer getNumeroQuartos() {
         return numeroQuartos;
     }

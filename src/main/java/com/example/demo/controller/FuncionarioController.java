@@ -96,7 +96,7 @@ public class FuncionarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<List<FuncionarioDTO>> atualizarCliente(
+    public ResponseEntity<List<FuncionarioDTO>> atualizarFuncionario(
             @PathVariable String id,
             @RequestBody FuncionarioDTO dto) {
 
