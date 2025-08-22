@@ -1213,6 +1213,50 @@
                     return; // Sai da função para evitar processamento adicional
                 }
 
+                            // Lógica para mostrar/ocultar campos específicos do TIPO DE IMÓVEL
+            // Re-organizado para ser uma função mais robusta e reutilizável
+            const updatePropertyFieldsVisibility = () => {
+                const selectedType = tipoImovelSelect ? tipoImovelSelect.value : '';
+
+                allTypeSpecificFieldDivs.forEach(div => {
+                    div.style.display = 'none';
+                    div.querySelectorAll('input, select, textarea').forEach(input => input.removeAttribute('required'));
+                });
+
+                if (typeFieldGroups[selectedType]) {
+                    typeFieldGroups[selectedType].forEach(fieldGroupId => {
+                        const fieldGroupDiv = document.getElementById(fieldGroupId);
+                        if (fieldGroupDiv) {
+                            fieldGroupDiv.style.display = 'grid';
+                        }
+                    });
+
+                    // Set required attributes based on selected type
+                    if (selectedType === 'TERRENO') {
+                        document.getElementById('topografia').setAttribute('required', 'true');
+                    } else if (selectedType === 'CASA' || selectedType === 'APARTAMENTO') {
+                        document.getElementById('numero_quartos').setAttribute('required', 'true');
+                        document.getElementById('numero_banheiros').setAttribute('required', 'true');
+                        document.getElementById('area_construida').setAttribute('required', 'true');
+                        if (selectedType === 'CASA') {
+                            document.getElementById('numero_pavimentos').setAttribute('required', 'true');
+                        } else if (selectedType === 'APARTAMENTO') {
+                            document.getElementById('andar').setAttribute('required', 'true');
+                            document.getElementById('numero_apartamento').setAttribute('required', 'true');
+                        }
+                    } else if (selectedType === 'PREDIO_COMERCIAL' || selectedType === 'SALA_COMERCIAL') {
+                        document.getElementById('area_util').setAttribute('required', 'true');
+                        if (selectedType === 'PREDIO_COMERCIAL') {
+                            document.getElementById('total_andares').setAttribute('required', 'true');
+                            document.getElementById('numero_salas').setAttribute('required', 'true');
+                        } else if (selectedType === 'SALA_COMERCIAL') {
+                            document.getElementById('andar_sala').setAttribute('required', 'true');
+                            document.getElementById('numero_sala').setAttribute('required', 'true');
+                        }
+                    }
+                }
+            };
+
 
                 // Chamar a função para atualizar visibilidade dos campos de imóvel caso o select esteja presente
                 if (tipoImovelSelect) {
@@ -1229,6 +1273,219 @@
                 }
             }
         };
+
+        // Comentário: Função assíncrona para popular os selects de cliente, imóvel e corretor no formulário de visita, buscando dados do backend.
+            const populateVisitFormSelects = async () => { // Adicionado 'async'
+                // Comentário: Popula o Select de Clientes.
+                clienteVisitaSelect.innerHTML = '<option value="">Selecione o Cliente</option>';
+                try {
+                    const clientsResponse = await fetch(`${API_BASE_URL}/clients?active=true`, { // Busca apenas clientes ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (clientsResponse.ok) {
+                        const clients = await clientsResponse.json();
+                        clients.forEach(client => {
+                            const option = document.createElement('option');
+                            option.value = client.id;
+                            option.textContent = `${client.nome} (${client.documentType}: ${client.cpf || client.cnpj})`;
+                            clienteVisitaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar clientes para o select:', await clientsResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar clientes:', error); }
+
+                // Comentário: Popula o Select de Imóveis.
+                imovelVisitaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
+                try {
+                    const propertiesResponse = await fetch(`${API_BASE_URL}/properties?status=DISPONIVEL`, { // Busca apenas imóveis disponíveis
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (propertiesResponse.ok) {
+                        const properties = await propertiesResponse.json();
+                        properties.forEach(property => {
+                            const option = document.createElement('option');
+                            option.value = property.id;
+                            option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''}`;
+                            imovelVisitaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar imóveis para o select:', await propertiesResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar imóveis:', error); }
+
+                // Comentário: Popula o Select de Corretores (apenas usuários com cargo 'CORRETOR').
+                corretorVisitaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
+                try {
+                    const corretoresResponse = await fetch(`${API_BASE_URL}/users?tipoCargo=CORRETOR&ativo=true`, { // Busca apenas corretores ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (corretoresResponse.ok) {
+                        const corretores = await corretoresResponse.json();
+                        corretores.forEach(corretor => {
+                            const option = document.createElement('option');
+                            option.value = corretor.id;
+                            option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.cpf || corretor.cnpj})`;
+                            corretorVisitaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar corretores para o select:', await corretoresResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar corretores:', error); }
+            };
+
+// Comentário: Função assíncrona para atualizar a visibilidade dos campos de interesse/avaliação.
+            // Comentário: Essa função agora buscará os detalhes do imóvel (incluindo seus 'interessesValidos') do backend.
+            const updateAvaliacaoFieldsVisibility = async () => { // Adicionado 'async'
+                const selectedPropertyId = imovelVisitaSelect ? imovelVisitaSelect.value : '';
+
+                const allInterestFieldGroups = avaliacaoFields.querySelectorAll('.form-group[data-interest-field]');
+                allInterestFieldGroups.forEach(group => {
+                    group.style.display = 'none';
+                    // Comentário: Limpa os radio buttons de avaliação quando a visibilidade é resetada.
+                    group.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                });
+
+                if (!selectedPropertyId) { // Se nenhum imóvel for selecionado, oculta tudo.
+                    avaliacaoFields.style.display = 'none';
+                    avaliacaoImovelTitle.style.display = 'none';
+                    avaliacaoImovelDesc.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    // Comentário: Busca os detalhes do imóvel selecionado do backend para obter os 'interessesValidos'.
+                    const response = await fetch(`${API_BASE_URL}/properties/${selectedPropertyId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getToken()}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        // Comentário: Em caso de erro (ex: imóvel não encontrado, sessão expirada), oculta os campos.
+                        console.error('Erro ao buscar detalhes do imóvel para avaliação:', await response.text());
+                        avaliacaoFields.style.display = 'none';
+                        avaliacaoImovelTitle.style.display = 'none';
+                        avaliacaoImovelDesc.style.display = 'none';
+                        return;
+                    }
+
+                    const selectedProperty = await response.json(); // Obtém o objeto do imóvel do backend.
+
+                    // Comentário: Agora, usa os 'interessesValidos' que vieram do backend.
+                    if (selectedProperty && selectedProperty.interessesValidos && selectedProperty.interessesValidos.length > 0) {
+                        avaliacaoFields.style.display = 'grid';
+                        avaliacaoImovelTitle.style.display = 'block';
+                        avaliacaoImovelDesc.style.display = 'block';
+
+                        selectedProperty.interessesValidos.forEach(fieldName => {
+                            const fieldGroup = avaliacaoFields.querySelector(`.form-group[data-interest-field="${fieldName}"]`);
+                            if (fieldGroup) {
+                                fieldGroup.style.display = 'block';
+                            }
+                        });
+                    } else {
+                        // Comentário: Se o imóvel não tiver interesses válidos configurados, oculta os campos.
+                        avaliacaoFields.style.display = 'none';
+                        avaliacaoImovelTitle.style.display = 'none';
+                        avaliacaoImovelDesc.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Erro de rede ao buscar detalhes do imóvel para avaliação:', error);
+                    avaliacaoFields.style.display = 'none';
+                    avaliacaoImovelTitle.style.display = 'none';
+                    avaliacaoImovelDesc.style.display = 'none';
+                }
+            };
+        
+            // Comentário: Função assíncrona para popular os selects de imóvel, cliente comprador e corretor no formulário de venda.
+            const populateSaleFormSelects = async () => { // Adicionado 'async'
+                // Comentário: Popula o Select de Imóveis.
+                imovelVendaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
+                try {
+                    const propertiesResponse = await fetch(`${API_BASE_URL}/properties?status=DISPONIVEL`, { // Busca apenas imóveis disponíveis
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (propertiesResponse.ok) {
+                        const properties = await propertiesResponse.json();
+                        properties.forEach(property => {
+                            const option = document.createElement('option');
+                            option.value = property.id;
+                            option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''}`;
+                            option.dataset.proprietarioId = property.proprietario?.id; // Armazena o ID do proprietário no data attribute
+                            imovelVendaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar imóveis para o select:', await propertiesResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar imóveis:', error); }
+
+                // Comentário: Popula o Select de Cliente Comprador.
+                clienteCompradorSelect.innerHTML = '<option value="">Selecione o Comprador</option>';
+                try {
+                    const clientsResponse = await fetch(`${API_BASE_URL}/clients?active=true`, { // Busca apenas clientes ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (clientsResponse.ok) {
+                        const clients = await clientsResponse.json();
+                        clients.forEach(client => {
+                            const option = document.createElement('option');
+                            option.value = client.id;
+                            option.textContent = `${client.nome} (${client.documentType}: ${client.cpf || client.cnpj})`;
+                            clienteCompradorSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar clientes para o select:', await clientsResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar clientes:', error); }
+
+                // Comentário: Popula o Select de Corretor Responsável.
+                corretorVendaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
+                try {
+                    const corretoresResponse = await fetch(`${API_BASE_URL}/users?tipoCargo=CORRETOR&ativo=true`, { // Busca apenas corretores ativos
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (corretoresResponse.ok) {
+                        const corretores = await corretoresResponse.json();
+                        corretores.forEach(corretor => {
+                            const option = document.createElement('option');
+                            option.value = corretor.id;
+                            option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.cpf || corretor.cnpj})`;
+                            corretorVendaSelect.appendChild(option);
+                        });
+                    } else {
+                        console.error('Erro ao carregar corretores para o select:', await corretoresResponse.text());
+                    }
+                } catch (error) { console.error('Erro de rede ao carregar corretores:', error); }
+
+                // Comentário: Event Listener para preencher Proprietário automaticamente com base no imóvel selecionado.
+                imovelVendaSelect.addEventListener('change', async () => { // Adicionado 'async'
+                    const selectedPropertyId = imovelVendaSelect.value;
+                    proprietarioImovelVendaSelect.innerHTML = '<option value="">Proprietário (automático)</option>'; // Limpa e adiciona opção padrão
+                    if (selectedPropertyId) {
+                        // Comentário: Se o ID do proprietário foi armazenado no data attribute, usa ele.
+                        const proprietarioId = imovelVendaSelect.options[imovelVendaSelect.selectedIndex].dataset.proprietarioId;
+                        if (proprietarioId) {
+                            try {
+                                const ownerResponse = await fetch(`${API_BASE_URL}/clients/${proprietarioId}`, { // Busca os dados do proprietário por ID
+                                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                                });
+                                if (ownerResponse.ok) {
+                                    const owner = await ownerResponse.json();
+                                    const option = document.createElement('option');
+                                    option.value = owner.id;
+                                    option.textContent = `${owner.nome} (${owner.documentType}: ${owner.cpf || owner.cnpj})`;
+                                    option.selected = true; // Seleciona automaticamente
+                                    proprietarioImovelVendaSelect.appendChild(option);
+                                } else {
+                                    console.error('Erro ao carregar proprietário para o select:', await ownerResponse.text());
+                                }
+                            } catch (error) { console.error('Erro de rede ao carregar proprietário:', error); }
+                        }
+                    }
+                });
+            };
+
 
         // Comentário: Funções auxiliares para formatação de CPF/CNPJ
         const formatCpf = (value) => {
@@ -1450,13 +1707,16 @@
                     users.forEach(user => { 
                         const row = usersTableBody.insertRow();
                         // Comentário: Acessa propriedades como 'nome', 'primaryKey', 'ativo', 'tipoCargo' que devem vir do backend.
+                        const primaryKey = user.documentType === 'CPF' ? user.cpf : user.cnpj;
+                        const cleanId = primaryKey.replace(/\//g, '');
+                        const userId= `${user.documentType}${cleanId}`;
                         row.innerHTML = `
                             <td data-label="Nome">${user.nome}</td>
                             <td data-label="Chave Primária">${user.primaryKey || user.cpf || user.cnpj || 'N/A'}</td>
                             <td data-label="Status">${user.ativo ? 'Ativo' : 'Inativo'}</td>
                             <td data-label="Cargo">${user.tipoCargo}</td>
                             <td data-label="Ações" class="actions-cell">
-                                <button class="edit-btn" data-user-id="${user.id}"><i class="fas fa-edit"></i></button>
+                                <button class="edit-btn" data-user-id="${userId}"><i class="fas fa-edit"></i></button>
                             </td>
                         `;
                     });
@@ -1510,7 +1770,7 @@
                     // Comentário: Atualiza o título e descrição do formulário para modo de edição.
                     userFormTitle.textContent = 'Editar Usuário'; 
                     userFormDescription.textContent = 'Modifique os campos abaixo para atualizar o cadastro do usuário.'; 
-                    userIdInput.value = user.id; // Define o ID do usuário no campo hidden.
+                    userIdInput.value = userId; // Define o ID do usuário no campo hidden.
 
                     // Comentário: Preenche os campos do formulário com os dados recebidos do backend.
                     // Comentário: Dispara eventos 'change' para garantir que a lógica de visibilidade de campos (CPF/CNPJ, Área de Atuação) seja atualizada.
@@ -1537,7 +1797,7 @@
 
                     // Comentário: Torna o botão de exclusão visível e atribui a ele a função 'deleteUser'.
                     deleteUserBtn.style.display = 'inline-block';
-                    deleteUserBtn.onclick = () => deleteUser(user.id);
+                    deleteUserBtn.onclick = () => deleteUser(userId);
 
                     showSection('register-user-section'); // Exibe a seção do formulário de registro/edição.
 
@@ -2262,129 +2522,6 @@
 
             // VISIT AND INTEREST FUNCTIONS -----------------------------------------------------------
 
-// Comentário: Função assíncrona para popular os selects de cliente, imóvel e corretor no formulário de visita, buscando dados do backend.
-            const populateVisitFormSelects = async () => { // Adicionado 'async'
-                // Comentário: Popula o Select de Clientes.
-                clienteVisitaSelect.innerHTML = '<option value="">Selecione o Cliente</option>';
-                try {
-                    const clientsResponse = await fetch(`${API_BASE_URL}/clients?active=true`, { // Busca apenas clientes ativos
-                        headers: { 'Authorization': `Bearer ${getToken()}` }
-                    });
-                    if (clientsResponse.ok) {
-                        const clients = await clientsResponse.json();
-                        clients.forEach(client => {
-                            const option = document.createElement('option');
-                            option.value = client.id;
-                            option.textContent = `${client.nome} (${client.documentType}: ${client.cpf || client.cnpj})`;
-                            clienteVisitaSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Erro ao carregar clientes para o select:', await clientsResponse.text());
-                    }
-                } catch (error) { console.error('Erro de rede ao carregar clientes:', error); }
-
-                // Comentário: Popula o Select de Imóveis.
-                imovelVisitaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
-                try {
-                    const propertiesResponse = await fetch(`${API_BASE_URL}/properties?status=DISPONIVEL`, { // Busca apenas imóveis disponíveis
-                        headers: { 'Authorization': `Bearer ${getToken()}` }
-                    });
-                    if (propertiesResponse.ok) {
-                        const properties = await propertiesResponse.json();
-                        properties.forEach(property => {
-                            const option = document.createElement('option');
-                            option.value = property.id;
-                            option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''}`;
-                            imovelVisitaSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Erro ao carregar imóveis para o select:', await propertiesResponse.text());
-                    }
-                } catch (error) { console.error('Erro de rede ao carregar imóveis:', error); }
-
-                // Comentário: Popula o Select de Corretores (apenas usuários com cargo 'CORRETOR').
-                corretorVisitaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
-                try {
-                    const corretoresResponse = await fetch(`${API_BASE_URL}/users?tipoCargo=CORRETOR&ativo=true`, { // Busca apenas corretores ativos
-                        headers: { 'Authorization': `Bearer ${getToken()}` }
-                    });
-                    if (corretoresResponse.ok) {
-                        const corretores = await corretoresResponse.json();
-                        corretores.forEach(corretor => {
-                            const option = document.createElement('option');
-                            option.value = corretor.id;
-                            option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.cpf || corretor.cnpj})`;
-                            corretorVisitaSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Erro ao carregar corretores para o select:', await corretoresResponse.text());
-                    }
-                } catch (error) { console.error('Erro de rede ao carregar corretores:', error); }
-            };
-
-// Comentário: Função assíncrona para atualizar a visibilidade dos campos de interesse/avaliação.
-            // Comentário: Essa função agora buscará os detalhes do imóvel (incluindo seus 'interessesValidos') do backend.
-            const updateAvaliacaoFieldsVisibility = async () => { // Adicionado 'async'
-                const selectedPropertyId = imovelVisitaSelect ? imovelVisitaSelect.value : '';
-
-                const allInterestFieldGroups = avaliacaoFields.querySelectorAll('.form-group[data-interest-field]');
-                allInterestFieldGroups.forEach(group => {
-                    group.style.display = 'none';
-                    // Comentário: Limpa os radio buttons de avaliação quando a visibilidade é resetada.
-                    group.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-                });
-
-                if (!selectedPropertyId) { // Se nenhum imóvel for selecionado, oculta tudo.
-                    avaliacaoFields.style.display = 'none';
-                    avaliacaoImovelTitle.style.display = 'none';
-                    avaliacaoImovelDesc.style.display = 'none';
-                    return;
-                }
-
-                try {
-                    // Comentário: Busca os detalhes do imóvel selecionado do backend para obter os 'interessesValidos'.
-                    const response = await fetch(`${API_BASE_URL}/properties/${selectedPropertyId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${getToken()}`
-                        }
-                    });
-
-                    if (!response.ok) {
-                        // Comentário: Em caso de erro (ex: imóvel não encontrado, sessão expirada), oculta os campos.
-                        console.error('Erro ao buscar detalhes do imóvel para avaliação:', await response.text());
-                        avaliacaoFields.style.display = 'none';
-                        avaliacaoImovelTitle.style.display = 'none';
-                        avaliacaoImovelDesc.style.display = 'none';
-                        return;
-                    }
-
-                    const selectedProperty = await response.json(); // Obtém o objeto do imóvel do backend.
-
-                    // Comentário: Agora, usa os 'interessesValidos' que vieram do backend.
-                    if (selectedProperty && selectedProperty.interessesValidos && selectedProperty.interessesValidos.length > 0) {
-                        avaliacaoFields.style.display = 'grid';
-                        avaliacaoImovelTitle.style.display = 'block';
-                        avaliacaoImovelDesc.style.display = 'block';
-
-                        selectedProperty.interessesValidos.forEach(fieldName => {
-                            const fieldGroup = avaliacaoFields.querySelector(`.form-group[data-interest-field="${fieldName}"]`);
-                            if (fieldGroup) {
-                                fieldGroup.style.display = 'block';
-                            }
-                        });
-                    } else {
-                        // Comentário: Se o imóvel não tiver interesses válidos configurados, oculta os campos.
-                        avaliacaoFields.style.display = 'none';
-                        avaliacaoImovelTitle.style.display = 'none';
-                        avaliacaoImovelDesc.style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error('Erro de rede ao buscar detalhes do imóvel para avaliação:', error);
-                    avaliacaoFields.style.display = 'none';
-                    avaliacaoImovelTitle.style.display = 'none';
-                    avaliacaoImovelDesc.style.display = 'none';
-                }
-            };
 
             // Event listener for property select change to update interest fields
             if (imovelVisitaSelect) {
@@ -2821,94 +2958,8 @@
 
             // SALES FUNCTIONS -----------------------------------------------------------
 
-// Comentário: Função assíncrona para popular os selects de imóvel, cliente comprador e corretor no formulário de venda.
-            const populateSaleFormSelects = async () => { // Adicionado 'async'
-                // Comentário: Popula o Select de Imóveis.
-                imovelVendaSelect.innerHTML = '<option value="">Selecione o Imóvel</option>';
-                try {
-                    const propertiesResponse = await fetch(`${API_BASE_URL}/properties?status=DISPONIVEL`, { // Busca apenas imóveis disponíveis
-                        headers: { 'Authorization': `Bearer ${getToken()}` }
-                    });
-                    if (propertiesResponse.ok) {
-                        const properties = await propertiesResponse.json();
-                        properties.forEach(property => {
-                            const option = document.createElement('option');
-                            option.value = property.id;
-                            option.textContent = `Mat. ${property.numeroMatriculaImovel} - ${property.endereco?.logradouro || ''}, ${property.endereco?.numero || ''}`;
-                            option.dataset.proprietarioId = property.proprietario?.id; // Armazena o ID do proprietário no data attribute
-                            imovelVendaSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Erro ao carregar imóveis para o select:', await propertiesResponse.text());
-                    }
-                } catch (error) { console.error('Erro de rede ao carregar imóveis:', error); }
 
-                // Comentário: Popula o Select de Cliente Comprador.
-                clienteCompradorSelect.innerHTML = '<option value="">Selecione o Comprador</option>';
-                try {
-                    const clientsResponse = await fetch(`${API_BASE_URL}/clients?active=true`, { // Busca apenas clientes ativos
-                        headers: { 'Authorization': `Bearer ${getToken()}` }
-                    });
-                    if (clientsResponse.ok) {
-                        const clients = await clientsResponse.json();
-                        clients.forEach(client => {
-                            const option = document.createElement('option');
-                            option.value = client.id;
-                            option.textContent = `${client.nome} (${client.documentType}: ${client.cpf || client.cnpj})`;
-                            clienteCompradorSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Erro ao carregar clientes para o select:', await clientsResponse.text());
-                    }
-                } catch (error) { console.error('Erro de rede ao carregar clientes:', error); }
-
-                // Comentário: Popula o Select de Corretor Responsável.
-                corretorVendaSelect.innerHTML = '<option value="">Selecione o Corretor</option>';
-                try {
-                    const corretoresResponse = await fetch(`${API_BASE_URL}/users?tipoCargo=CORRETOR&ativo=true`, { // Busca apenas corretores ativos
-                        headers: { 'Authorization': `Bearer ${getToken()}` }
-                    });
-                    if (corretoresResponse.ok) {
-                        const corretores = await corretoresResponse.json();
-                        corretores.forEach(corretor => {
-                            const option = document.createElement('option');
-                            option.value = corretor.id;
-                            option.textContent = `${corretor.nome} (${corretor.documentType}: ${corretor.cpf || corretor.cnpj})`;
-                            corretorVendaSelect.appendChild(option);
-                        });
-                    } else {
-                        console.error('Erro ao carregar corretores para o select:', await corretoresResponse.text());
-                    }
-                } catch (error) { console.error('Erro de rede ao carregar corretores:', error); }
-
-                // Comentário: Event Listener para preencher Proprietário automaticamente com base no imóvel selecionado.
-                imovelVendaSelect.addEventListener('change', async () => { // Adicionado 'async'
-                    const selectedPropertyId = imovelVendaSelect.value;
-                    proprietarioImovelVendaSelect.innerHTML = '<option value="">Proprietário (automático)</option>'; // Limpa e adiciona opção padrão
-                    if (selectedPropertyId) {
-                        // Comentário: Se o ID do proprietário foi armazenado no data attribute, usa ele.
-                        const proprietarioId = imovelVendaSelect.options[imovelVendaSelect.selectedIndex].dataset.proprietarioId;
-                        if (proprietarioId) {
-                            try {
-                                const ownerResponse = await fetch(`${API_BASE_URL}/clients/${proprietarioId}`, { // Busca os dados do proprietário por ID
-                                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                                });
-                                if (ownerResponse.ok) {
-                                    const owner = await ownerResponse.json();
-                                    const option = document.createElement('option');
-                                    option.value = owner.id;
-                                    option.textContent = `${owner.nome} (${owner.documentType}: ${owner.cpf || owner.cnpj})`;
-                                    option.selected = true; // Seleciona automaticamente
-                                    proprietarioImovelVendaSelect.appendChild(option);
-                                } else {
-                                    console.error('Erro ao carregar proprietário para o select:', await ownerResponse.text());
-                                }
-                            } catch (error) { console.error('Erro de rede ao carregar proprietário:', error); }
-                        }
-                    }
-                });
-            };
-
+            
 // Comentário: Função assíncrona para carregar e exibir as vendas na tabela a partir do backend.
             const loadSalesTable = async (searchTerm = '') => { // Adicionado 'async'
                 salesTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Carregando vendas...</td></tr>';
@@ -3198,49 +3249,7 @@
                 toggleAreaAtuacao(); // Initial call
             }
 
-            // Lógica para mostrar/ocultar campos específicos do TIPO DE IMÓVEL
-            // Re-organizado para ser uma função mais robusta e reutilizável
-            const updatePropertyFieldsVisibility = () => {
-                const selectedType = tipoImovelSelect ? tipoImovelSelect.value : '';
 
-                allTypeSpecificFieldDivs.forEach(div => {
-                    div.style.display = 'none';
-                    div.querySelectorAll('input, select, textarea').forEach(input => input.removeAttribute('required'));
-                });
-
-                if (typeFieldGroups[selectedType]) {
-                    typeFieldGroups[selectedType].forEach(fieldGroupId => {
-                        const fieldGroupDiv = document.getElementById(fieldGroupId);
-                        if (fieldGroupDiv) {
-                            fieldGroupDiv.style.display = 'grid';
-                        }
-                    });
-
-                    // Set required attributes based on selected type
-                    if (selectedType === 'TERRENO') {
-                        document.getElementById('topografia').setAttribute('required', 'true');
-                    } else if (selectedType === 'CASA' || selectedType === 'APARTAMENTO') {
-                        document.getElementById('numero_quartos').setAttribute('required', 'true');
-                        document.getElementById('numero_banheiros').setAttribute('required', 'true');
-                        document.getElementById('area_construida').setAttribute('required', 'true');
-                        if (selectedType === 'CASA') {
-                            document.getElementById('numero_pavimentos').setAttribute('required', 'true');
-                        } else if (selectedType === 'APARTAMENTO') {
-                            document.getElementById('andar').setAttribute('required', 'true');
-                            document.getElementById('numero_apartamento').setAttribute('required', 'true');
-                        }
-                    } else if (selectedType === 'PREDIO_COMERCIAL' || selectedType === 'SALA_COMERCIAL') {
-                        document.getElementById('area_util').setAttribute('required', 'true');
-                        if (selectedType === 'PREDIO_COMERCIAL') {
-                            document.getElementById('total_andares').setAttribute('required', 'true');
-                            document.getElementById('numero_salas').setAttribute('required', 'true');
-                        } else if (selectedType === 'SALA_COMERCIAL') {
-                            document.getElementById('andar_sala').setAttribute('required', 'true');
-                            document.getElementById('numero_sala').setAttribute('required', 'true');
-                        }
-                    }
-                }
-            };
 
             if (tipoImovelSelect) {
                 tipoImovelSelect.addEventListener('change', updatePropertyFieldsVisibility);
