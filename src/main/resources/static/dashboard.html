@@ -414,9 +414,6 @@
                             <label for="proprietario_imovel_select">Proprietário (Cliente):</label>
                             <select id="proprietario_imovel_select" name="proprietarioImovel" required>
                                 <option value="">Selecione o Cliente Proprietário</option>
-                                <option value="c1">Maria Eduarda Costa (CPF: 000...)</option>
-                                <option value="c2">Construtora Solida S.A. (CNPJ: 45...)</option>
-                                <option value="c3">João Pedro Alves (CPF: 333...)</option>
                             </select>
                         </div>
                     </div>
@@ -1150,6 +1147,10 @@
                 if (contentId === 'dashboard-section') { 
                     loadDashboardStats();
                 }
+
+                if (contentId === 'register-property-section') {
+                    populateProprietariosSelect();
+                }
             
                 // Lógica específica para cada seção ao exibi-la
                 if (contentId === 'list-manage-users-content') {
@@ -1509,6 +1510,39 @@
             return value.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
         };
 
+        // Dentro do seu <script> no dashboard.html
+        const populateProprietariosSelect = async () => {
+            const proprietarioSelect = document.getElementById('proprietario_imovel_select');
+            if (!proprietarioSelect) return;
+
+            // Limpa as opções existentes (exceto a primeira de placeholder)
+            proprietarioSelect.innerHTML = '<option value="">Selecione o Cliente Proprietário</option>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/clients?active=true`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+
+                if (!response.ok) {
+                    console.error('Erro ao carregar clientes:', await response.text());
+                    return;
+                }
+
+                const clientes = await response.json();
+                clientes.forEach(cliente => {
+                    const option = document.createElement('option');
+                    // O valor da opção será o ID único do cliente, que é a concatenação de seu tipo de documento com o CPF/CNPJ.
+                    const primaryKey = cliente.documentType === 'CPF' ? cliente.cpf : cliente.cnpj;
+                    option.value = `${cliente.documentType}${primaryKey}`;
+                    option.textContent = `${cliente.nome} (${cliente.documentType}: ${primaryKey})`;
+                    proprietarioSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro de rede ao buscar clientes:', error);
+                alert('Não foi possível carregar a lista de clientes.');
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const usersTableBody = document.getElementById('users-table-body');
             const userSearchInput = document.getElementById('user-search-input'); 
@@ -1781,13 +1815,13 @@
                     document.getElementById('nome_user').value = user.nome || '';
                     document.getElementById('email_user').value = user.email || '';
                     document.getElementById('telefone_user').value = user.telefone || '';
-                    document.getElementById('cep_user').value = user.endereco?.cep || ''; // Acessa sub-propriedade 'endereco.cep'
-                    document.getElementById('logradouro_user').value = user.endereco?.logradouro || '';
-                    document.getElementById('numero_user').value = user.endereco?.numero || '';
-                    document.getElementById('complemento_user').value = user.endereco?.complemento || '';
-                    document.getElementById('bairro_user').value = user.endereco?.bairro || '';
-                    document.getElementById('cidade_user').value = user.endereco?.cidade || '';
-                    document.getElementById('estado_user').value = user.endereco?.estado || '';
+                    document.getElementById('cep_user').value = user.cep || ''; // Acessa sub-propriedade 'endereco.cep'
+                    document.getElementById('logradouro_user').value = user.endereco || '';
+                    document.getElementById('numero_user').value = user.numero || '';
+                    document.getElementById('complemento_user').value = user.complemento || '';
+                    document.getElementById('bairro_user').value = user.bairro || '';
+                    document.getElementById('cidade_user').value = user.cidade || '';
+                    document.getElementById('estado_user').value = user.estado || '';
                     document.getElementById('tipo_cargo').value = user.tipoCargo || ''; // 'tipoCargo' deve ser o nome da propriedade no backend
                     document.getElementById('tipo_cargo').dispatchEvent(new Event('change'));
                     document.getElementById('area_atuacao').value = user.areaAtuacao || '';
@@ -2401,27 +2435,41 @@
                 propertyData.possuiElevador = propertyData.possuiElevador === 'on';
                 propertyData.possuiEstacionamento = propertyData.possuiEstacionamento === 'on';
 
-                // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de imóvel no Spring.
-                const propertyToSend = {
-                    id: propertyData.propertyId || null,
-                    numeroMatriculaImovel: propertyData.numeroMatriculaImovel,
-                    finalidade: propertyData.finalidade,
-                    valor: parseFloat(propertyData.valor),
-                    areaTotal: parseFloat(propertyData.areaTotal),
-                    status: propertyData.status,
-                    dataCadastro: propertyData.dataCadastro,
-                    dataAtualizacao: propertyData.dataAtualizacao || null, // Pode ser nulo
-                    // Comentário: 'proprietario' deve ser um objeto com o ID, ou um DTO simplificado, dependendo do seu backend.
-                    proprietario: { id: propertyData.proprietarioImovel }, 
-                    endereco: { // Endereço como um objeto aninhado
-                        cep: propertyData.cep,
-                        logradouro: propertyData.logradouro,
-                        numero: propertyData.numero,
-                        complemento: propertyData.complemento,
-                        bairro: propertyData.bairro,
-                        cidade: propertyData.cidade,
-                        estado: propertyData.estado
-                    },
+                    // 1. Obter o valor do select do proprietário (ex: "CPF12345678900")
+                    const proprietarioValue = propertyData.proprietarioImovel;
+                    let cpfProprietario = null;
+                    let cnpjProprietario = null;
+
+                    // 2. Extrair o tipo de documento e o número
+                    if (proprietarioValue.startsWith('CPF')) {
+                        cpfProprietario = proprietarioValue.substring(3); // Remove 'CPF'
+                    } else if (proprietarioValue.startsWith('CNPJ')) {
+                        cnpjProprietario = proprietarioValue.substring(4); // Remove 'CNPJ'
+                    }
+
+                    // 3. Reorganizar os dados para corresponder à estrutura do ImovelController
+                    const propertyToSend = {
+                        id: propertyData.propertyId || null,
+                        numeroMatriculaImovel: propertyData.numeroMatriculaImovel,
+                        finalidade: propertyData.finalidade,
+                        valor: parseFloat(propertyData.valor),
+                        areaTotal: parseFloat(propertyData.areaTotal),
+                        status: propertyData.status,
+                        dataCadastro: propertyData.dataCadastro,
+                        dataAtualizacao: propertyData.dataAtualizacao || null,
+                        // Envie o CPF e/ou CNPJ diretamente, como string.
+                        cpfProprietario: cpfProprietario,
+                        cnpjProprietario: cnpjProprietario,
+                        endereco: {
+                            cep: propertyData.cep,
+                            logradouro: propertyData.logradouro,
+                            numero: propertyData.numero,
+                            complemento: propertyData.complemento,
+                            bairro: propertyData.bairro,
+                            cidade: propertyData.cidade,
+                            estado: propertyData.estado
+                        },
+
                     tipoImovel: propertyData.tipoImovel,
                     // Comentário: Campos específicos do tipo de imóvel, enviados apenas se o tipo for o correspondente.
                     // Comentário: O backend pode ignorar campos extras ou você pode construir o objeto de forma mais dinâmica.
