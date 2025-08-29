@@ -58,6 +58,78 @@ public class ImovelDTO {
     public ImovelDTO() {
     }
 
+    public ImovelDTO(
+        String numeroMatriculaImovel,
+        String endereco,
+        String bairro,
+        String cidade,
+        String estado,
+        String cep,
+        BigDecimal areaTotal,
+        BigDecimal valor,
+        String status,
+        String dataCadastro,
+        String dataAtualizacao,
+        String nomeProprietario,
+        String cpfProprietario,
+        String cnpjProprietario,
+        String finalidade,
+        String topografia,
+        String tipoSolo,
+        Integer numeroQuartos,
+        Integer numeroBanheiros,
+        Integer numeroSuites,
+        BigDecimal areaConstruida,
+        Integer numeroVagasGaragem,
+        String descricao,
+        Boolean possuiQuintal,
+        Integer numeroPavimentos,
+        Integer andar,
+        String numeroApartamento,
+        Boolean possuiElevador,
+        BigDecimal areaUtil,
+        Integer totalAndares,
+        Integer numeroSalas,
+        Boolean possuiEstacionamento,
+        String numeroSala,
+        String tipoImovel
+    ) {
+        this.numeroMatriculaImovel = numeroMatriculaImovel;
+        this.endereco = endereco;
+        this.bairro = bairro;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.cep = cep;
+        this.areaTotal = areaTotal;
+        this.valor = valor;
+        this.status = status;
+        this.dataCadastro = dataCadastro;
+        this.dataAtualizacao = dataAtualizacao;
+        this.nomeProprietario = nomeProprietario;
+        this.cpfProprietario = cpfProprietario;
+        this.cnpjProprietario = cnpjProprietario;
+        this.finalidade = finalidade;
+        this.topografia = topografia;
+        this.tipoSolo = tipoSolo;
+        this.numeroQuartos = numeroQuartos;
+        this.numeroBanheiros = numeroBanheiros;
+        this.numeroSuites = numeroSuites;
+        this.areaConstruida = areaConstruida;
+        this.numeroVagasGaragem = numeroVagasGaragem;
+        this.descricao = descricao;
+        this.possuiQuintal = possuiQuintal;
+        this.numeroPavimentos = numeroPavimentos;
+        this.andar = andar;
+        this.numeroApartamento = numeroApartamento;
+        this.possuiElevador = possuiElevador;
+        this.areaUtil = areaUtil;
+        this.totalAndares = totalAndares;
+        this.numeroSalas = numeroSalas;
+        this.possuiEstacionamento = possuiEstacionamento;
+        this.numeroSala = numeroSala;
+        this.tipoImovel = tipoImovel;
+    }
+
     public String getNumeroMatriculaImovel() { return numeroMatriculaImovel; }
     public void setNumeroMatriculaImovel(String numeroMatriculaImovel) { this.numeroMatriculaImovel = numeroMatriculaImovel; }
 

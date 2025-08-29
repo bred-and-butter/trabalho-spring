@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 public class Terreno {
 
     @Id
-    @Column(name = "numero_matricula_imovel", nullable = false)
     private String numeroMatriculaImovel;
 
     @OneToOne
@@ -46,5 +45,13 @@ public class Terreno {
 
     public void setTipoSolo(String tipoSolo) {
         this.tipoSolo = tipoSolo;
+    }
+
+    public Imovel getImovel() {
+        return imovel;
+    }
+
+    public void setImovel(Imovel imovel) {
+        this.imovel = imovel;
     }
 }

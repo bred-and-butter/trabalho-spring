@@ -105,10 +105,11 @@ public class ImovelController {
         imovel.setStatus(dto.getStatus());
         imovel.setDataCadastro(LocalDate.now());
         imovel.setProprietario(clienteOpt.get());
-        imovelRepository.save(imovel);
-
+        
         // cria subentidade
         salvarSubEntidade(dto, imovel);
+
+        imovelRepository.save(imovel);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -132,10 +133,11 @@ public class ImovelController {
         imovel.setValor(dto.getValor());
         imovel.setStatus(dto.getStatus());
         imovel.setDataAtualizacao(LocalDate.now());
-        imovelRepository.save(imovel);
 
         // atualiza subentidade
         salvarSubEntidade(dto, imovel);
+
+        imovelRepository.save(imovel);
 
         return ResponseEntity.ok(dto);
     }
@@ -146,14 +148,14 @@ public class ImovelController {
         switch (tipo) {
             case "TERRENO" -> {
                 Terreno t = new Terreno();
-                t.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                t.setImovel(imovel);
                 t.setTopografia(dto.getTopografia());
                 t.setTipoSolo(dto.getTipoSolo());
                 terrenoRepository.save(t);
             }
             case "CASA" -> {
                 UnidadeResidencial u = new UnidadeResidencial();
-                u.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                u.setImovel(imovel);
                 u.setNumeroQuartos(dto.getNumeroQuartos());
                 u.setNumeroBanheiros(dto.getNumeroBanheiros());
                 u.setNumeroSuites(dto.getNumeroSuites());
@@ -163,14 +165,14 @@ public class ImovelController {
                 unidadeResidencialRepository.save(u);
 
                 Casa c = new Casa();
-                c.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                c.setImovel(imovel);
                 c.setPossuiQuintal(dto.getPossuiQuintal());
                 c.setNumeroPavimentos(dto.getNumeroPavimentos());
                 casaRepository.save(c);
             }
             case "APARTAMENTO" -> {
                 UnidadeResidencial u = new UnidadeResidencial();
-                u.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                u.setImovel(imovel);
                 u.setNumeroQuartos(dto.getNumeroQuartos());
                 u.setNumeroBanheiros(dto.getNumeroBanheiros());
                 u.setNumeroSuites(dto.getNumeroSuites());

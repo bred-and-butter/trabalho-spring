@@ -48,8 +48,8 @@ public class Imovel {
 
     @ManyToOne
     @JoinColumns({
-        @JoinColumn(name = "cpf_proprietario", referencedColumnName = "cpf_cliente", insertable = false, updatable = false),
-        @JoinColumn(name = "cnpj_proprietario", referencedColumnName = "cnpj_cliente", insertable = false, updatable = false)
+        @JoinColumn(name = "cpf_proprietario", referencedColumnName = "cpf_cliente"),
+        @JoinColumn(name = "cnpj_proprietario", referencedColumnName = "cnpj_cliente")
     })
     private Cliente proprietario;
 

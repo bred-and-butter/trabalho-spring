@@ -2124,6 +2124,12 @@
                 const clientData = Object.fromEntries(formData.entries()); // Converte os dados do formulário em um objeto JavaScript.
 
                 // Comentário: Reorganiza os dados para corresponder à estrutura de um DTO de cliente no Spring.
+                if (clientData.documentType === 'CPF' && clientData.cpf) {
+                    clientData.cpf = unformatDocument(clientData.cpf);
+                }
+                if (clientData.documentType === 'CNPJ' && clientData.cnpj) {
+                    clientData.cnpj = unformatDocument(clientData.cnpj);
+                }
                 const clientToSend = {
                     id: clientData.clientId || null, // Se for edição, o ID já estará presente
                     nome: clientData.nome,
