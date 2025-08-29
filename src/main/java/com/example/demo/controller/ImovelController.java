@@ -148,14 +148,14 @@ public class ImovelController {
         switch (tipo) {
             case "TERRENO" -> {
                 Terreno t = new Terreno();
-                t.setImovel(imovel);
+                t.setImovel(imovel); // associa via MapsId
                 t.setTopografia(dto.getTopografia());
                 t.setTipoSolo(dto.getTipoSolo());
                 terrenoRepository.save(t);
             }
             case "CASA" -> {
                 UnidadeResidencial u = new UnidadeResidencial();
-                u.setImovel(imovel);
+                u.setImovel(imovel); // UnidadeResidencial depende de Imovel
                 u.setNumeroQuartos(dto.getNumeroQuartos());
                 u.setNumeroBanheiros(dto.getNumeroBanheiros());
                 u.setNumeroSuites(dto.getNumeroSuites());
@@ -165,14 +165,14 @@ public class ImovelController {
                 unidadeResidencialRepository.save(u);
 
                 Casa c = new Casa();
-                c.setImovel(imovel);
+                c.setUnidadeResidencial(u); // associa via MapsId
                 c.setPossuiQuintal(dto.getPossuiQuintal());
                 c.setNumeroPavimentos(dto.getNumeroPavimentos());
                 casaRepository.save(c);
             }
             case "APARTAMENTO" -> {
                 UnidadeResidencial u = new UnidadeResidencial();
-                u.setImovel(imovel);
+                u.setImovel(imovel); // UnidadeResidencial depende de Imovel
                 u.setNumeroQuartos(dto.getNumeroQuartos());
                 u.setNumeroBanheiros(dto.getNumeroBanheiros());
                 u.setNumeroSuites(dto.getNumeroSuites());
@@ -182,7 +182,7 @@ public class ImovelController {
                 unidadeResidencialRepository.save(u);
 
                 Apartamento a = new Apartamento();
-                a.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                a.setUnidadeResidencial(u); // associa via MapsId
                 a.setAndar(dto.getAndar());
                 a.setNumeroApartamento(dto.getNumeroApartamento());
                 a.setPossuiElevador(dto.getPossuiElevador());
@@ -190,13 +190,13 @@ public class ImovelController {
             }
             case "PREDIO_COMERCIAL" -> {
                 UnidadeComercial u = new UnidadeComercial();
-                u.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                u.setImovel(imovel); // UnidadeComercial depende de Imovel
                 u.setAreaUtil(dto.getAreaUtil());
                 u.setDescricao(dto.getDescricao());
                 unidadeComercialRepository.save(u);
 
                 PredioComercial p = new PredioComercial();
-                p.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                p.setUnidadeComercial(u); // associa via MapsId
                 p.setTotalAndares(dto.getTotalAndares());
                 p.setNumeroSalas(dto.getNumeroSalas());
                 p.setPossuiEstacionamento(dto.getPossuiEstacionamento());
@@ -204,13 +204,13 @@ public class ImovelController {
             }
             case "SALA_COMERCIAL" -> {
                 UnidadeComercial u = new UnidadeComercial();
-                u.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                u.setImovel(imovel); // UnidadeComercial depende de Imovel
                 u.setAreaUtil(dto.getAreaUtil());
                 u.setDescricao(dto.getDescricao());
                 unidadeComercialRepository.save(u);
 
                 SalaComercial s = new SalaComercial();
-                s.setNumeroMatriculaImovel(imovel.getNumeroMatriculaImovel());
+                s.setUnidadeComercial(u); // associa via MapsId
                 s.setAndar(dto.getAndar());
                 s.setNumeroSala(dto.getNumeroSala());
                 salaComercialRepository.save(s);

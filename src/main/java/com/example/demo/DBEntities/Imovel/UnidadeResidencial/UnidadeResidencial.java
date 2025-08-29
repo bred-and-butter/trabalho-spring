@@ -43,6 +43,14 @@ public class UnidadeResidencial{
         return numeroQuartos;
     }
 
+    public Imovel getImovel() {
+        return imovel;
+    }
+
+    public void setImovel(Imovel imovel) {
+        this.imovel = imovel;
+    }
+
     public void setNumeroQuartos(Integer numeroQuartos) {
         this.numeroQuartos = numeroQuartos;
     }
