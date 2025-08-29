@@ -2343,7 +2343,7 @@
                             <td data-label="Status">${property.status || 'N/A'}</td>
                             <td data-label="Proprietário">${ownerName}</td>
                             <td data-label="Ações" class="actions-cell">
-                                <button class="edit-btn" data-property-id="${property.id}"><i class="fas fa-edit"></i></button>
+                                <button class="edit-btn" data-property-id="${property.numeroMatriculaImovel}"><i class="fas fa-edit"></i></button>
                             </td>
                         `;
                     });
@@ -2405,16 +2405,16 @@
                     document.getElementById('data_cadastro_imovel').value = property.dataCadastro || '';
                     document.getElementById('data_atualizacao_imovel').value = property.dataAtualizacao || '';
                     // Comentário: Assume que 'proprietario' é um objeto aninhado no backend com 'id'.
-                    document.getElementById('proprietario_imovel_select').value = property.proprietario?.id || ''; 
+                    document.getElementById('proprietario_imovel_select').value = property.cpfProprietario + property.cnpjProprietario; 
                     
                     // Comentário: Preenche os campos de endereço.
-                    document.getElementById('cep_imovel').value = property.endereco?.cep || '';
-                    document.getElementById('logradouro_imovel').value = property.endereco?.logradouro || '';
-                    document.getElementById('numero_imovel').value = property.endereco?.numero || '';
-                    document.getElementById('complemento_imovel').value = property.endereco?.complemento || '';
-                    document.getElementById('bairro_imovel').value = property.endereco?.bairro || '';
-                    document.getElementById('cidade_imovel').value = property.endereco?.cidade || '';
-                    document.getElementById('estado_imovel').value = property.endereco?.estado || '';
+                    document.getElementById('cep_imovel').value = property.cep || '';
+                    document.getElementById('logradouro_imovel').value = property.endereco || '';
+                    document.getElementById('numero_imovel').value = property.numero || '';
+                    document.getElementById('complemento_imovel').value = property.complemento || '';
+                    document.getElementById('bairro_imovel').value = property.bairro || '';
+                    document.getElementById('cidade_imovel').value = property.cidade || '';
+                    document.getElementById('estado_imovel').value = property.estado || '';
 
                     // Comentário: Preenche os campos específicos do tipo de imóvel e dispara a visibilidade.
                     tipoImovelSelect.value = property.tipoImovel || '';
