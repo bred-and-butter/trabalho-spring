@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/properties")
 public class ImovelController {
 
-     @Autowired
+    @Autowired
     private ImovelRepository imovelRepository;
     @Autowired
     private ClienteRepository clienteRepository;

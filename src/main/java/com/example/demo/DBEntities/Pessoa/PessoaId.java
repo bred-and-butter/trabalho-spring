@@ -15,6 +15,13 @@ public class PessoaId implements Serializable {
     public PessoaId(){};
 
     public PessoaId(String cpf, String cnpj) {
+        if (cpf.equals("null")){
+            cpf = "";
+        }
+        if (cnpj.equals("null")){
+            cnpj = "";
+        }
+
         if ((!cpf.equals("") && cnpj.equals("")) ||
             (cpf.equals("") && !cnpj.equals(""))) {
             this.cpf = cpf;

@@ -414,7 +414,7 @@
                             <label for="proprietario_imovel_select">Proprietário (Cliente):</label>
                             <div class="autocomplete-container">
                                 <input type="text" id="proprietario_imovel_search" placeholder="Buscar cliente por nome ou CPF/CNPJ..." required>
-                                <input type="hidden" id="proprietario_imovel_id" name="proprietarioImovel">
+                                <input type="hidden" id="proprietario_imovel_id" name="proprietarioImovel" required>
                                 <ul id="proprietario_imovel_results" class="autocomplete-results"></ul>
                             </div>
                         </div>
@@ -2245,7 +2245,7 @@
                     // Limpa resultados anteriores
                     proprietarioImovelResultsList.innerHTML = '';
                     
-                    if (searchTerm.length > 0) { // Só mostra resultados após 2 caracteres
+                    if (searchTerm.length > 1) { // Só mostra resultados após 2 caracteres
                         const filteredClients = allClients.filter(client => {
                             const primaryKey = client.documentType === 'CPF' ? client.cpf : client.cnpj;
                             return (client.nome?.toLowerCase().includes(searchTerm) || primaryKey?.includes(searchTerm));
@@ -2271,9 +2271,8 @@
                 // Event listener para seleção de um item na lista de resultados
                 proprietarioImovelResultsList.addEventListener('click', (event) => {
                     if (event.target.tagName === 'LI') {
-                        const selectedClientId = event.target.dataset.clientId;
                         const selectedClientName = event.target.textContent;
-
+                        const selectedClientId = selectedClientName;
                         // Preenche o campo de busca com o nome selecionado
                         proprietarioImovelSearchInput.value = selectedClientName;
                         // Define o valor do campo hidden com o ID do cliente
@@ -2471,33 +2470,36 @@
         // Comentário: Event listener para a submissão do formulário de cadastro/edição de imóvel.
             propertyRegistrationForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
-
-
-                // Obtém o valor do campo oculto do proprietário diretamente do DOM
-                const proprietarioId = document.getElementById('proprietario_imovel_id').value;
-
-                // Se o proprietário não foi selecionado, exibe um alerta e interrompe a submissão
-                if (!proprietarioId) {
-                    alert('Por favor, selecione um proprietário para o imóvel.');
-                    return; // Impede o envio do formulário
-                }
-
                 const formData = new FormData(propertyRegistrationForm);
                 const propertyData = Object.fromEntries(formData.entries());
 
-                // Agora, use o valor obtido do campo oculto para definir o CPF/CNPJ
-                let cpfProprietario = null;
-                let cnpjProprietario = null;
+                // 1. Coletar dados do proprietário (seguindo a lógica do formulário de usuário)
+                const proprietarioValue = propertyData.proprietarioImovel;
+                let cpfProprietario = 'null';
+                let cnpjProprietario = 'null';
 
-                if (proprietarioId.startsWith('CPF')) {
-                    cpfProprietario = proprietarioId.substring(3);
-                } else if (proprietarioId.startsWith('CNPJ')) {
-                    cnpjProprietario = proprietarioId.substring(4);
+                if (proprietarioValue.includes('CPF')) {
+                    const cpfMatch = proprietarioValue.match(/CPF:\s*([\d.-]+)/);
+                    if (cpfMatch && cpfMatch[1]) {
+                        cpfProprietario = cpfMatch[1].replace(/[.-]/g, ''); // Remove pontos e traço
+                    }
                 }
+
+                // Extrair CNPJ
+                if (proprietarioValue.includes('CNPJ')) {
+                    const cnpjMatch = proprietarioValue.match(/CNPJ:\s*([\d./-]+)/);
+                    if (cnpjMatch && cnpjMatch[1]) {
+                        cnpjProprietario = cnpjMatch[1].replace(/[./-]/g, ''); // Remove pontos, barras e traço
+                    }
+                }
+
+                // 2. Coletar dados dos checkboxes e converter para booleanos.
+                propertyData.possuiQuintal = propertyData.possuiQuintal === 'on';
+                propertyData.possuiElevador = propertyData.possuiElevador === 'on';
+                propertyData.possuiEstacionamento = propertyData.possuiEstacionamento === 'on';
 
                 // 3. Reorganizar os dados para corresponder à estrutura do ImovelController
                 const propertyToSend = {
-                    id: propertyData.propertyId || null,
                     numeroMatriculaImovel: propertyData.numeroMatriculaImovel,
                     finalidade: propertyData.finalidade,
                     valor: parseFloat(propertyData.valor),
@@ -2505,7 +2507,7 @@
                     status: propertyData.status,
                     dataCadastro: propertyData.dataCadastro,
                     dataAtualizacao: propertyData.dataAtualizacao || null,
-                    // Usa o ID do proprietário selecionado
+                    // Agora, os campos de proprietário são definidos corretamente
                     cpfProprietario: cpfProprietario,
                     cnpjProprietario: cnpjProprietario,
                     cep: propertyData.cep,
@@ -2545,20 +2547,8 @@
                 const isEditing = !!propertyIdInput.value;
                 const method = isEditing ? 'PUT' : 'POST';
                 const url = isEditing ? `${API_BASE_URL}/properties/${propertyIdInput.value}` : `${API_BASE_URL}/properties`;
-                
-                // Adicione este código antes do 'try/catch'
-                console.log('---------------------------------');
-                console.log('Iniciando o teste de envio do Imóvel...');
-                console.log('Dados brutos do formulário:', propertyData);
-                // Testando o valor que está sendo pego do campo oculto
-                console.log('Valor do campo oculto proprietarioImovel:', propertyData.proprietarioImovel);
-                console.log('CPF do Proprietário a ser enviado:', cpfProprietario);
-                console.log('CNPJ do Proprietário a ser enviado:', cnpjProprietario);
 
-                // Testando o objeto final que será enviado para o backend
-                console.log('Objeto completo a ser enviado:', propertyToSend);
-                console.log('---------------------------------');
-
+                console.log(JSON.stringify(propertyToSend));
                 try {
                     // Comentário: Envia os dados do imóvel para o backend.
                     const response = await fetch(url, {
