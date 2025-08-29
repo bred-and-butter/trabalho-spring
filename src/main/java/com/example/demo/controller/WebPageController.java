@@ -27,14 +27,14 @@ public class WebPageController {
 
     @GetMapping(value = "/dashboard", produces = MediaType.TEXT_HTML_VALUE)
     public String dashboard() throws IOException{
-        ClassPathResource resource = new ClassPathResource("static/dashboard_adm.html");
+        ClassPathResource resource = new ClassPathResource("static/dashboard.html");
 
         return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     }
 
     @GetMapping(value = "/logout", produces = MediaType.TEXT_HTML_VALUE)
     public String logout() throws IOException{
-        ClassPathResource resource = new ClassPathResource("static/dashboard_adm.html");
+        ClassPathResource resource = new ClassPathResource("static/dashboard.html");
 
         return StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
     }
