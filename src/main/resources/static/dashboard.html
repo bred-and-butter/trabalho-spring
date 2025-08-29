@@ -412,9 +412,11 @@
                         </div>
                         <div class="form-group full-width">
                             <label for="proprietario_imovel_select">Proprietário (Cliente):</label>
-                            <select id="proprietario_imovel_select" name="proprietarioImovel" required>
-                                <option value="">Selecione o Cliente Proprietário</option>
-                            </select>
+                            <div class="autocomplete-container">
+                                <input type="text" id="proprietario_imovel_search" placeholder="Buscar cliente por nome ou CPF/CNPJ..." required>
+                                <input type="hidden" id="proprietario_imovel_id" name="proprietarioImovel" required>
+                                <ul id="proprietario_imovel_results" class="autocomplete-results"></ul>
+                            </div>
                         </div>
                     </div>
 
@@ -1510,39 +1512,6 @@
             return value.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
         };
 
-        // Dentro do seu <script> no dashboard.html
-        const populateProprietariosSelect = async () => {
-            const proprietarioSelect = document.getElementById('proprietario_imovel_select');
-            if (!proprietarioSelect) return;
-
-            // Limpa as opções existentes (exceto a primeira de placeholder)
-            proprietarioSelect.innerHTML = '<option value="">Selecione o Cliente Proprietário</option>';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/clients?active=true`, {
-                    headers: { 'Authorization': `Bearer ${getToken()}` }
-                });
-
-                if (!response.ok) {
-                    console.error('Erro ao carregar clientes:', await response.text());
-                    return;
-                }
-
-                const clientes = await response.json();
-                clientes.forEach(cliente => {
-                    const option = document.createElement('option');
-                    // O valor da opção será o ID único do cliente, que é a concatenação de seu tipo de documento com o CPF/CNPJ.
-                    const primaryKey = cliente.documentType === 'CPF' ? cliente.cpf : cliente.cnpj;
-                    option.value = `${cliente.documentType}${primaryKey}`;
-                    option.textContent = `${cliente.nome} (${cliente.documentType}: ${primaryKey})`;
-                    proprietarioSelect.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Erro de rede ao buscar clientes:', error);
-                alert('Não foi possível carregar a lista de clientes.');
-            }
-        };
-
         document.addEventListener('DOMContentLoaded', () => {
             const usersTableBody = document.getElementById('users-table-body');
             const userSearchInput = document.getElementById('user-search-input'); 
@@ -1575,7 +1544,11 @@
             const deletePropertyBtn = document.getElementById('delete-property-btn');
             const propertyRegistrationForm = document.getElementById('property-registration-form');
             const tipoImovelSelect = document.getElementById('tipo_imovel_select'); 
-            const allTypeSpecificFieldDivs = document.querySelectorAll('.type-specific-fields'); 
+            const allTypeSpecificFieldDivs = document.querySelectorAll('.type-specific-fields');
+            const proprietarioImovelSearchInput = document.getElementById('proprietario_imovel_search');
+            const proprietarioImovelIdInput = document.getElementById('proprietario_imovel_id');
+            const proprietarioImovelResultsList = document.getElementById('proprietario_imovel_results');
+
 
             // Elements for visit/interest management
             const visitsTableBody = document.getElementById('visits-table-body'); 
@@ -2245,6 +2218,77 @@
 
             // PROPERTY FUNCTIONS -----------------------------------------------------------
 
+                        // Variável para armazenar a lista completa de clientes em memória
+            let allClients = [];
+
+            // Função assíncrona para buscar todos os clientes e armazenar localmente
+            const fetchAllClients = async () => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/clients?active=true`, {
+                        headers: { 'Authorization': `Bearer ${getToken()}` }
+                    });
+                    if (response.ok) {
+                        allClients = await response.json();
+                    } else {
+                        console.error('Erro ao carregar clientes:', await response.text());
+                    }
+                } catch (error) {
+                    console.error('Erro de rede ao buscar clientes:', error);
+                }
+            };
+
+            // Event listener para a digitação no campo de busca
+            if (proprietarioImovelSearchInput) {
+                proprietarioImovelSearchInput.addEventListener('input', (event) => {
+                    const searchTerm = event.target.value.toLowerCase();
+                    
+                    // Limpa resultados anteriores
+                    proprietarioImovelResultsList.innerHTML = '';
+                    
+                    if (searchTerm.length > 1) { // Só mostra resultados após 2 caracteres
+                        const filteredClients = allClients.filter(client => {
+                            const primaryKey = client.documentType === 'CPF' ? client.cpf : client.cnpj;
+                            return (client.nome?.toLowerCase().includes(searchTerm) || primaryKey?.includes(searchTerm));
+                        });
+
+                        if (filteredClients.length > 0) {
+                            filteredClients.forEach(client => {
+                                const listItem = document.createElement('li');
+                                const primaryKey = client.documentType === 'CPF' ? formatCpf(client.cpf) : formatCnpj(client.cnpj);
+                                listItem.textContent = `${client.nome} (${client.documentType}: ${primaryKey})`;
+                                listItem.dataset.clientId = client.id;
+                                proprietarioImovelResultsList.appendChild(listItem);
+                            });
+                            proprietarioImovelResultsList.style.display = 'block';
+                        } else {
+                            proprietarioImovelResultsList.style.display = 'none';
+                        }
+                    } else {
+                        proprietarioImovelResultsList.style.display = 'none';
+                    }
+                });
+
+                // Event listener para seleção de um item na lista de resultados
+                proprietarioImovelResultsList.addEventListener('click', (event) => {
+                    if (event.target.tagName === 'LI') {
+                        const selectedClientId = event.target.dataset.clientId;
+                        const selectedClientName = event.target.textContent;
+
+                        // Preenche o campo de busca com o nome selecionado
+                        proprietarioImovelSearchInput.value = selectedClientName;
+                        // Define o valor do campo hidden com o ID do cliente
+                        proprietarioImovelIdInput.value = selectedClientId;
+                        // Oculta a lista de resultados
+                        proprietarioImovelResultsList.style.display = 'none';
+                        // Dispara um evento de 'change' para que a validação de formulário funcione
+                        proprietarioImovelIdInput.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+
+            fetchAllClients();
+
 
             // Comentário: Função assíncrona para carregar e exibir os imóveis na tabela a partir do backend.
             const loadPropertiesTable = async (searchTerm = '') => { // Adicionado 'async'
@@ -2424,51 +2468,48 @@
                 deletePropertyBtn.style.display = 'none';
             };
 
-// Comentário: Event listener para a submissão do formulário de cadastro/edição de imóvel.
-            propertyRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
+        // Comentário: Event listener para a submissão do formulário de cadastro/edição de imóvel.
+            propertyRegistrationForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
                 const formData = new FormData(propertyRegistrationForm);
-                const propertyData = Object.fromEntries(formData.entries()); // Converte os dados do formulário em um objeto JavaScript.
+                const propertyData = Object.fromEntries(formData.entries());
 
-                // Comentário: Coletar dados dos checkboxes e converter para booleanos.
+                // 1. Coletar dados do proprietário (seguindo a lógica do formulário de usuário)
+                const proprietarioValue = propertyData.proprietarioImovel;
+                let cpfProprietario = null;
+                let cnpjProprietario = null;
+
+                if (proprietarioValue.startsWith('CPF')) {
+                    cpfProprietario = proprietarioValue.substring(3);
+                } else if (proprietarioValue.startsWith('CNPJ')) {
+                    cnpjProprietario = proprietarioValue.substring(4);
+                }
+
+                // 2. Coletar dados dos checkboxes e converter para booleanos.
                 propertyData.possuiQuintal = propertyData.possuiQuintal === 'on';
                 propertyData.possuiElevador = propertyData.possuiElevador === 'on';
                 propertyData.possuiEstacionamento = propertyData.possuiEstacionamento === 'on';
 
-                    // 1. Obter o valor do select do proprietário (ex: "CPF12345678900")
-                    const proprietarioValue = propertyData.proprietarioImovel;
-                    let cpfProprietario = null;
-                    let cnpjProprietario = null;
-
-                    // 2. Extrair o tipo de documento e o número
-                    if (proprietarioValue.startsWith('CPF')) {
-                        cpfProprietario = proprietarioValue.substring(3); // Remove 'CPF'
-                    } else if (proprietarioValue.startsWith('CNPJ')) {
-                        cnpjProprietario = proprietarioValue.substring(4); // Remove 'CNPJ'
-                    }
-
-                    // 3. Reorganizar os dados para corresponder à estrutura do ImovelController
-                    const propertyToSend = {
-                        id: propertyData.propertyId || null,
-                        numeroMatriculaImovel: propertyData.numeroMatriculaImovel,
-                        finalidade: propertyData.finalidade,
-                        valor: parseFloat(propertyData.valor),
-                        areaTotal: parseFloat(propertyData.areaTotal),
-                        status: propertyData.status,
-                        dataCadastro: propertyData.dataCadastro,
-                        dataAtualizacao: propertyData.dataAtualizacao || null,
-                        // Envie o CPF e/ou CNPJ diretamente, como string.
-                        cpfProprietario: cpfProprietario,
-                        cnpjProprietario: cnpjProprietario,
-                        endereco: {
-                            cep: propertyData.cep,
-                            logradouro: propertyData.logradouro,
-                            numero: propertyData.numero,
-                            complemento: propertyData.complemento,
-                            bairro: propertyData.bairro,
-                            cidade: propertyData.cidade,
-                            estado: propertyData.estado
-                        },
+                // 3. Reorganizar os dados para corresponder à estrutura do ImovelController
+                const propertyToSend = {
+                    id: propertyData.propertyId || null,
+                    numeroMatriculaImovel: propertyData.numeroMatriculaImovel,
+                    finalidade: propertyData.finalidade,
+                    valor: parseFloat(propertyData.valor),
+                    areaTotal: parseFloat(propertyData.areaTotal),
+                    status: propertyData.status,
+                    dataCadastro: propertyData.dataCadastro,
+                    dataAtualizacao: propertyData.dataAtualizacao || null,
+                    // Agora, os campos de proprietário são definidos corretamente
+                    cpfProprietario: cpfProprietario,
+                    cnpjProprietario: cnpjProprietario,
+                    cep: propertyData.cep,
+                    endereco: propertyData.logradouro,
+                    numero: propertyData.numero,
+                    complemento: propertyData.complemento,
+                    bairro: propertyData.bairro,
+                    cidade: propertyData.cidade,
+                    estado: propertyData.estado,
 
                     tipoImovel: propertyData.tipoImovel,
                     // Comentário: Campos específicos do tipo de imóvel, enviados apenas se o tipo for o correspondente.
@@ -2651,7 +2692,7 @@
 
 
 
-// Comentário: Função assíncrona para carregar os dados de uma visita específica para edição.
+            // Comentário: Função assíncrona para carregar os dados de uma visita específica para edição.
             const editVisit = async (visitId) => { // Adicionado 'async'
                 try {
                     // Comentário: Faz uma requisição GET para o endpoint de detalhe de visita do Spring Boot.
@@ -2728,7 +2769,7 @@
                 deleteVisitBtn.style.display = 'none';
             };
 
-// Comentário: Event listener para a submissão do formulário de cadastro/edição de visita.
+            // Comentário: Event listener para a submissão do formulário de cadastro/edição de visita.
             visitRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
                 event.preventDefault();
 
@@ -2795,7 +2836,7 @@
                 }
             });
 
-// Comentário: Função assíncrona para excluir uma visita do backend.
+            // Comentário: Função assíncrona para excluir uma visita do backend.
             const deleteVisit = async (visitId) => { // Adicionado 'async'
                 if (confirm('Tem certeza que deseja excluir esta visita? Esta ação é irreversível.')) {
                     try {
@@ -2832,7 +2873,7 @@
 
             // PROPERTY SUGGESTIONS FUNCTIONS -----------------------------------------------------------
 
-// Comentário: Função assíncrona para carregar e exibir os clientes na tabela de seleção para sugestão de imóveis.
+            // Comentário: Função assíncrona para carregar e exibir os clientes na tabela de seleção para sugestão de imóveis.
             const loadClientsForSuggestionsTable = async (searchTerm = '') => { // Adicionado 'async'
                 clientsForSuggestionTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Carregando clientes...</td></tr>';
 
@@ -3008,7 +3049,7 @@
 
 
             
-// Comentário: Função assíncrona para carregar e exibir as vendas na tabela a partir do backend.
+            // Comentário: Função assíncrona para carregar e exibir as vendas na tabela a partir do backend.
             const loadSalesTable = async (searchTerm = '') => { // Adicionado 'async'
                 salesTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Carregando vendas...</td></tr>';
 
@@ -3083,7 +3124,7 @@
                 });
             }
 
-// Comentário: Função assíncrona para carregar os dados de uma venda específica para edição.
+            // Comentário: Função assíncrona para carregar os dados de uma venda específica para edição.
             const editSale = async (saleId) => { // Adicionado 'async'
                 try {
                     // Comentário: Faz uma requisição GET para o endpoint de detalhe de venda do Spring Boot.
@@ -3147,7 +3188,7 @@
                 deleteSaleBtn.style.display = 'none';
             };
 
-// Comentário: Event listener para a submissão do formulário de cadastro/edição de venda.
+            // Comentário: Event listener para a submissão do formulário de cadastro/edição de venda.
             saleRegistrationForm.addEventListener('submit', async (event) => { // Adicionado 'async'
                 event.preventDefault();
 
@@ -3204,7 +3245,7 @@
                 }
             });
 
-// Comentário: Função assíncrona para excluir uma venda do backend.
+            // Comentário: Função assíncrona para excluir uma venda do backend.
             const deleteSale = async (saleId) => { // Adicionado 'async'
                 if (confirm('Tem certeza que deseja excluir esta venda? Esta ação é irreversível.')) {
                     try {
@@ -3274,7 +3315,100 @@
                 cpfCnpjSelectUser.addEventListener('change', toggleCpfCnpjUserFields);
                 toggleCpfCnpjUserFields(); // Initial call to set correct visibility
             }
+ 
 
+            // Função auxiliar para resetar qualquer formulário de cadastro
+            function setupFormReset(linkSelector, formId, hiddenId, titleId, newTitle, descId, newDesc, deleteBtnId) {
+                const link = document.querySelector(linkSelector);
+                const form = document.getElementById(formId);
+
+                if (link && form) {
+                    link.addEventListener("click", () => {
+                        form.reset();
+
+                        // Zera id oculto (se existir)
+                        if (hiddenId && document.getElementById(hiddenId)) {
+                            document.getElementById(hiddenId).value = "";
+                        }
+
+                        // Ajusta título
+                        if (titleId && document.getElementById(titleId)) {
+                            document.getElementById(titleId).textContent = newTitle;
+                        }
+
+                        // Ajusta descrição
+                        if (descId && document.getElementById(descId)) {
+                            document.getElementById(descId).textContent = newDesc;
+                        }
+
+                        // Esconde botão de excluir
+                        if (deleteBtnId && document.getElementById(deleteBtnId)) {
+                            document.getElementById(deleteBtnId).style.display = "none";
+                        }
+                    });
+                }
+            }
+
+            // Funcionários (Usuários)
+            setupFormReset(
+                'a[data-content-id="register-user-section"]',
+                "user-registration-form",
+                "user_id",
+                "user-form-title",
+                "Cadastrar Novo Usuário",
+                "user-form-description",
+                "Preencha os campos abaixo para registrar um novo usuário no sistema.",
+                "delete-user-btn"
+            );
+
+            // Clientes
+            setupFormReset(
+                'a[data-content-id="register-client-section"]',
+                "client-registration-form",
+                "client_id",
+                "client-form-title",
+                "Cadastrar Novo Cliente",
+                "client-form-description",
+                "Preencha os campos abaixo para registrar um novo cliente no sistema.",
+                "delete-client-btn"
+            );
+
+            // Imóveis
+            setupFormReset(
+                'a[data-content-id="register-property-section"]',
+                "property-registration-form",
+                "property_id",
+                "property-form-title",
+                "Cadastrar Novo Imóvel",
+                "property-form-description",
+                "Preencha os campos abaixo para registrar um novo imóvel no sistema.",
+                "delete-property-btn"
+            );
+
+            // Visitas e Interesses
+            setupFormReset(
+                'a[data-content-id="register-visit-interest-section"]',
+                "visit-registration-form",
+                "visit_id",
+                "visit-form-title",
+                "Registrar Visita e Interesse",
+                "visit-form-description",
+                "Preencha os campos abaixo para registrar uma nova visita e a avaliação de interesse.",
+                "delete-visit-btn" // confirme se existe esse botão, senão pode remover
+            );
+
+            // Vendas
+            setupFormReset(
+                'a[data-content-id="register-sale-section"]', // confirme se esse ID está no HTML
+                "sale-registration-form",
+                "sale_id",
+                "sale-form-title",
+                "Registrar Nova Venda",
+                "sale-form-description",
+                "Preencha os campos abaixo para registrar uma nova venda no sistema.",
+                "delete-sale-btn"
+            );
+     
 
             // Lógica para mostrar/ocultar Área de Atuação para Corretor
             const tipoCargoSelect = document.getElementById('tipo_cargo');
@@ -3312,6 +3446,66 @@
                 showSection('dashboard-section');
             } 
         });
+
+        const selectTipo = document.getElementById('tipo_imovel_select');
+        const grupos = document.querySelectorAll('.type-specific-fields');
+
+        const TYPE_GROUPS = {
+            'TERRENO': ['terreno_fields'],
+            'CASA': ['unidade_residencial_fields', 'casa_fields'],
+            'APARTAMENTO': ['unidade_residencial_fields', 'apartamento_fields'],
+            'PREDIO_COMERCIAL': ['unidade_comercial_fields', 'predio_comercial_fields'],
+            'SALA_COMERCIAL': ['unidade_comercial_fields', 'sala_comercial_fields']
+        };
+
+        function limparRequired() {
+            [
+            'numero_comodos','numero_quartos','numero_banheiros','possui_garagem','capacidade_garagem',
+            'andar','numero_apartamento','posicao_apartamento','numero_salas','total_andares',
+            'area_total','area_construida','area_util','andar_sala','numero_sala'
+            ].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.removeAttribute('required');
+            });
+        }
+
+        function aplicarRequired(tipo) {
+            if (tipo === 'CASA' || tipo === 'APARTAMENTO') {
+            ['numero_comodos','numero_quartos','numero_banheiros','area_total','area_construida']
+                .forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('required','true'); });
+            if (tipo === 'APARTAMENTO') {
+                ['andar','numero_apartamento','posicao_apartamento']
+                .forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('required','true'); });
+            }
+            } else if (tipo === 'PREDIO_COMERCIAL') {
+            ['numero_salas','total_andares','area_total','area_construida','area_util']
+                .forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('required','true'); });
+            } else if (tipo === 'SALA_COMERCIAL') {
+            ['andar_sala','numero_sala','area_total','area_construida','area_util']
+                .forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('required','true'); });
+            } else if (tipo === 'TERRENO') {
+            const el = document.getElementById('area_total');
+            if (el) el.setAttribute('required','true');
+            }
+        }
+
+        function mostrarCampos(tipo) {
+            grupos.forEach(div => { div.style.display = 'none'; });
+            (TYPE_GROUPS[tipo] || []).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+            });
+            limparRequired();
+            aplicarRequired(tipo);
+        }
+
+        if (selectTipo) {
+            mostrarCampos(selectTipo.value || '');
+            selectTipo.addEventListener('change', e => {
+            mostrarCampos(e.target.value);
+            });
+        }
+
     </script>
 </body>
 </html>
